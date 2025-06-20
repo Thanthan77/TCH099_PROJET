@@ -1,7 +1,7 @@
 # Projet Intégrateur : Préparation du projet (Date limite : vendredi 20 juin 2025)
 
 ### Gestion de réservation - Clinique privée
-### Auteurs : Mathis Clermont (Mathou-Clermont), Ethan Chea (Thanthan77), Vanisone Rasavady (Vanisone), Lotfi Fradj (lotfi-1), Koffi Akakpo (koffi1734) 
+### Auteurs : Mathis Clermont (Mathou-Clermont), Ethan Chea (Thanthan77), Vanisone Rasavady (Vanisone), Lotfi Fradj (Fradj-1), Koffi Akakpo (koffi2317) 
 
 ##  Description du projet : 
 Ce projet a pour but de développer un système complet de gestion de réservation pour une clinique privée.
