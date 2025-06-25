@@ -38,11 +38,10 @@ Le projet sera composé d'un **site Web**, d'un **API REST** ainsi que d'une **a
 
 ### Tables prévues
 
-- utilisateurs
-- roles
+- patient
+- employe
 - rendez_vous
-- disponibilites
-- services
+- disponibilite
 
 ## Informations multi-usager
 
