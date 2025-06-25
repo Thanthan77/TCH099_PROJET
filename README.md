@@ -48,7 +48,8 @@ Le projet sera composé d'un **site Web**, d'un **API REST** ainsi que d'une **a
 
 | Type d'utilisateur | Actions possibles |
 |--------------------|-------------------|
-| Patient            | Prendre, voir, annuler des rendez-vous |
+| Patient            | Prendre, voir, annuler ses rendez-vous |
+| Secrétaire         | Prendre, voir, déplacer, annuler des rendez-vous |
 | Médecin            | Gérer ses disponibilités, voir ses rendez-vous |
 | Infirmière         | Gérer ses disponibilités, voir ses rendez-vous |
 | Administrateur     | Gérer les utilisateurs, services, horaires et ressources |
