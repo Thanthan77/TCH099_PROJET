@@ -42,6 +42,7 @@ Le projet sera composé d'un **site Web**, d'un **API REST** ainsi que d'une **a
 - employe
 - rendez_vous
 - disponibilite
+- service
 
 ## Informations multi-usager
 
