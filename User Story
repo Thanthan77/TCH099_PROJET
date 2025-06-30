@@ -27,11 +27,11 @@ Gestion des messages d’erreur et de confirmation.
 (Optionnel) Envoi d’un courriel de confirmation d’inscription.
 
 Requis Technologiques :
-Frontend : React.js (ou autre framework JS) pour l’interface utilisateur.
+Frontend : javascript,css et javascript
 
 Backend : Node.js avec Express pour la gestion des requêtes.
 
-Base de données : PostgreSQL (ou autre SGBD relationnel).
+Base de données : phpMyadmin (ou autre SGBD relationnel).
 
 Authentification : hachage du mot de passe (bcrypt), gestion JWT pour les sessions.
 
@@ -70,7 +70,7 @@ Mise à jour des données dans la base.
 Notification de succès ou d’erreur.
 
 Requis Technologiques et Non-fonctionnels :
-Techno : React (formulaire), API REST (PUT), PostgreSQL (UPDATE), sécurisation par jeton JWT.
+Techno :  API REST (PUT), PostgreSQL (UPDATE), sécurisation par jeton JWT.
 
 Non-fonctionnels : sécurité des données personnelles, accessibilité, interface intuitive.
 
@@ -97,7 +97,7 @@ Vérification de disponibilité.
 Confirmation par courriel ou à l’écran.
 
 Requis Tech et Non-fonctionnels :
-React (UI), API REST (POST), PostgreSQL, envoi d’e-mail.
+ API REST (POST), phpMyadmin, envoi d’e-mail.
 
 Convivialité, rapidité, robustesse.
 
@@ -145,7 +145,7 @@ Backend pour mise à jour.
 Gestion des conflits horaires.
 
 Requis Tech et Non-fonctionnels :
-React, Express, PostgreSQL.
+css,html et phpMyadmin
 
 Fiabilité, communication claire, UX fluide.
 
@@ -218,7 +218,7 @@ Enregistrement en base.
 Déclencheur pour désactivation RDV.
 
 Requis Tech et Non-fonctionnels :
-Express, PostgreSQL, règles métier.
+ phpMyadmin, règles métier.
 
 Prévention des conflits, automatisation.
 
