@@ -27,9 +27,9 @@ Gestion des messages d’erreur et de confirmation.
 (Optionnel) Envoi d’un courriel de confirmation d’inscription.
 
 Requis Technologiques :
-Frontend : javascript,css et javascript
+Frontend : javascript,html et css
 
-Backend : Node.js avec Express pour la gestion des requêtes.
+Backend : php 
 
 Base de données : phpMyadmin (ou autre SGBD relationnel).
 
@@ -70,7 +70,7 @@ Mise à jour des données dans la base.
 Notification de succès ou d’erreur.
 
 Requis Technologiques et Non-fonctionnels :
-Techno :  API REST (PUT), PostgreSQL (UPDATE), sécurisation par jeton JWT.
+Techno :  API REST (PUT),  sécurisation par jeton JWT.
 
 Non-fonctionnels : sécurité des données personnelles, accessibilité, interface intuitive.
 
@@ -120,7 +120,7 @@ Endpoint pour mise à jour dossier patient.
 Ajout d’un champ de texte sécurisé.
 
 Requis Tech et Non-fonctionnels :
-PostgreSQL (jointures patient-médecin), React, auth sécurisée.
+API REST(GET),auth sécurisée.
 
 Traçabilité, performance, sécurité médicale.
 
@@ -140,7 +140,7 @@ Notification au patient.
 Décomposition en Tâches :
 Interface de modification.
 
-Backend pour mise à jour.
+Backend: API REST (UPDATE)
 
 Gestion des conflits horaires.
 
@@ -192,7 +192,7 @@ UI formulaire horaire.
 
 Table “disponibilités”.
 
-Backend pour CREATE/UPDATE.
+Backend: API REST( CREATE/UPDATE.)
 
 Requis Tech et Non-fonctionnels :
 PostgreSQL, React, Express.
