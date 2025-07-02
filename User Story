@@ -1,269 +1,230 @@
-USER 1 :
-User Story :
+# User Stories – Projet Clinique Santé Plus
+
+## USER 1
+
+### User Story :
 En tant que patient, je souhaite créer un profil sur la plateforme de la clinique Santé Plus afin de pouvoir accéder aux services de réservation de rendez-vous et de gestion de mon dossier médical.
 
-Requis Fonctionnels :
-Le patient doit pouvoir accéder à un formulaire d’inscription.
+### Requis Fonctionnels :
+- Le patient doit pouvoir accéder à un formulaire d’inscription.
+- Le formulaire doit contenir les champs obligatoires suivants : nom, prénom, date de naissance, adresse courriel, mot de passe, numéro de téléphone.
+- Le système doit valider les champs (format courriel, mot de passe sécurisé, etc.).
+- Après validation, les données sont enregistrées dans la base de données.
+- Une confirmation de création de compte est affichée ou envoyée par courriel.
 
-Le formulaire doit contenir les champs obligatoires suivants : nom, prénom, date de naissance, adresse courriel, mot de passe, numéro de téléphone.
+### Décomposition en Tâches :
+- Création de l’interface de formulaire d’inscription.
+- Développement de la logique de validation des champs côté client et serveur.
+- Création d’un endpoint API pour enregistrer un nouveau patient.
+- Connexion à la base de données pour insertion.
+- Gestion des messages d’erreur et de confirmation.
+- (Optionnel) Envoi d’un courriel de confirmation d’inscription.
 
-Le système doit valider les champs (format courriel, mot de passe sécurisé, etc.).
+### Requis Technologiques :
+- Frontend : JavaScript, HTML et CSS
+- Backend : PHP
+- Base de données : phpMyAdmin (ou autre SGBD relationnel)
+- Authentification : hachage du mot de passe (bcrypt), gestion JWT pour les sessions
 
-Après validation, les données sont enregistrées dans la base de données.
+### Requis Non Fonctionnels :
+- Sécurité des données personnelles (protection des mots de passe, HTTPS obligatoire)
+- Accessibilité du formulaire (responsive design, navigation clavier)
+- Performance (chargement rapide, validation rapide)
+- UX claire et simple pour un public non technique
 
-Une confirmation de création de compte est affichée ou envoyée par courriel.
+---
 
-Décomposition en Tâches :
-Création de l’interface de formulaire d’inscription.
+## USER 2
 
-Développement de la logique de validation des champs côté client et serveur.
-
-Création d’un endpoint API pour enregistrer un nouveau patient.
-
-Connexion à la base de données pour insertion.
-
-Gestion des messages d’erreur et de confirmation.
-
-(Optionnel) Envoi d’un courriel de confirmation d’inscription.
-
-Requis Technologiques :
-Frontend : javascript,html et css
-
-Backend : php 
-
-Base de données : phpMyadmin (ou autre SGBD relationnel).
-
-Authentification : hachage du mot de passe (bcrypt), gestion JWT pour les sessions.
-
-Requis Non Fonctionnels :
-Sécurité des données personnelles (protection des mots de passe, HTTPS obligatoire).
-
-Accessibilité du formulaire (responsive design, navigation clavier).
-
-Performance (chargement rapide, validation rapide).
-
-UX claire et simple pour un public non technique.
-
-
-USER 2 :
-User Story :
+### User Story :
 En tant que patient, je souhaite pouvoir modifier mes informations personnelles (adresse, numéro de téléphone, etc.) afin de m'assurer que mes coordonnées sont à jour dans le système de la clinique Santé Plus.
 
-Requis Fonctionnels :
-Le patient doit pouvoir accéder à son profil.
+### Requis Fonctionnels :
+- Le patient doit pouvoir accéder à son profil.
+- Il doit être possible de modifier certaines informations et de sauvegarder les changements.
+- Le système doit valider les nouvelles données.
+- Un message de confirmation doit s’afficher après la sauvegarde.
 
-Il doit être possible de modifier certaines informations et de sauvegarder les changements.
+### Décomposition en Tâches :
+- Mise en place de l’interface de modification du profil.
+- Chargement des informations actuelles dans le formulaire.
+- Validation des nouvelles données.
+- Mise à jour des données dans la base.
+- Notification de succès ou d’erreur.
 
-Le système doit valider les nouvelles données.
+### Requis Technologiques et Non-fonctionnels :
+- Techno : API REST (PUT), sécurisation par jeton JWT
+- Non-fonctionnels : sécurité des données personnelles, accessibilité, interface intuitive
 
-Un message de confirmation doit s’afficher après la sauvegarde.
+---
 
-Décomposition en Tâches :
-Mise en place de l’interface de modification du profil.
+## USER 3
 
-Chargement des informations actuelles dans le formulaire.
-
-Validation des nouvelles données.
-
-Mise à jour des données dans la base.
-
-Notification de succès ou d’erreur.
-
-Requis Technologiques et Non-fonctionnels :
-Techno :  API REST (PUT),  sécurisation par jeton JWT.
-
-Non-fonctionnels : sécurité des données personnelles, accessibilité, interface intuitive.
-
-USER 3 :
-User Story :
+### User Story :
 En tant que patient ou secrétaire, je souhaite pouvoir prendre un rendez-vous avec un professionnel de santé afin de recevoir les soins nécessaires.
 
-Requis Fonctionnels :
-Accès à un calendrier de disponibilité.
+### Requis Fonctionnels :
+- Accès à un calendrier de disponibilité
+- Sélection du professionnel, date et heure
+- Validation des champs
+- Notification de prise en charge
 
-Sélection du professionnel, date et heure.
+### Décomposition en Tâches :
+- Interface de calendrier et formulaire de RDV
+- Endpoint pour créer un RDV
+- Vérification de disponibilité
+- Confirmation par courriel ou à l’écran
 
-Validation des champs.
+### Requis Tech et Non-fonctionnels :
+- API REST (POST), phpMyAdmin, envoi d’e-mail
+- Convivialité, rapidité, robustesse
 
-Notification de prise en charge.
+---
 
-Décomposition en Tâches :
-Interface de calendrier et formulaire de RDV.
+## USER 4
 
-Endpoint pour créer un RDV.
-
-Vérification de disponibilité.
-
-Confirmation par courriel ou à l’écran.
-
-Requis Tech et Non-fonctionnels :
- API REST (POST), phpMyadmin, envoi d’e-mail.
-
-Convivialité, rapidité, robustesse.
-
-USER 4 :
-User Story :
+### User Story :
 En tant qu’infirmière ou médecin, je souhaite pouvoir voir les rendez-vous à venir et noter des suivis médicaux pour les patients afin de documenter leur traitement.
 
-Requis Fonctionnels :
-Interface de consultation de RDV.
+### Requis Fonctionnels :
+- Interface de consultation de RDV
+- Ajout de notes de suivi
+- Liaison avec le dossier médical du patient
 
-Ajout de notes de suivi.
+### Décomposition en Tâches :
+- Création de la page de suivi
+- Endpoint pour mise à jour dossier patient
+- Ajout d’un champ de texte sécurisé
 
-Liaison avec le dossier médical du patient.
+### Requis Tech et Non-fonctionnels :
+- API REST (GET), auth sécurisée
+- Traçabilité, performance, sécurité médicale
 
-Décomposition en Tâches :
-Création de la page de suivi.
+---
 
-Endpoint pour mise à jour dossier patient.
+## USER 5
 
-Ajout d’un champ de texte sécurisé.
-
-Requis Tech et Non-fonctionnels :
-API REST(GET),auth sécurisée.
-
-Traçabilité, performance, sécurité médicale.
-
-USER 5 :
-User Story :
+### User Story :
 En tant que secrétaire, médecin ou infirmière, je souhaite pouvoir déplacer un rendez-vous afin de gérer les imprévus dans l’agenda du personnel.
 
-Requis Fonctionnels :
-Sélection du RDV.
+### Requis Fonctionnels :
+- Sélection du RDV
+- Nouvelle date/heure
+- Vérification de conflit
+- Notification au patient
 
-Nouvelle date/heure.
+### Décomposition en Tâches :
+- Interface de modification
+- Backend : API REST (UPDATE)
+- Gestion des conflits horaires
 
-Vérification de conflit.
+### Requis Tech et Non-fonctionnels :
+- CSS, HTML et phpMyAdmin
+- Fiabilité, communication claire, UX fluide
 
-Notification au patient.
+---
 
-Décomposition en Tâches :
-Interface de modification.
+## USER 6
 
-Backend: API REST (UPDATE)
-
-Gestion des conflits horaires.
-
-Requis Tech et Non-fonctionnels :
-css,html et phpMyadmin
-
-Fiabilité, communication claire, UX fluide.
-
-USER 6 :
-User Story :
+### User Story :
 En tant que médecin ou secrétaire, je souhaite référer un patient à un spécialiste (autre médecin) et faire le suivi des références afin d’assurer la continuité des soins.
 
-Requis Fonctionnels :
-Choix d’un spécialiste.
+### Requis Fonctionnels :
+- Choix d’un spécialiste
+- Génération d’une référence
+- Ajout au dossier du patient
+- Suivi de la réponse du spécialiste
 
-Génération d’une référence.
+### Décomposition en Tâches :
+- Interface de référence
+- Endpoint de création
+- Envoi de notification
+- Historique des références
 
-Ajout au dossier du patient.
+### Requis Tech et Non-fonctionnels :
+- DB relationnelle, authentification par rôle
+- Sécurité, audit des actions
 
-Suivi de la réponse du spécialiste.
+---
 
-Décomposition en Tâches :
-Interface de référence.
+## USER 7
 
-Endpoint de création.
-
-Envoi de notification.
-
-Historique des références.
-
-Requis Tech et Non-fonctionnels :
-DB relationnelle, authentification par rôle.
-
-Sécurité, audit des actions.
-
-USER 7 :
-User Story :
+### User Story :
 En tant que médecin, infirmière ou secrétaire, je souhaite pouvoir définir mes disponibilités dans le système afin que les patients puissent réserver selon mes horaires.
 
-Requis Fonctionnels :
-Formulaire de disponibilité.
+### Requis Fonctionnels :
+- Formulaire de disponibilité
+- Affichage dans le calendrier de RDV
+- Possibilité de modifier/supprimer
 
-Affichage dans le calendrier de RDV.
+### Décomposition en Tâches :
+- UI formulaire horaire
+- Table “disponibilités”
+- Backend : API REST (CREATE/UPDATE)
 
-Possibilité de modifier/supprimer.
+### Requis Tech et Non-fonctionnels :
+- PostgreSQL, React, Express
+- Clarté, facilité d’utilisation
 
-Décomposition en Tâches :
-UI formulaire horaire.
+---
 
-Table “disponibilités”.
+## USER 8
 
-Backend: API REST( CREATE/UPDATE.)
-
-Requis Tech et Non-fonctionnels :
-PostgreSQL, React, Express.
-
-Clarté, facilité d’utilisation.
-
-USER 8 :
-User Story :
+### User Story :
 En tant que personnel de la clinique, je souhaite pouvoir choisir mes vacances dans le système pour bloquer les périodes indisponibles automatiquement.
 
-Requis Fonctionnels :
-Interface de demande de vacances.
+### Requis Fonctionnels :
+- Interface de demande de vacances
+- Validation du conflit horaire
+- Mise à jour du calendrier
 
-Validation du conflit horaire.
+### Décomposition en Tâches :
+- UI de sélection des dates
+- Enregistrement en base
+- Déclencheur pour désactivation RDV
 
-Mise à jour du calendrier.
+### Requis Tech et Non-fonctionnels :
+- phpMyAdmin, règles métier
+- Prévention des conflits, automatisation
 
-Décomposition en Tâches :
-UI de sélection des dates.
+---
 
-Enregistrement en base.
+## USER 9
 
-Déclencheur pour désactivation RDV.
-
-Requis Tech et Non-fonctionnels :
- phpMyadmin, règles métier.
-
-Prévention des conflits, automatisation.
-
-USER 9 :
-User Story :
+### User Story :
 En tant que médecin, infirmière ou patient, je souhaite pouvoir accéder au dossier médical du patient pour consulter ou documenter son historique de soins.
 
-Requis Fonctionnels :
-Affichage du dossier.
+### Requis Fonctionnels :
+- Affichage du dossier
+- Rôles avec permissions spécifiques
+- Historique des modifications
 
-Rôles avec permissions spécifiques.
+### Décomposition en Tâches :
+- Page d’affichage sécurisée
+- Middleware de permission
+- Logging des accès
 
-Historique des modifications.
+### Requis Tech et Non-fonctionnels :
+- JWT, base relationnelle, cryptage
+- Confidentialité, audit, UX claire
 
-Décomposition en Tâches :
-Page d’affichage sécurisée.
+---
 
-Middleware de permission.
+## USER 10
 
-Logging des accès.
-
-Requis Tech et Non-fonctionnels :
-JWT, base relationnelle, cryptage.
-
-Confidentialité, audit, UX claire.
-
-USER 10 :
-User Story :
+### User Story :
 En tant qu’administrateur, je souhaite pouvoir gérer les comptes du personnel médical afin d'assurer une administration efficace de la clinique.
 
-Requis Fonctionnels :
-Création/suppression de comptes.
+### Requis Fonctionnels :
+- Création/suppression de comptes
+- Attribution de rôles
+- Historique des actions admin
 
-Attribution de rôles.
+### Décomposition en Tâches :
+- Tableau de bord admin
+- Endpoints sécurisés
+- Audit des actions
 
-Historique des actions admin.
-
-Décomposition en Tâches :
-Tableau de bord admin.
-
-Endpoints sécurisés.
-
-Audit des actions.
-
-Requis Tech et Non-fonctionnels :
-Authentification forte, rôle admin.
-
-Traçabilité, sécurité, modularité.
+### Requis Tech et Non-fonctionnels :
+- Authentification forte, rôle admin
+- Traçabilité, sécurité, modularité
