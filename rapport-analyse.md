@@ -35,14 +35,10 @@ Le projet sera composé d'un **site Web**, d'un **API REST** ainsi que d'une **a
 
 # Planification du Sprint 1 
 
-## Diagramme de cas d'utilisation
+## [Diagramme de cas d'utilisation](https://github.com/Thanthan77/TCH099_PROJET/blob/main/diagramme.png)
 
-Créez un diagramme de cas d'utilisation pour le système de votre projet. Celui-ci devra identifier les différents acteurs possibles du système et leurs cas d'utilisation comme vue en classe.
 
-## Schéma initial de la base de données
-
-* Insérez une image du schéma de la base de données (vous pouvez amélioré changer le schéma durant le restant du développement)
-    * Insérez soit un diagramme entités-relations ou un diagramme de classe à votre choix.
+## [Schéma initial de la base de données](https://github.com/Thanthan77/TCH099_PROJET/blob/main/basedonneestch099.png)
 
 ## Liste d’user stories
 Visité le site suivant pour comprendre les user stories :
