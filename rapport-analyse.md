@@ -41,16 +41,13 @@ Le projet sera composé d'un **site Web**, d'un **API REST** ainsi que d'une **a
 ## [Schéma initial de la base de données](https://github.com/Thanthan77/TCH099_PROJET/blob/main/basedonneestch099.png)
 
 ## Liste d’user stories
-Visité le site suivant pour comprendre les user stories :
-
-[User stories](https://www.atlassian.com/fr/agile/project-management/user-stories)
-
-Complétez une dizaine de user stories pour votre projet. Ajoutez-les comme Issues (sur github) qui seront gérées dans votre projet.
-
-Ajoutez dans ce document le lien vers le Issue de votre projet. Cela n'est pas obligatoirement la liste exhaustive des user stories.
-
-### Liste de requis technologiques
-Ajoutez les requis technologiques avec les liens vers les Issues de votre projet.
-
-### Liste de requis non fonctionnels
-Ajoutez les requis non fonctionnels avec les liens vers les Issues de votre projet.
+[ISSUE 1](https://github.com/Thanthan77/TCH099_PROJET/issues/1)
+[ISSUE 2](https://github.com/Thanthan77/TCH099_PROJET/issues/2)
+[ISSUE 3](https://github.com/Thanthan77/TCH099_PROJET/issues/2)
+[ISSUE 4](https://github.com/Thanthan77/TCH099_PROJET/issues/7)
+[ISSUE 5](https://github.com/Thanthan77/TCH099_PROJET/issues/11)
+[ISSUE 6](https://github.com/Thanthan77/TCH099_PROJET/issues/4)
+[ISSUE 7](https://github.com/Thanthan77/TCH099_PROJET/issues/6)
+[ISSUE 8](https://github.com/Thanthan77/TCH099_PROJET/issues/8)
+[ISSUE 9](https://github.com/Thanthan77/TCH099_PROJET/issues/10)
+[ISSUE 10](https://github.com/Thanthan77/TCH099_PROJET/issues/12)
