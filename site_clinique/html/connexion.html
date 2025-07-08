@@ -3,22 +3,22 @@
 <head>
     <meta charset="utf-8">
     <title>Page de Connexion</title>
-    <link rel="stylesheet" href="style/grille.css"> <!--à modif -->
+    <link rel="stylesheet" href="../css/connexion.css"> <!--à modif -->
  
 </head>
  <body>
 <!-- Milieu -->
-    <div id="main">
-        <h1>Connexion</h1>
-
-        <form action="#" method="post">
-            <label for="email">Courriel :</label><br>
-            <input type="email" id="email" name="email" required><br><br>
-
-            <label for="password">Mot de passe :</label><br>
-            <input type="password" id="password" name="password" required><br><br>
-
-            <button type="submit">Se connecter</button>
-        </form>
+    <div>
+        <h1> CONNEXION</h1>
+    <form id="form-login">
+        <label for="email">Email</label><br>
+        <input type="email" id="email" name="email" required><br>
+        <label for="motdepasse">Mot de passe</label><br>
+        <input type="password" id="motdepasse" name="motdepasse" required><br><br>
+        <div id="erreur-login" class="erreur"></div>
+        <p onclick="window.location.href='page_inscription.php'">Créer votre compte</p>
+        <button type="submit">Se connecter</button>
+    </form>
+</div>
 
 </body> 
