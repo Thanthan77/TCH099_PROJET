@@ -38,7 +38,7 @@ Le projet sera composé d'un **site Web**, d'un **API REST** ainsi que d'une **a
 ## [Diagramme de cas d'utilisation](https://github.com/Thanthan77/TCH099_PROJET/blob/main/diagramme.png)
 
 
-## [Schéma initial de la base de données](https://github.com/Thanthan77/TCH099_PROJET/blob/main/basedonneestch099.png)
+## [Schéma initial de la base de données](https://github.com/Thanthan77/TCH099_PROJET/blob/main/basedonnees.png)
 
 ## Liste d’user stories
 [ISSUE 1](https://github.com/Thanthan77/TCH099_PROJET/issues/1)
