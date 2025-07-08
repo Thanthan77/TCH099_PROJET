@@ -25,7 +25,7 @@ Le projet sera composé d'un **site Web**, d'un **API REST** ainsi que d'une **a
 #### Application mobile
 - Android Studio (Environnement)
 - Java (langage utilisé)
-- PHP (APIRest)
+- Retrofit (APIRest)
 
 ### Choix de technologies/framework/librairies pour l'API REST
 - PHP
