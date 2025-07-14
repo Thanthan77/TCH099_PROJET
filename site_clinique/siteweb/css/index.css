@@ -10,6 +10,10 @@ header {
   background-color: #0077b6;
   padding: 20px 40px;
   color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
 }
 
 .logo-container {
@@ -26,6 +30,9 @@ header {
 header h1 {
   font-size: 24px;
   margin: 0;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 /* Contenu principal */
