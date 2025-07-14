@@ -56,7 +56,7 @@
       fetch(API_URL + "login", {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ codeEmploye: codeEmploye, motDePasse: motdepasse })
+        body: JSON.stringify({ CODE_EMPLOYE: codeEmploye, MOT_DE_PASSE: motdepasse })
       })
       .then(response => response.text()) // on récupère en texte brut
       .then(raw => {
@@ -74,7 +74,10 @@
         if (data.token) {
           monToken = data.token;
           errDiv.innerText = "Connecté avec succès.";
-          window.location.href = "medecin_dashboard.html";
+          if(employe="Médecin"){
+            window.location.href = "medecin_dashboard.html";
+          }
+
         } else {
           errDiv.innerText = data.erreur ?? "Erreur de connexion.";
         }
