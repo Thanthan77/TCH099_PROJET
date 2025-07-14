@@ -25,13 +25,20 @@ try {
     
     $pstmt->setFetchMode(PDO::FETCH_ASSOC);
     if ($result = $pstmt->fetch()) { //Utilisateur trouve
-        if ($mdp==$result['MOT_DE_PASSE']) { //mot de passe correct
-        //On génère le token et on l'envoie au client :
-        $token = generate_jwt(['CODE_EMPLOYE' => $username, 'exp' => time() + 3600]);
-        echo json_encode(['token' => $token]);
-        //On arrete l'execution du script :
-        exit();
-        }   
+        if ($mdp == $result['MOT_DE_PASSE']) {
+    // Générer le token avec info employé
+    $token = generate_jwt([
+        'CODE_EMPLOYE' => $username,
+        'poste' => $result['POSTE'],
+        'exp' => time() + 3600
+    ]);
+
+    echo json_encode([
+        'token' => $token,
+        'poste' => $result['POSTE']
+    ]);
+    exit();
+} 
     }
     //Infos de connexion incorrectes :
     http_response_code(401);

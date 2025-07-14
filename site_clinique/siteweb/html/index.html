@@ -73,10 +73,23 @@
 
         if (data.token) {
           monToken = data.token;
+          poste=data.poste;
           errDiv.innerText = "Connecté avec succès.";
-          if(employe="Médecin"){
+          if(poste=="Médecin"){
             window.location.href = "medecin_dashboard.html";
           }
+          else if(poste=="Infirmier"){
+            window.location.href = "infirmiere_dashboard.html";
+          }
+
+          else if(poste=="Admin"){
+            window.location.href = "admin_dashboard.html";
+          }
+
+          else if(poste=="Secretaire"){
+            window.location.href = "secretaire_dashboard.html";
+          }
+
 
         } else {
           errDiv.innerText = data.erreur ?? "Erreur de connexion.";
