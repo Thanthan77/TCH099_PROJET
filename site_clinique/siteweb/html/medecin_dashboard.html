@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Tableau de bord - Médecin</title>
+  <link rel="stylesheet" href="../css/medecin_dashboard.css">
+  <script src="../script/medecin_dashboard.js" defer></script>
+</head>
+<body>
+
+  <header>
+    <div class="logo-container">
+      <img src="../image/Copilot_20250708_143732.png" alt="Logo" class="logo">
+      <h1>FIX-SANTÉ – Espace Médecin</h1>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button onclick="showTab('rdv')">Rendez-vous</button>
+    <button onclick="showTab('dossier')">Dossier patient</button>
+    <button onclick="showTab('suivi')">Demande de suivi</button>
+    <button onclick="showTab('dispo')">Disponibilités</button>
+    <button onclick="showTab('vacances')">Vacances</button>
+  </nav>
+
+  <main>
+    <!-- Section Rendez-vous -->
+    <section id="rdv" class="tab-content">
+      <h2>Mes rendez-vous de la semaine</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th><th>Heure</th><th>Patient</th><th>Service</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2025-07-15</td><td>09:00</td><td>Jean Dupont</td><td>Consultation</td>
+            <td><button onclick="showTab('dossier')">Voir dossier</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Section Dossier patient -->
+    <section id="dossier" class="tab-content hidden">
+      <h2>Dossier patient</h2>
+      <p><strong>Nom :</strong> Jean Dupont</p>
+      <p><strong>Date de naissance :</strong> 1985-04-12</p>
+      <label for="note">Note de consultation :</label>
+      <textarea id="note" placeholder="Écrire une note de consultation..."></textarea>
+      <button>Enregistrer</button>
+    </section>
+
+    <!-- Section Demande de suivi -->
+    <section id="suivi" class="tab-content hidden">
+      <h2>Demande de suivi avec un spécialiste</h2>
+      <label for="patient-suivi">Patient concerné :</label>
+      <input type="text" id="patient-suivi" placeholder="Nom du patient">
+
+      <label for="specialiste">Spécialiste :</label>
+      <select id="specialiste">
+        <option>Cardiologue</option>
+        <option>Neurologue</option>
+        <option>Dermatologue</option>
+      </select>
+
+      <button>Envoyer la demande</button>
+    </section>
+
+    <!-- Section Disponibilités -->
+    <section id="dispo" class="tab-content hidden">
+      <h2>Mes disponibilités</h2>
+      <label for="jours">Jours :</label>
+      <input type="text" id="jours" placeholder="Ex : Lundi, Mardi">
+
+      <label for="heures">Heures :</label>
+      <input type="text" id="heures" placeholder="Ex : 9h - 16h">
+
+      <button>Soumettre</button>
+    </section>
+
+    <!-- Section Vacances -->
+    <section id="vacances" class="tab-content hidden">
+      <h2>Demande de vacances</h2>
+      <label for="date-debut">Date de début :</label>
+      <input type="date" id="date-debut">
+
+      <label for="date-fin">Date de fin :</label>
+      <input type="date" id="date-fin">
+
+      <button>Envoyer la demande</button>
+    </section>
+  </main>
+</body>
+</html>

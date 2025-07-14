@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - FIX-SANTÉ</title>
+  <link rel="stylesheet" href="../css/admin_dashboard.css">
+  <script src="a../script/admin_dashboard.js" defer></script>
+</head>
+<body>
+
+  <header>
+    <div class="logo-container">
+      <img src="../image/Copilot_20250708_143732.png" alt="Logo FIX-SANTÉ" class="logo">
+      <h1>FIX-SANTÉ – Espace Administrateur</h1>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button onclick="showTab('comptes')">Comptes utilisateurs</button>
+    <button onclick="showTab('vacances')">Demandes de vacances</button>
+    <button onclick="showTab('secretaires')">Assignation secrétaires</button>
+    <button onclick="showTab('infirmiers')">Assignation infirmiers</button>
+  </nav>
+
+  <main>
+    <!-- Comptes -->
+    <section id="comptes" class="tab-content">
+      <h2>Comptes utilisateurs</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nom</th><th>Courriel</th><th>Rôle</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Julie Roy</td><td>julie@fixsante.com</td><td>Infirmière</td>
+            <td><button>Modifier</button> <button class="danger">Supprimer</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Ajouter un utilisateur</h3>
+      <label>Nom :</label><input type="text">
+      <label>Courriel :</label><input type="email">
+      <label>Rôle :</label>
+      <select>
+        <option>Médecin</option>
+        <option>Infirmière</option>
+        <option>Secrétaire</option>
+        <option>Administrateur</option>
+      </select>
+      <button>Créer le compte</button>
+    </section>
+
+    <!-- Vacances -->
+    <section id="vacances" class="tab-content hidden">
+      <h2>Demandes de vacances</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nom</th><th>Rôle</th><th>Début</th><th>Fin</th><th>Statut</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Dr. Tremblay</td><td>Médecin</td><td>2025-08-01</td><td>2025-08-10</td><td>En attente</td>
+            <td><button>Accepter</button> <button class="danger">Refuser</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Secretaires -->
+    <section id="secretaires" class="tab-content hidden">
+      <h2>Assignation des secrétaires</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Médecin</th><th>Secrétaire assignée</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Dr. Lavoie</td><td>Aucune</td><td><button>Assigner</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Infirmiers -->
+    <section id="infirmiers" class="tab-content hidden">
+      <h2>Assignation des infirmiers/infirmières</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Médecin</th><th>Infirmière assignée</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Dr. Tremblay</td><td>Julie Roy</td><td><button>Modifier</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>
