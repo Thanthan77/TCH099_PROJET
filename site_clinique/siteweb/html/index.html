@@ -18,18 +18,20 @@
     <div class="login-box">
       <h2>Connexion</h2>
 
-      <form>
-        <label for="username">Nom d’utilisateur :</label>
-        <input type="text" id="username" required>
+      <form method="post" id="connexion">
+        <label for="codeEmploye">Code Employe :</label>
+        <input name="codeEmploye" type="text" id="codeEmploye" required>
 
-        <label for="password">Mot de passe :</label>
-        <input type="password" id="password" required>
+        <label for="motDePasse">Mot de passe :</label>
+        <input name="motDePasse" type="password" id="motDePasse" required>
 
         <div class="options">
           <label><input type="checkbox"> Mémoriser mon compte</label>
         </div>
 
-        <button type="submit">Se connecter</button>
+        <button  type="submit">Se connecter</button>
+
+        <div id="erreur-login" class="text-danger mb-2"></div>
 
         <div class="links">
           <a href="mot_de_passe.html">Mot de passe oublié ?</a>
@@ -37,6 +39,53 @@
       </form>
     </div>
   </main>
+
+  <script src="../script/get_handle_data.js"></script>
+  <script>
+    const API_URL = 'http://localhost/api/';
+    let monToken = "";
+
+    document.getElementById("connexion").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const errDiv = document.getElementById("erreur-login");
+      errDiv.innerText = "";
+
+      const codeEmploye = document.getElementById("codeEmploye").value;
+      const motdepasse = document.getElementById("motDePasse").value;
+
+      fetch(API_URL + "login", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ codeEmploye: codeEmploye, motDePasse: motdepasse })
+      })
+      .then(response => response.text()) // on récupère en texte brut
+      .then(raw => {
+        console.log("Réponse brute du serveur :", raw);
+
+        let data;
+        try {
+          data = JSON.parse(raw);
+        } catch (e) {
+          errDiv.innerText = "Réponse invalide du serveur.";
+          console.error("Erreur JSON.parse :", e);
+          return;
+        }
+
+        if (data.token) {
+          monToken = data.token;
+          errDiv.innerText = "Connecté avec succès.";
+          window.location.href = "medecin_dashboard.html";
+        } else {
+          errDiv.innerText = data.erreur ?? "Erreur de connexion.";
+        }
+      })
+      .catch(error => {
+        console.error("Erreur login:", error);
+        errDiv.innerText = "Erreur lors de la connexion.";
+      });
+    });
+  </script>
+
 
 </body>
 </html>
