@@ -1,0 +1,91 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #e0f2ff;
+}
+
+header {
+  background-color: #0077b6;
+  padding: 20px 40px;
+  color: white;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 50px;
+  margin-right: 15px;
+}
+
+h1 {
+  font-size: 24px;
+  margin: 0;
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  padding: 50px 20px;
+}
+
+.reset-box {
+  background-color: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+h2 {
+  color: #0077b6;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+.requirements {
+  font-size: 14px;
+  color: #555;
+  margin-top: 15px;
+  padding-left: 20px;
+}
+
+button {
+  margin-top: 25px;
+  width: 100%;
+  padding: 12px;
+  background-color: #0077b6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #023e8a;
+}
+
+.erreur {
+  margin-top: 15px;
+  color: red;
+  text-align: center;
+}

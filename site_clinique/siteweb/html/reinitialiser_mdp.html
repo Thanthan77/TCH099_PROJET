@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Réinitialiser le mot de passe - FIX-SANTÉ</title>
+  <link rel="stylesheet" href="../css/reinitialiser_mdp.css">
+  <script src="../js/reinitialiser_mdp.js" defer></script>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="../image/logo.png" alt="Logo FIX-SANTÉ" class="logo">
+      <h1>FIX-SANTÉ</h1>
+    </div>
+  </header>
+
+  <main>
+    <div class="reset-box">
+      <h2>Réinitialiser votre mot de passe</h2>
+      <form id="form-reinitialisation">
+        <label>Nouveau mot de passe :</label>
+        <input type="password" id="password" required>
+
+        <label>Confirmer le mot de passe :</label>
+        <input type="password" id="confirmPassword" required>
+
+        <ul class="requirements">
+          <p>Le mot de passe doit contenir :</p>
+          <li>Minimum 8 caractères</li>
+          <li>1 lettre minuscule</li>
+          <li>1 lettre majuscule</li>
+          <li>1 chiffre (0 - 9)</li>
+          <li>1 caractère spécial : ! @ # $ % ^ & * ( ) , . ? " : { } | < ></li>
+        </ul>
+
+        <button type="submit">Réinitialiser</button>
+      </form>
+      <p id="message-erreur" class="erreur"></p>
+    </div>
+  </main>
+</body>
+</html>
