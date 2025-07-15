@@ -16,7 +16,6 @@
 
   <nav class="tabs">
     <button onclick="showTab('rdv')">Rendez-vous</button>
-    <button onclick="showTab('suivi')">Demande de suivi</button>
     <button onclick="showTab('dispo')">Disponibilités</button>
     <button onclick="showTab('vacances')">Vacances</button>
   </nav>
@@ -52,21 +51,6 @@
       <button id="enregistrer-note">Enregistrer</button>
     </section>
 
-    <!-- Section Demande de suivi -->
-    <section id="suivi" class="tab-content hidden">
-      <h2>Demande de suivi avec un spécialiste</h2>
-      <label for="patient-suivi">Patient concerné :</label>
-      <input type="text" id="patient-suivi" placeholder="Nom du patient" />
-
-      <label for="specialiste">Spécialiste :</label>
-      <select id="specialiste">
-        <option>Cardiologue</option>
-        <option>Neurologue</option>
-        <option>Dermatologue</option>
-      </select>
-
-      <button>Envoyer la demande</button>
-    </section>
 
     <!-- Section Disponibilités -->
     <section id="dispo" class="tab-content hidden">
