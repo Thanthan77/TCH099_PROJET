@@ -6,9 +6,16 @@ header('Content-Type: application/json');
 
 try {
     $cnx = Database::getInstance();
-    $pstmt = $cnx->prepare("SELECT * FROM Rendezvous");
-    $pstmt->execute();
 
+    //  Requête avec JOIN pour récupérer le nom du service
+    $pstmt = $cnx->prepare("
+        SELECT r.NUM_RDV, r.HEURE, r.DUREE, r.DATE_RDV, r.COURRIEL, r.CODE_EMPLOYE, r.ID_SERVICE,
+        s.NOM AS service
+        FROM Rendezvous r
+        JOIN Service s ON r.ID_SERVICE = s.ID_SERVICE
+    ");
+
+    $pstmt->execute();
     $pstmt->setFetchMode(PDO::FETCH_ASSOC);
     $resultats = $pstmt->fetchAll();
 

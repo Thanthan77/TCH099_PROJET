@@ -4,9 +4,6 @@
   <meta charset="UTF-8" />
   <title>Tableau de bord - Médecin</title>
   <link rel="stylesheet" href="../css/medecin_dashboard.css" />
-  <style>
-    .hidden { display: none; }
-  </style>
 </head>
 <body>
 
@@ -19,7 +16,6 @@
 
   <nav class="tabs">
     <button onclick="showTab('rdv')">Rendez-vous</button>
-    <button onclick="showTab('dossier')">Dossier patient</button>
     <button onclick="showTab('suivi')">Demande de suivi</button>
     <button onclick="showTab('dispo')">Disponibilités</button>
     <button onclick="showTab('vacances')">Vacances</button>
@@ -101,13 +97,6 @@
   <script>
     const API_URL = 'http://localhost/api/';
 
-    // Données des services (en dur en attendant que l'API soit corrigée)
-    const SERVICES = {
-        1: { ID_SERVICE: 1, NOM_SERVICE: "Cardiologie" },
-        2: { ID_SERVICE: 2, NOM_SERVICE: "Dermatologie" },
-        3: { ID_SERVICE: 3, NOM_SERVICE: "Pédiatrie" }
-    };
-
     async function chargerAfficherRendezVous() {
         try {
             // 1. Charger les rendez-vous et patients
@@ -124,15 +113,15 @@
             const tbody = document.querySelector('#rdv tbody');
             tbody.innerHTML = listeRendezVous.map(rdv => {
                 const patient = listePatients.find(p => p.COURRIEL === rdv.COURRIEL) || {};
-                const service = SERVICES[rdv.ID_SERVICE] || { NOM_SERVICE: "Inconnu" };
+                const nomService = rdv.service || "Inconnu";
 
                 return `
                     <tr>
                         <td>${formatDate(rdv.DATE_RDV)}</td>
                         <td>${formatTime(rdv.HEURE)} (${rdv.DUREE} min)</td>
                         <td>${patient.PRENOM_PATIENT || 'Inconnu'} ${patient.NOM_PATIENT || ''} (${rdv.COURRIEL || 'Email manquant'})</td>
-                        <td>${service.NOM_SERVICE}</td>
-                        <td></td>
+                        <td>${nomService}</td>
+                        <td><button onclick="afficherDossier('${patient.PRENOM_PATIENT}', '${patient.NOM_PATIENT}', '${patient.DATE_NAISSANCE}')">Voir dossier</button></td>
                     </tr>
                 `;
             }).join('');
@@ -157,31 +146,39 @@
         return text ? JSON.parse(text) : [];
     }
 
-
     function formatTime(timeStr) {
         return timeStr?.substring(0, 5) || '--:--';
-    }
-
-    // Nouvelle fonction pour formater l'heure
-    function formatHeure(timeStr) {
-        if (!timeStr) return '--:--';
-        
-        // Extraction des heures et minutes
-        const [heures, minutes] = timeStr.split(':');
-        
-        // Conversion en format 12h (09:00 au lieu de 00:09)
-        let h = parseInt(heures);
-        h = h < 10 ? `0${h}` : h; // Ajout du 0 pour les heures < 10
-        
-        return `${h}:${minutes.substring(0, 2)}`;
     }
 
     function formatDate(dateStr) {
         return dateStr?.trim().split(' ')[0] || 'Date invalide';
     }
 
-    // Démarrer
-    document.addEventListener('DOMContentLoaded', chargerAfficherRendezVous);
+
+    function afficherDossier(prenom, nom, dateNaissance) {
+      // Affiche la section dossier si elle est masquée
+  document.getElementById('dossier').classList.remove('hidden');
+
+  // Insère les infos du patient dans le dossier
+  document.getElementById('patient-nom').textContent = `${prenom} ${nom}`;
+  document.getElementById('patient-dob').textContent = dateNaissance || 'Date inconnue';
+}
+
+
+
+
+    function showTab(id) {
+      const sections = document.querySelectorAll('.tab-content');
+      sections.forEach(sec => sec.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    window.showTab = showTab; // rendre accessible aux attributs onclick
+
+
+
+    document.addEventListener('DOMContentLoaded', chargerAfficherRendezVous,showTab);
 </script>
+
 </body>
 </html>
