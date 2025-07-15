@@ -6,7 +6,7 @@ header('Content-Type: application/json');
 
 try {
     $cnx = Database::getInstance();
-    $pstmt = $cnx->prepare("SELECT * FROM Rendezvous");
+    $pstmt = $cnx->prepare("SELECT * FROM Service");
     $pstmt->execute();
 
     $pstmt->setFetchMode(PDO::FETCH_ASSOC);

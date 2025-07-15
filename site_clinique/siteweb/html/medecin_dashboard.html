@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Tableau de bord - Médecin</title>
-  <link rel="stylesheet" href="../css/medecin_dashboard.css">
-  <script src="../script/medecin_dashboard.js" defer></script>
+  <link rel="stylesheet" href="../css/medecin_dashboard.css" />
+  <style>
+    .hidden { display: none; }
+  </style>
 </head>
 <body>
 
   <header>
     <div class="logo-container">
-      <img src="../image/logo.png" alt="Logo" class="logo">
+      <img src="../image/logo.png" alt="Logo" class="logo" />
       <h1>Clinique VITALIS – Espace Médecin</h1>
     </div>
   </header>
@@ -24,39 +26,41 @@
   </nav>
 
   <main>
+    
     <!-- Section Rendez-vous -->
-    <section id="rdv" class="tab-content">
-      <h2>Mes rendez-vous de la semaine</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th><th>Heure</th><th>Patient</th><th>Service</th><th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>2025-07-15</td><td>09:00</td><td>Jean Dupont</td><td>Consultation</td> // Creer ca pour chaque ligne du tableau
-            <td><button onclick="showTab('dossier')">Voir dossier</button></td>        // *
-          </tr>
-        </tbody>
-      </table>
-    </section>
+<section id="rdv" class="tab-content">
+  <h2>Mes rendez-vous de la semaine</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Heure</th>
+        <th>Patient</th>
+        <th>Service</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Les lignes seront insérées dynamiquement en JavaScript -->
+    </tbody>
+  </table>
+</section>
 
     <!-- Section Dossier patient -->
     <section id="dossier" class="tab-content hidden">
       <h2>Dossier patient</h2>
-      <p><strong>Nom :</strong> Jean Dupont</p>
-      <p><strong>Date de naissance :</strong> 1985-04-12</p>
+      <p><strong>Nom :</strong> <span id="patient-nom">-</span></p>
+      <p><strong>Date de naissance :</strong> <span id="patient-dob">-</span></p>
       <label for="note">Note de consultation :</label>
       <textarea id="note" placeholder="Écrire une note de consultation..."></textarea>
-      <button>Enregistrer</button>
+      <button id="enregistrer-note">Enregistrer</button>
     </section>
 
     <!-- Section Demande de suivi -->
     <section id="suivi" class="tab-content hidden">
       <h2>Demande de suivi avec un spécialiste</h2>
       <label for="patient-suivi">Patient concerné :</label>
-      <input type="text" id="patient-suivi" placeholder="Nom du patient">
+      <input type="text" id="patient-suivi" placeholder="Nom du patient" />
 
       <label for="specialiste">Spécialiste :</label>
       <select id="specialiste">
@@ -72,10 +76,10 @@
     <section id="dispo" class="tab-content hidden">
       <h2>Mes disponibilités</h2>
       <label for="jours">Jours :</label>
-      <input type="text" id="jours" placeholder="Ex : Lundi, Mardi">
+      <input type="text" id="jours" placeholder="Ex : Lundi, Mardi" />
 
       <label for="heures">Heures :</label>
-      <input type="text" id="heures" placeholder="Ex : 9h - 16h">
+      <input type="text" id="heures" placeholder="Ex : 9h - 16h" />
 
       <button>Soumettre</button>
     </section>
@@ -84,25 +88,100 @@
     <section id="vacances" class="tab-content hidden">
       <h2>Demande de vacances</h2>
       <label for="date-debut">Date de début :</label>
-      <input type="date" id="date-debut">
+      <input type="date" id="date-debut" />
 
       <label for="date-fin">Date de fin :</label>
-      <input type="date" id="date-fin">
+      <input type="date" id="date-fin" />
 
       <button>Envoyer la demande</button>
     </section>
   </main>
-  <script src="../script/get_handle_data.js"></script>
+
+   <script src="../script/get_handle_data.js"></script>
   <script>
-        const API_URL = 'http://localhost/api/';
-charger_traiter_data(API_URL + "patients", function(listePatients) {
-      listeActivites.forEach(patient => {
+    const API_URL = 'http://localhost/api/';
 
-//*
+    // Données des services (en dur en attendant que l'API soit corrigée)
+    const SERVICES = {
+        1: { ID_SERVICE: 1, NOM_SERVICE: "Cardiologie" },
+        2: { ID_SERVICE: 2, NOM_SERVICE: "Dermatologie" },
+        3: { ID_SERVICE: 3, NOM_SERVICE: "Pédiatrie" }
+    };
 
-      })
+    async function chargerAfficherRendezVous() {
+        try {
+            // 1. Charger les rendez-vous et patients
+            const [rdvRes, patientsRes] = await Promise.all([
+                fetch(`${API_URL}rendezvous`),
+                fetch(`${API_URL}patients`)
+            ]);
 
-    })
-  </script>
+            // 2. Parser les réponses
+            const listeRendezVous = await parseJsonSafe(rdvRes);
+            const listePatients = await parseJsonSafe(patientsRes);
+
+            // 3. Afficher les données
+            const tbody = document.querySelector('#rdv tbody');
+            tbody.innerHTML = listeRendezVous.map(rdv => {
+                const patient = listePatients.find(p => p.COURRIEL === rdv.COURRIEL) || {};
+                const service = SERVICES[rdv.ID_SERVICE] || { NOM_SERVICE: "Inconnu" };
+
+                return `
+                    <tr>
+                        <td>${formatDate(rdv.DATE_RDV)}</td>
+                        <td>${formatTime(rdv.HEURE)} (${rdv.DUREE} min)</td>
+                        <td>${patient.PRENOM_PATIENT || 'Inconnu'} ${patient.NOM_PATIENT || ''} (${rdv.COURRIEL || 'Email manquant'})</td>
+                        <td>${service.NOM_SERVICE}</td>
+                        <td></td>
+                    </tr>
+                `;
+            }).join('');
+
+        } catch (error) {
+            console.error('Erreur:', error);
+            document.querySelector('#rdv tbody').innerHTML = `
+                <tr>
+                    <td colspan="5" class="error">
+                        Erreur de chargement: ${error.message}
+                        <button onclick="chargerAfficherRendezVous()">Réessayer</button>
+                    </td>
+                </tr>
+            `;
+        }
+    }
+
+    // Fonctions utilitaires
+    async function parseJsonSafe(response) {
+        if (!response.ok) throw new Error(`Erreur ${response.status}`);
+        const text = await response.text();
+        return text ? JSON.parse(text) : [];
+    }
+
+
+    function formatTime(timeStr) {
+        return timeStr?.substring(0, 5) || '--:--';
+    }
+
+    // Nouvelle fonction pour formater l'heure
+    function formatHeure(timeStr) {
+        if (!timeStr) return '--:--';
+        
+        // Extraction des heures et minutes
+        const [heures, minutes] = timeStr.split(':');
+        
+        // Conversion en format 12h (09:00 au lieu de 00:09)
+        let h = parseInt(heures);
+        h = h < 10 ? `0${h}` : h; // Ajout du 0 pour les heures < 10
+        
+        return `${h}:${minutes.substring(0, 2)}`;
+    }
+
+    function formatDate(dateStr) {
+        return dateStr?.trim().split(' ')[0] || 'Date invalide';
+    }
+
+    // Démarrer
+    document.addEventListener('DOMContentLoaded', chargerAfficherRendezVous);
+</script>
 </body>
 </html>

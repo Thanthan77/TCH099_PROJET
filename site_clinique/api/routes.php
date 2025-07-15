@@ -16,8 +16,14 @@ get($URL, 'views/index.php');
 // POST pour le login (génération du token JWT)
 post($URL.'/login', 'endpoints/login.php'); 
 
-// GET pour avoir la listes des patients 
-get($URL.'/patients','endpoints/rendezVous_get.php');
+// GET pour avoir la listes de tous les rendezVous
+get($URL.'/rendezvous','endpoints/rendezVous_get.php');
+
+// GET pour avoir la listes de tous les patients
+get($URL.'/patients','endpoints/patients_get.php');
+
+// GET pour avoir la listes de tous les services
+get($URL.'/services','endpoints/service_get.php');
 
 
 
