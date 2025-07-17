@@ -5,7 +5,7 @@ header('Content-Type: application/json');
 
 $data = json_decode(file_get_contents('php://input'), true);
 
-//On vefie les infos de connexion :
+//On vérifie les infos de connexion :
 $username = $data['CODE_EMPLOYE'];
 $mdp = $data['MOT_DE_PASSE'];
 
@@ -24,21 +24,21 @@ try {
     $pstmt->execute();
     
     $pstmt->setFetchMode(PDO::FETCH_ASSOC);
-    if ($result = $pstmt->fetch()) { //Utilisateur trouve
+    if ($result = $pstmt->fetch()) { //Utilisateur trouvé
         if ($mdp == $result['MOT_DE_PASSE']) {
-    // Générer le token avec info employé
-    $token = generate_jwt([
-        'CODE_EMPLOYE' => $username,
-        'poste' => $result['POSTE'],
-        'exp' => time() + 3600
-    ]);
+            // Générer le token avec info employé
+            $token = generate_jwt([
+                'CODE_EMPLOYE' => $username,
+                'poste' => $result['POSTE'],
+                'exp' => time() + 3600
+            ]);
 
-    echo json_encode([
-        'token' => $token,
-        'poste' => $result['POSTE']
-    ]);
-    exit();
-} 
+            echo json_encode([
+                'token' => $token,
+                'CODE_EMPLOYE' => $username  // Remplacement du poste par le code employé
+            ]);
+            exit();
+        } 
     }
     //Infos de connexion incorrectes :
     http_response_code(401);

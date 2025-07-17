@@ -19,11 +19,17 @@ post($URL.'/login', 'endpoints/login.php');
 // GET pour avoir la listes de tous les rendezVous
 get($URL.'/rendezvous','endpoints/rendezVous_get.php');
 
+// GET pour avoir la listes de tous les rendezVous d'un employe
+get($URL.'/rendezvous/$codeEmploye', 'endpoints/rendezVousEmploye_get.php');
+
 // GET pour avoir la listes de tous les patients
 get($URL.'/patients','endpoints/patients_get.php');
 
+
 // GET pour avoir la listes de tous les services
-get($URL.'/services','endpoints/service_get.php');
+get($URL.'/services','endpoints/services_get.php');
+
+
 
 
 

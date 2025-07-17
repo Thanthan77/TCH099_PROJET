@@ -41,66 +41,67 @@
   </main>
 
   <script src="../script/get_handle_data.js"></script>
-  <script>
+ <script>
     const API_URL = 'http://localhost/api/';
-    let monToken = "";
 
     document.getElementById("connexion").addEventListener("submit", function (e) {
-      e.preventDefault();
-      const errDiv = document.getElementById("erreur-login");
-      errDiv.innerText = "";
+        e.preventDefault();
+        const errDiv = document.getElementById("erreur-login");
+        errDiv.innerText = "";
 
-      const codeEmploye = document.getElementById("codeEmploye").value;
-      const motdepasse = document.getElementById("motDePasse").value;
+        const codeEmploye = document.getElementById("codeEmploye").value;
+        const motdepasse = document.getElementById("motDePasse").value;
 
-      fetch(API_URL + "login", {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ CODE_EMPLOYE: codeEmploye, MOT_DE_PASSE: motdepasse })
-      })
-      .then(response => response.text()) // on récupère en texte brut
-      .then(raw => {
-        console.log("Réponse brute du serveur :", raw);
-
-        let data;
-        try {
-          data = JSON.parse(raw);
-        } catch (e) {
-          errDiv.innerText = "Réponse invalide du serveur.";
-          console.error("Erreur JSON.parse :", e);
-          return;
-        }
-
-        if (data.token) {
-          monToken = data.token;
-          poste=data.poste;
-          errDiv.innerText = "Connecté avec succès.";
-          if(poste=="Médecin"){
-            window.location.href = "medecin_dashboard.html";
-          }
-          else if(poste=="Infirmier"){
-            window.location.href = "infirmiere_dashboard.html";
-          }
-
-          else if(poste=="Admin"){
-            window.location.href = "admin_dashboard.html";
-          }
-
-          else if(poste=="Secrétaire"){
-            window.location.href = "secretaire_dashboard.html";
-          }
-
-
-        } else {
-          errDiv.innerText = data.erreur ?? "Erreur de connexion.";
-        }
-      })
-      .catch(error => {
-        console.error("Erreur login:", error);
-        errDiv.innerText = "Erreur lors de la connexion.";
-      });
+        fetch(API_URL + "login", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ CODE_EMPLOYE: codeEmploye, MOT_DE_PASSE: motdepasse })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur réseau ou serveur');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.token && data.CODE_EMPLOYE) {
+                // Stocker le token
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('codeEmploye', data.CODE_EMPLOYE);
+                
+                // Déterminer le rôle par le premier chiffre du code employé
+                const premierChiffre = data.CODE_EMPLOYE.toString().charAt(0);
+                let redirectUrl = '';
+                
+                switch(premierChiffre) {
+                    case '1':
+                        redirectUrl = 'medecin_dashboard.html';
+                        break;
+                    case '2':
+                        redirectUrl = 'infirmiere_dashboard.html';
+                        break;
+                    case '3':
+                        redirectUrl = 'secretaire_dashboard.html';
+                        break;
+                    case '4':
+                        redirectUrl = 'admin_dashboard.html';
+                        break;
+                    default:
+                        throw new Error('Rôle non reconnu');
+                }
+                
+                errDiv.innerText = "Connecté avec succès.";
+                window.location.href = redirectUrl;
+            } else {
+                throw new Error(data.error || "Identifiants invalides");
+            }
+        })
+        .catch(error => {
+            console.error("Erreur:", error);
+            errDiv.innerText = error.message || "Erreur lors de la connexion";
+        });
     });
-  </script>
+</script>
 
 
 </body>
