@@ -46,6 +46,7 @@
       <h2>Dossier patient</h2>
       <p><strong>Nom :</strong> <span id="patient-nom">-</span></p>
       <p><strong>Date de naissance :</strong> <span id="patient-dob">-</span></p>
+      <p><strong>Numéro Assurance Maladie :</strong> <span id="patient-assm">-</span></p>
       <label for="note">Note de consultation :</label>
       <textarea id="note" placeholder="Écrire une note de consultation..."></textarea>
       <button id="enregistrer-note">Enregistrer</button>
@@ -132,7 +133,8 @@
                             <button onclick="afficherDossier(
                                 '${escapeHtml(patient.PRENOM_PATIENT || '')}',
                                 '${escapeHtml(patient.NOM_PATIENT || '')}',
-                                '${escapeHtml(patient.DATE_NAISSANCE || '')}'
+                                '${escapeHtml(patient.DATE_NAISSANCE || '')}',
+                                '${escapeHtml(patient.NO_ASSURANCE_MALADIE || '')}'
                             )">Voir dossier</button>
                         </td>
                     </tr>
@@ -170,13 +172,14 @@
             .replace(/'/g, "&#039;");
     }
 
-    function afficherDossier(prenom, nom, dateNaissance) {
+    function afficherDossier(prenom, nom, dateNaissance,assurance) {
         // Affiche la section dossier si elle est masquée
         document.getElementById('dossier').classList.remove('hidden');
 
         // Insère les infos du patient dans le dossier
         document.getElementById('patient-nom').textContent = `${prenom} ${nom}`;
         document.getElementById('patient-dob').textContent = dateNaissance || 'Date inconnue';
+        document.getElementById('patient-assm').textContent= assurance || 'Assurance indisponible';
     }
 
     function showTab(id) {
