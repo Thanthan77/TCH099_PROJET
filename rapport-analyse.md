@@ -17,7 +17,6 @@ Le projet sera composé d'un **site Web**, d'un **API REST** ainsi que d'une **a
 ### Choix des deux interfaces et les technologies/framework/librairies utilisés
 #### Interface Web
 - HTML, CSS, JavaScript (Site web)
-- Vue.js (Framework)
 - PHP (APIRest)
 - MySQL (Base de données)
 - JWT tokens (Authentification)
