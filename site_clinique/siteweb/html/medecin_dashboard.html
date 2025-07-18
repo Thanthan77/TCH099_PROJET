@@ -77,132 +77,120 @@
     </section>
   </main>
 
-   <script src="../script/get_handle_data.js"></script>
-  <script>
+  <script src="../script/get_handle_data.js"></script>
+<script>
     const API_URL = 'http://localhost/api/';
-    const codeEmploye = '100'; // À remplacer par le code dynamique si nécessaire
+    const codeEmploye = new URLSearchParams(window.location.search).get("codeEmploye");
 
-async function chargerAfficherRendezVous() {
-    try {
-        // 1. Charger les données
-        const response = await fetch(`${API_URL}rendezvous/${codeEmploye}`);
-        if (!response.ok) {
-            throw new Error(`Erreur HTTP: ${response.status}`);
-        }
+    async function chargerAfficherRendezVous() {
+        try {
+            if (!codeEmploye) {
+                throw new Error("Code employé manquant dans l'URL");
+            }
 
-        const data = await response.json();
-        console.log("Données reçues:", data); // Debug
+            // 1. Charger les données des rendez-vous
+            const response = await fetch(`${API_URL}rendezvous/${codeEmploye}`);
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`);
+            }
 
-        // 2. Charger les patients séparément
-        const patientsRes = await fetch(`${API_URL}patients`);
-        const listePatients = await patientsRes.json();
+            const data = await response.json();
+            console.log("Données reçues:", data); // Debug
 
-        // 3. Préparer la correspondance services
-        const servicesMap = {};
-        data.services.forEach(service => {
-            servicesMap[service.id] = service.nom;
-        });
+            // 2. Charger les patients séparément
+            const patientsRes = await fetch(`${API_URL}patients`);
+            const listePatients = await patientsRes.json();
 
-        // 4. Afficher les données
-        const tbody = document.querySelector('#rdv tbody');
-        if (!tbody) {
-            throw new Error("Élément #rdv tbody introuvable");
-        }
+            // 3. Préparer la correspondance services
+            const servicesMap = {};
+            data.services.forEach(service => {
+                servicesMap[service.id] = service.nom;
+            });
 
-        if (!data.rendezvous || data.rendezvous.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5">Aucun rendez-vous prévu</td></tr>';
-            return;
-        }
+            // 4. Afficher les données
+            const tbody = document.querySelector('#rdv tbody');
+            if (!tbody) {
+                throw new Error("Élément #rdv tbody introuvable");
+            }
 
-        tbody.innerHTML = data.rendezvous.map(rdv => {
-            const patient = listePatients.find(p => p.COURRIEL === rdv.email) || {};
-            const nomService = servicesMap[rdv.service_id] || "Service inconnu";
+            if (!data.rendezvous || data.rendezvous.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5">Aucun rendez-vous prévu</td></tr>';
+                return;
+            }
 
-            return `
+            tbody.innerHTML = data.rendezvous.map(rdv => {
+                const patient = listePatients.find(p => p.COURRIEL === rdv.email) || {};
+                const nomService = servicesMap[rdv.service_id] || "Service inconnu";
+
+                return `
+                    <tr>
+                        <td>${rdv.date}</td>
+                        <td>${rdv.heure} (${rdv.duree} min)</td>
+                        <td>${patient.PRENOM_PATIENT || 'Inconnu'} ${patient.NOM_PATIENT || ''}</td>
+                        <td>${nomService}</td>
+                        <td>
+                            <button onclick="afficherDossier(
+                                '${escapeHtml(patient.PRENOM_PATIENT || '')}',
+                                '${escapeHtml(patient.NOM_PATIENT || '')}',
+                                '${escapeHtml(patient.DATE_NAISSANCE || '')}'
+                            )">Voir dossier</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+        } catch (error) {
+            console.error('Erreur:', error);
+            const errorHtml = `
                 <tr>
-                    <td>${rdv.date}</td>
-                    <td>${rdv.heure} (${rdv.duree} min)</td>
-                    <td>${patient.PRENOM_PATIENT || 'Inconnu'} ${patient.NOM_PATIENT || ''}</td>
-                    <td>${nomService}</td>
-                    <td>
-                        <button onclick="afficherDossier(
-                            '${escapeHtml(patient.PRENOM_PATIENT || '')}',
-                            '${escapeHtml(patient.NOM_PATIENT || '')}',
-                            '${escapeHtml(patient.DATE_NAISSANCE || '')}'
-                        )">Voir dossier</button>
+                    <td colspan="5" class="error">
+                        Erreur de chargement: ${error.message}
+                        <button onclick="chargerAfficherRendezVous()">Réessayer</button>
                     </td>
                 </tr>
             `;
-        }).join('');
-
-    } catch (error) {
-        console.error('Erreur:', error);
-        const errorHtml = `
-            <tr>
-                <td colspan="5" class="error">
-                    Erreur de chargement: ${error.message}
-                    <button onclick="chargerAfficherRendezVous()">Réessayer</button>
-                </td>
-            </tr>
-        `;
-        
-        const tbody = document.querySelector('#rdv tbody');
-        if (tbody) {
-            tbody.innerHTML = errorHtml;
-        } else {
-            console.error("Impossible d'afficher l'erreur: tbody introuvable");
+            
+            const tbody = document.querySelector('#rdv tbody');
+            if (tbody) {
+                tbody.innerHTML = errorHtml;
+            } else {
+                console.error("Impossible d'afficher l'erreur: tbody introuvable");
+            }
         }
     }
-}
 
-// Fonction d'échappement HTML
-function escapeHtml(str) {
-    if (!str) return '';
-    return str.toString()
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
+    // Fonction d'échappement HTML
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.toString()
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
 
-function afficherDossier(prenom, nom, dateNaissance) {
+    function afficherDossier(prenom, nom, dateNaissance) {
+        // Affiche la section dossier si elle est masquée
+        document.getElementById('dossier').classList.remove('hidden');
 
+        // Insère les infos du patient dans le dossier
+        document.getElementById('patient-nom').textContent = `${prenom} ${nom}`;
+        document.getElementById('patient-dob').textContent = dateNaissance || 'Date inconnue';
+    }
 
-
-      // Affiche la section dossier si elle est masquée
-
-
-  document.getElementById('dossier').classList.remove('hidden');
-
-
-
-
-
-  // Insère les infos du patient dans le dossier
-
-
-  document.getElementById('patient-nom').textContent = `${prenom} ${nom}`;
-
-
-  document.getElementById('patient-dob').textContent = dateNaissance || 'Date inconnue';
-
-
-}
-
-
-
-function showTab(id) {
-      const sections = document.querySelectorAll('.tab-content');
-      sections.forEach(sec => sec.classList.add('hidden'));
-      document.getElementById(id).classList.remove('hidden');
+    function showTab(id) {
+        const sections = document.querySelectorAll('.tab-content');
+        sections.forEach(sec => sec.classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden');
     }
 
     window.showTab = showTab; // rendre accessible aux attributs onclick
 
-// Démarrer le chargement
-document.addEventListener('DOMContentLoaded', chargerAfficherRendezVous,showTab);
+    // Démarrer le chargement
+    document.addEventListener('DOMContentLoaded', chargerAfficherRendezVous);
 </script>
+
 
 </body>
 </html>

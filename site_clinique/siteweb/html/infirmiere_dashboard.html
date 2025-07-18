@@ -41,15 +41,13 @@
     </section>
 
     <!-- Dossier patient -->
-    <section id="dossier" class="tab-content hidden">
+     <section id="dossier" class="tab-content hidden">
       <h2>Dossier patient</h2>
-      <p><strong>Nom :</strong> Marc Lefebvre</p>
+      <p><strong>Nom :</strong> <span id="patient-nom">-</span></p>
+      <p><strong>Date de naissance :</strong> <span id="patient-dob">-</span></p>
       <label for="note">Note de soin :</label>
-      <textarea id="note" placeholder="Note de suivi infirmier..."></textarea>
-
-      <label><input type="checkbox" id="complet"> Soin complété</label><br><br>
-
-      <button>Enregistrer</button>
+      <textarea id="note" placeholder="Écrire une note de soin..."></textarea>
+      <button id="enregistrer-note">Enregistrer</button>
     </section>
 
 
@@ -77,5 +75,110 @@
       <button>Envoyer la demande</button>
     </section>
   </main>
+
+  <script src="../script/get_handle_data.js"></script>
+  <script>
+    const API_URL = 'http://localhost/api/';
+    const codeEmploye = new URLSearchParams(window.location.search).get("codeEmploye");
+
+    async function chargerAfficherRendezVous() {
+        try {
+            if (!codeEmploye) {
+                throw new Error("Code employé manquant dans l'URL");
+            }
+
+            // 1. Charger les rendez-vous de l'infirmière
+            const response = await fetch(`${API_URL}rendezvous/${codeEmploye}`);
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`);
+            }
+            const data = await response.json();
+
+            // 2. Charger les patients
+            const patientsRes = await fetch(`${API_URL}patients`);
+            const listePatients = await patientsRes.json();
+
+            // 3. Préparer les services
+            const servicesMap = {};
+            data.services.forEach(service => {
+                servicesMap[service.id] = service.nom;
+            });
+
+            // 4. Affichage dans le tableau
+            const tbody = document.querySelector('#rdv tbody');
+            if (!tbody) throw new Error("Élément #rdv tbody introuvable");
+
+            if (!data.rendezvous || data.rendezvous.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5">Aucun rendez-vous prévu</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.rendezvous.map(rdv => {
+                const patient = listePatients.find(p => p.COURRIEL === rdv.email) || {};
+                const nomService = servicesMap[rdv.service_id] || "Service inconnu";
+
+                return `
+                    <tr>
+                        <td>${rdv.date}</td>
+                        <td>${rdv.heure} (${rdv.duree} min)</td>
+                        <td>${patient.PRENOM_PATIENT || 'Inconnu'} ${patient.NOM_PATIENT || ''}</td>
+                        <td>${nomService}</td>
+                        <td>
+                            <button onclick="afficherDossier(
+                                '${escapeHtml(patient.PRENOM_PATIENT || '')}',
+                                '${escapeHtml(patient.NOM_PATIENT || '')}',
+                                '${escapeHtml(patient.DATE_NAISSANCE || '')}'
+                            )">Voir dossier</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+        } catch (error) {
+            console.error('Erreur:', error);
+            const errorHtml = `
+                <tr>
+                    <td colspan="5" class="error">
+                        Erreur de chargement: ${error.message}
+                        <button onclick="chargerAfficherRendezVous()">Réessayer</button>
+                    </td>
+                </tr>
+            `;
+            const tbody = document.querySelector('#rdv tbody');
+            if (tbody) tbody.innerHTML = errorHtml;
+        }
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.toString()
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function afficherDossier(prenom, nom, dateNaissance) {
+        document.getElementById('dossier').classList.remove('hidden');
+        document.getElementById('patient-nom').textContent = `${prenom} ${nom}`;
+        document.getElementById('patient-dob').textContent = dateNaissance || 'Date inconnue';
+
+        // Réinitialiser champ texte et case à cocher
+        document.getElementById('note-soin').value = '';
+        document.getElementById('soin-complete').checked = false;
+    }
+
+    function showTab(id) {
+        const sections = document.querySelectorAll('.tab-content');
+        sections.forEach(sec => sec.classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden');
+    }
+
+    window.showTab = showTab;
+
+    document.addEventListener('DOMContentLoaded', chargerAfficherRendezVous);
+</script>
+
 </body>
 </html>

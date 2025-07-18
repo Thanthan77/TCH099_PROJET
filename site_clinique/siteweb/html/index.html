@@ -65,7 +65,7 @@
         })
         .then(data => {
             if (data.token && data.CODE_EMPLOYE) {
-                // Stocker le token
+                // Stocker les informations dans le stockage local
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('codeEmploye', data.CODE_EMPLOYE);
                 
@@ -89,7 +89,10 @@
                     default:
                         throw new Error('Rôle non reconnu');
                 }
-                
+
+                // ➕ Ajouter le code employé dans l'URL en paramètre GET
+                redirectUrl += '?codeEmploye=' + encodeURIComponent(data.CODE_EMPLOYE);
+
                 errDiv.innerText = "Connecté avec succès.";
                 window.location.href = redirectUrl;
             } else {
@@ -102,6 +105,7 @@
         });
     });
 </script>
+
 
 
 </body>
