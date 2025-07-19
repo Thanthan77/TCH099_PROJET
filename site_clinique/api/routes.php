@@ -30,7 +30,7 @@ get($URL.'/patients','endpoints/patients_get.php');
 get($URL.'/services','endpoints/services_get.php');
 
 // GET pour avoir la liste de tous les employées
-get($URL,'/employes','endpoints/employes_get.php');
+get($URL,'/employees','endpoints/employes_get.php');
 
 
 
