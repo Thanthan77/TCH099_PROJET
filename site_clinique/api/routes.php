@@ -26,13 +26,14 @@ get($URL.'/rendezvous/$codeEmploye', 'endpoints/rendezVousEmploye_get.php');
 get($URL.'/patients','endpoints/patients_get.php');
 
 
-// GET pour avoir la listes de tous les services
+// GET pour avoir la liste de tous les services
 get($URL.'/services','endpoints/services_get.php');
 
 // GET pour avoir la liste de tous les employées
-get($URL,'/employees','endpoints/employes_get.php');
+get($URL.'/employes', 'endpoints/employees_get.php');
 
-
+// PUT pour avoir ajouter une note de consultation à un dossier
+put($URL. '/note/$numRdv', 'endpoints/note_put.php');
 
 
 

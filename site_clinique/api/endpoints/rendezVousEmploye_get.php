@@ -16,23 +16,25 @@ try {
     // Requête optimisée avec tous les JOINS nécessaires
     $query = "
         SELECT 
-            r.NUM_RDV, 
-            TIME_FORMAT(r.HEURE, '%H:%i') AS HEURE,
+            r.NUM_RDV,
+            DATE_FORMAT(r.JOUR, '%Y-%m-%d') AS DATE_RDV,   -- JOUR remplacé ici
+            TIME_FORMAT(r.HEURE, '%H:%i')   AS HEURE,
             r.DUREE,
-            DATE_FORMAT(r.DATE_RDV, '%Y-%m-%d') AS DATE_RDV,
             r.COURRIEL,
             e.CODE_EMPLOYE,
             e.PRENOM_EMPLOYE,
             e.NOM_EMPLOYE,
             e.POSTE,
             s.ID_SERVICE,
-            s.NOM AS NOM_SERVICE,
-            s.DESCRIPTION AS DESCRIPTION_SERVICE
-        FROM Rendezvous r
-        JOIN Employe e ON r.CODE_EMPLOYE = e.CODE_EMPLOYE
-        JOIN Service s ON r.ID_SERVICE = s.ID_SERVICE
+            s.NOM         AS NOM_SERVICE,
+            s.DESCRIPTION AS DESCRIPTION_SERVICE,
+            r.NOTE_CONSULT,
+            r.STATUT
+        FROM Rendezvous AS r
+        JOIN Employe AS e ON r.CODE_EMPLOYE = e.CODE_EMPLOYE
+        JOIN Service AS s ON r.ID_SERVICE   = s.ID_SERVICE
         WHERE r.CODE_EMPLOYE = :codeEmploye
-        ORDER BY r.DATE_RDV, r.HEURE
+        ORDER BY r.JOUR, r.HEURE
     ";
 
     $pstmt = $cnx->prepare($query);

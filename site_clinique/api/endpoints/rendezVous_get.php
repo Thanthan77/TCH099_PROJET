@@ -9,11 +9,26 @@ try {
 
     // Requête avec JOIN pour récupérer le nom du service et les infos de l'employé
     $pstmt = $cnx->prepare("
-        SELECT r.NUM_RDV, r.HEURE, r.DUREE, r.DATE_RDV, r.COURRIEL, r.CODE_EMPLOYE, r.ID_SERVICE,
-               s.NOM AS service, e.PRENOM_EMPLOYE, e.NOM_EMPLOYE, e.POSTE
-        FROM Rendezvous r
-        JOIN Service s ON r.ID_SERVICE = s.ID_SERVICE
-        JOIN Employe e ON r.CODE_EMPLOYE = e.CODE_EMPLOYE
+        SELECT 
+            r.NUM_RDV,
+            DATE_FORMAT(r.JOUR, '%Y-%m-%d') AS DATE_RDV,
+            TIME_FORMAT(r.HEURE, '%H:%i')   AS HEURE,
+            r.DUREE,
+            r.COURRIEL,
+            e.CODE_EMPLOYE,
+            e.PRENOM_EMPLOYE,
+            e.NOM_EMPLOYE,
+            e.POSTE,
+            s.ID_SERVICE,
+            s.NOM         AS NOM_SERVICE,
+            s.DESCRIPTION AS DESCRIPTION_SERVICE,
+            r.NOTE_CONSULT,
+            r.STATUT
+        FROM Rendezvous AS r
+        JOIN Employe AS e ON r.CODE_EMPLOYE = e.CODE_EMPLOYE
+        JOIN Service AS s ON r.ID_SERVICE   = s.ID_SERVICE
+        WHERE r.CODE_EMPLOYE = :codeEmploye
+        ORDER BY r.JOUR, r.HEURE
     ");
 
     $pstmt->execute();

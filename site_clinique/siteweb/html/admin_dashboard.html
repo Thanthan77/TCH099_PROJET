@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Tableau de bord - Administrateur</title>
-  <link rel="stylesheet" href="../css/admin_dashboard.css">
-  <script src="../script/admin_dashboard.js" defer></script>
+  <link rel="stylesheet" href="../css/admin_dashboard.css" />
 </head>
 <body>
 
   <header>
     <div class="logo-container">
-      <img src="../image/logo.png" alt="Logo Clinique Vitalis" class="logo">
+      <img src="../image/logo.png" alt="Logo Clinique Vitalis" class="logo" />
       <h1>Clinique VITALIS – Espace Administrateur</h1>
     </div>
   </header>
@@ -29,19 +28,17 @@
       <table>
         <thead>
           <tr>
-            <th>Nom</th><th>Code Employe</th><th>Rôle</th><th>Actions</th>
+            <th>Nom</th><th>Code Employé</th><th>Rôle</th><th>Actions</th>
           </tr>
         </thead>
         <tbody id="employe-table-body">
-          <tr>
-            
-          </tr>
+          <!-- rempli dynamiquement -->
         </tbody>
       </table>
 
       <h3>Ajouter un utilisateur</h3>
-      <label>Nom :</label><input type="text">
-      <label>Code Employe :</label><input type="email">
+      <label>Nom :</label><input type="text" />
+      <label>Code Employé :</label><input type="email" />
       <label>Rôle :</label>
       <select>
         <option>Médecin</option>
@@ -70,7 +67,7 @@
       </table>
     </section>
 
-    <!-- Secretaires -->
+    <!-- Secrétaires -->
     <section id="secretaires" class="tab-content hidden">
       <h2>Assignation des secrétaires</h2>
       <table>
@@ -104,69 +101,80 @@
       </table>
     </section>
   </main>
-<script src="../script/get_handle_data.js"></script>
+
+  <!-- (Optionnel) helper externe -->
+  <script src="../script/get_handle_data.js"></script>
+
+  <!-- JS corrigé -->
   <script>
-
     const API_URL = 'http://localhost/api/';
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      showTab('comptes');
+      chargerAfficherComptes();
+    });
 
-    async function chargerAfficherEmployes() {
-  try {
-    const response = await fetch(`${API_URL}/employes`);
-    if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
+    function showTab(id) {
+      document.querySelectorAll('.tab-content').forEach(sec => {
+        sec.classList.toggle('hidden', sec.id !== id);
+      });
+    }
+    window.showTab = showTab;
 
-    const employes = await response.json();
-    const tbody = document.getElementById('employe-table-body');
-    if (!tbody) throw new Error("Élément 'employe-table-body' non trouvé");
+    async function chargerAfficherComptes() {
+      const tbody = document.getElementById('employe-table-body');
+      if (!tbody) return console.error("Élément 'employe-table-body' introuvable");
+      tbody.innerHTML = '';
 
-    if (employes.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4">Aucun employé trouvé</td></tr>';
-      return;
+      try {
+        const res = await fetch(`${API_URL}employes`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const employes = await res.json();
+
+        if (!Array.isArray(employes) || employes.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4">Aucun employé trouvé</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = employes.map(emp => `
+          <tr>
+            <td>${escapeHtml(emp.PRENOM_EMPLOYE)} ${escapeHtml(emp.NOM_EMPLOYE)}</td>
+            <td>${escapeHtml(emp.CODE_EMPLOYE)}</td>
+            <td>${escapeHtml(emp.POSTE)}</td>
+            <td>
+              <button onclick="modifierEmploye('${emp.CODE_EMPLOYE}')">Modifier</button>
+              <button class="danger" onclick="supprimerEmploye('${emp.CODE_EMPLOYE}')">Supprimer</button>
+            </td>
+          </tr>
+        `).join('');
+
+      } catch (err) {
+        console.error('Erreur chargement employés :', err);
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" class="error">
+              Échec du chargement : ${escapeHtml(err.message)}
+              <button onclick="chargerAfficherComptes()">Réessayer</button>
+            </td>
+          </tr>`;
+      }
     }
 
-    tbody.innerHTML = employes.map(emp => `
-      <tr>
-        <td>${escapeHtml(emp.nom)}</td>
-        <td>${escapeHtml(emp.code_employe)}</td>
-        <td>${escapeHtml(emp.role)}</td>
-        <td>
-          <button onclick="modifierEmploye(${emp.id})">Modifier</button>
-          <button class="danger" onclick="supprimerEmploye(${emp.id})">Supprimer</button>
-        </td>
-      </tr>
-    `).join('');
-  } catch (error) {
-    console.error('Erreur:', error.message);
-    const tbody = document.getElementById('employe-table-body');
-    if (tbody) {
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="4" class="error">
-            Échec du chargement : ${error.message}
-            <button onclick="chargerAfficherEmployes()">Réessayer</button>
-          </td>
-        </tr>
-      `;
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, s => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+      }[s]));
     }
-  }
-}
 
-function escapeHtml(text) {
-  const map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;',
-  };
-  return text.replace(/[&<>"']/g, m => map[m]);
-}
+    function modifierEmploye(code) {
+      window.location.href = `modifier_employe.html?codeEmploye=${code}`;
+    }
 
-document.addEventListener('DOMContentLoaded', () => {
-  chargerAfficherEmployes();
-});
-
-
+    function supprimerEmploye(code) {
+      if (!confirm("Confirmer la suppression de l'employé ?")) return;
+      // TODO : appeler DELETE `${API_URL}employes/${code}`
+      alert("Suppression non implémentée");
+    }
   </script>
-
 </body>
 </html>
