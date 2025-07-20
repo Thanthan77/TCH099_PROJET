@@ -35,6 +35,8 @@ get($URL.'/employes', 'endpoints/employees_get.php');
 // PUT pour avoir ajouter une note de consultation à un dossier
 put($URL. '/note/$numRdv', 'endpoints/note_put.php');
 
+post($URL.'/login_patient', 'endpoints/login_patient.php'); 
+
 
 
 
