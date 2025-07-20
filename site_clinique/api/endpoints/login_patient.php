@@ -4,10 +4,10 @@ header('Content-Type: application/json');
 
 $data = json_decode(file_get_contents('php://input'), true);
 
-$email = $data['courriel'];
-$mdp = $data['motDePassePatient'];
+$courriel = $data['courriel'];
+$motDePasse = $data['motDePasse'];
 
-if ($email == '' || $mdp == '') {
+if ($courriel == '' || $motDePasse == '') {
     http_response_code(401);
     echo json_encode(['error' => 'Identifiants invalides']);
     exit();
@@ -15,31 +15,34 @@ if ($email == '' || $mdp == '') {
 
 require_once('./db/Database.php');
 $cnx = $pstmt = null;
+
 try {
     $cnx = Database::getInstance();
-    $pstmt = $cnx->prepare("SELECT * FROM Patient WHERE courriel = :email");
-    $pstmt->bindParam(':email', $email);
+    $pstmt = $cnx->prepare("SELECT * FROM Patient WHERE COURRIEL=:courriel");
+    $pstmt->bindParam(':courriel', $courriel);
     $pstmt->execute();
-    
+
     $pstmt->setFetchMode(PDO::FETCH_ASSOC);
     if ($result = $pstmt->fetch()) {
-        if ($mdp == $result['motDePassePatient']) {
+        if ($motDePasse == $result['MOT_DE_PASSE']) {
             $token = generate_jwt([
-                'courriel' => $email,
+                'courriel' => $courriel,
                 'exp' => time() + 3600
             ]);
+
             echo json_encode([
                 'token' => $token,
-                'courriel' => $email
+                'courriel' => $courriel
             ]);
             exit();
         }
     }
+
     http_response_code(401);
     echo json_encode(['error' => 'Identifiants invalides']);
 } catch (PDOException $e) {
     http_response_code(500);
-    echo '{"error":"Erreur BD", "message":"Problème d\'accès à la base"}';
+    echo json_encode(['error' => 'Erreur serveur']);
 } finally {
     $cnx = null;
 }
