@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.projet_integrateur.PageMesRDV;
+
 
 import org.json.JSONObject;
 
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Connexion réussie", Toast.LENGTH_SHORT).show();
 
                     // Redirige vers la prochaine activité
-                    Intent intent = new Intent(MainActivity.this, PageMesRDV.class);
+                    Intent intent = new Intent(MainActivity.this, com.example.appmobile.PageMesRDV.class);
                     intent.putExtra("token", token);
                     intent.putExtra("courriel", courriel);
                     startActivity(intent);

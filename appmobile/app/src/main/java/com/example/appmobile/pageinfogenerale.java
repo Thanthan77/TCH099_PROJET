@@ -32,7 +32,7 @@ public class pageinfogenerale extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pageinfogenerale);
+        setContentView(R.layout.activity_inscription);
 
         messageInfo = findViewById(R.id.titreinscription);
         nom = findViewById(R.id.editTextNom);
