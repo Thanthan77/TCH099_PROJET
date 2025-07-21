@@ -17,7 +17,7 @@
 
   <nav class="tabs">
     <button onclick="showTab('rdv')">Rendez-vous</button>
-    <button onclick="showTab('dispo')">Disponibilités</button>
+    <button onclick="showTab('horaire')">Horaires</button>
     <button onclick="showTab('vacances')">Vacances</button>
   </nav>
 
@@ -52,17 +52,21 @@
     </section>
 
 
-    <!-- Disponibilités -->
-    <section id="dispo" class="tab-content hidden">
-      <h2>Mes disponibilités</h2>
-      <label for="jours">Jours :</label>
-      <input type="text" id="jours" placeholder="Ex : Lundi, Mardi">
-
-      <label for="heures">Heures :</label>
-      <input type="text" id="heures" placeholder="Ex : 7h - 15h">
-
-      <button>Soumettre</button>
+    <!-- Section Horaire -->
+    <section id="horaire" class="tab-content hidden">
+      <h2>Horaires</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nom Employe</th>
+            <th>Jours</th>
+            <th>Heure</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </section>
+
 
     <!-- Vacances -->
     <section id="vacances" class="tab-content hidden">
@@ -172,6 +176,34 @@
     document.getElementById('soin-complete').checked = false;
   }
 
+    async function chargerAfficherHoraires() {
+  try {
+    const res = await fetch(`${API_URL}horaires`);
+    const data = await res.json();
+
+    const tbody = document.querySelector('#horaire table tbody');
+
+    if (!Array.isArray(data) || !data.length) {
+      tbody.innerHTML = '<tr><td colspan="3">Aucun horaire disponible</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.map(h => `
+      <tr>
+        <td>${escapeHtml(h.NOM_EMPLOYE)}</td>
+        <td>${escapeHtml(h.JOURS)}</td>
+        <td>${escapeHtml(h.HEURE)}</td>
+      </tr>
+    `).join('');
+
+  } catch (error) {
+    console.error("Erreur lors du chargement des horaires :", error);
+    const tbody = document.querySelector('#horaire table tbody');
+    tbody.innerHTML = '<tr><td colspan="3">Erreur de chargement des horaires</td></tr>';
+  }
+}
+
+
   function showTab(id) {
     const sections = document.querySelectorAll('.tab-content');
     sections.forEach(sec => sec.classList.add('hidden'));
@@ -180,7 +212,10 @@
 
   window.showTab = showTab;
 
-  document.addEventListener('DOMContentLoaded', chargerAfficherRendezVous);
+  document.addEventListener('DOMContentLoaded', () => {
+  chargerAfficherRendezVous();
+  chargerAfficherHoraires();
+});
 </script>
 
 

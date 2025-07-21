@@ -16,7 +16,7 @@
 
   <nav class="tabs">
     <button onclick="showTab('rdv')">Rendez‑vous</button>
-    <button onclick="showTab('dispo')">Disponibilités</button>
+    <button onclick="showTab('horaire')">Horaires</button>
     <button onclick="showTab('vacances')">Vacances</button>
   </nav>
 
@@ -49,14 +49,19 @@
       <!-- textarea et bouton seront créés ici par JavaScript -->
     </section>
 
-    <!-- Section Disponibilités -->
-    <section id="dispo" class="tab-content hidden">
-      <h2>Mes disponibilités</h2>
-      <label for="jours">Jours :</label>
-      <input type="text" id="jours" placeholder="Ex : Lundi, Mardi" />
-      <label for="heures">Heures :</label>
-      <input type="text" id="heures" placeholder="Ex : 9h – 16h" />
-      <button>Soumettre</button>
+    <!-- Section Horaire -->
+    <section id="horaire" class="tab-content hidden">
+      <h2>Horaires</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nom Employe</th>
+            <th>Jours</th>
+            <th>Heure</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </section>
 
     <!-- Section Vacances -->
@@ -126,9 +131,9 @@
                   '${escapeHtml(pat.PRENOM_PATIENT)}',
                   '${escapeHtml(pat.NOM_PATIENT)}',
                   '${escapeHtml(pat.DATE_NAISSANCE)}',
-                  '${escapeHtml(rdv.NUM_RDV)}', 
+                  
                   '${escapeHtml(pat.NO_ASSURANCE_MALADIE)}',
-                  ${rdv.id},
+                  ${rdv.num_rdv},
                   '${escapeHtml(rdv.note||'')}'
                 )">Voir dossier</button>
             </td>
@@ -137,8 +142,7 @@
       }).join('');
     }
 
-    function afficherDossier(prenom, nom, dateNaissance, numrdv, assurance, rdvId, note) {
-      currentRdvId = rdvId;
+    function afficherDossier(prenom, nom, dateNaissance, assurance,numrdv, rdvId, note) {
 
       document.getElementById('patient-nom').textContent  = `${prenom} ${nom}`;
       document.getElementById('patient-dob').textContent  = dateNaissance || 'Date inconnue';
@@ -153,8 +157,8 @@
 
       // créer le textarea
       const ta = document.createElement('textarea');
-      ta.id = 'note';
       ta.placeholder = 'Écrire une note de consultation…';
+      note="";
       ta.value = note;
       sec.appendChild(ta);
 
@@ -167,7 +171,7 @@
         const r = await fetch(`${API_URL}note/${numrdv}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ numRdv: currentRdvId, noteConsult: newNote })
+          body: JSON.stringify({ numRdv: numrdv, noteConsult: newNote })
         });
         const j = await r.json();
         if (r.ok && j.status === 'success') {
@@ -181,10 +185,40 @@
       sec.appendChild(btn);
     }
 
+    async function chargerAfficherHoraires() {
+  try {
+    const res = await fetch(`${API_URL}horaires`);
+    const data = await res.json();
+
+    const tbody = document.querySelector('#horaire table tbody');
+
+    if (!Array.isArray(data) || !data.length) {
+      tbody.innerHTML = '<tr><td colspan="3">Aucun horaire disponible</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.map(h => `
+      <tr>
+        <td>${escapeHtml(h.NOM_EMPLOYE)}</td>
+        <td>${escapeHtml(h.JOURS)}</td>
+        <td>${escapeHtml(h.HEURE)}</td>
+      </tr>
+    `).join('');
+
+  } catch (error) {
+    console.error("Erreur lors du chargement des horaires :", error);
+    const tbody = document.querySelector('#horaire table tbody');
+    tbody.innerHTML = '<tr><td colspan="3">Erreur de chargement des horaires</td></tr>';
+  }
+}
+
+
     document.addEventListener('DOMContentLoaded', () => {
       chargerAfficherRendezVous();
+      chargerAfficherHoraires();
       window.showTab        = showTab;
       window.afficherDossier = afficherDossier;
+
     });
   </script>
 </body>

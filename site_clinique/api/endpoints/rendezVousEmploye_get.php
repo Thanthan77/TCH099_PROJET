@@ -14,28 +14,29 @@ try {
     }
 
     // Requête optimisée avec tous les JOINS nécessaires
-    $query = "
-        SELECT 
-            r.NUM_RDV,
-            DATE_FORMAT(r.JOUR, '%Y-%m-%d') AS DATE_RDV,   -- JOUR remplacé ici
-            TIME_FORMAT(r.HEURE, '%H:%i')   AS HEURE,
-            r.DUREE,
-            r.COURRIEL,
-            e.CODE_EMPLOYE,
-            e.PRENOM_EMPLOYE,
-            e.NOM_EMPLOYE,
-            e.POSTE,
-            s.ID_SERVICE,
-            s.NOM         AS NOM_SERVICE,
-            s.DESCRIPTION AS DESCRIPTION_SERVICE,
-            r.NOTE_CONSULT,
-            r.STATUT
-        FROM Rendezvous AS r
-        JOIN Employe AS e ON r.CODE_EMPLOYE = e.CODE_EMPLOYE
-        JOIN Service AS s ON r.ID_SERVICE   = s.ID_SERVICE
-        WHERE r.CODE_EMPLOYE = :codeEmploye
-        ORDER BY r.JOUR, r.HEURE
-    ";
+   $query = "
+    SELECT 
+        r.NUM_RDV,
+        DATE_FORMAT(r.JOUR, '%Y-%m-%d') AS DATE_RDV,
+        TIME_FORMAT(r.HEURE, '%H:%i')   AS HEURE,
+        r.DUREE,
+        r.COURRIEL,
+        e.CODE_EMPLOYE,
+        e.PRENOM_EMPLOYE,
+        e.NOM_EMPLOYE,
+        e.POSTE,
+        s.ID_SERVICE,
+        s.NOM         AS NOM_SERVICE,
+        s.DESCRIPTION AS DESCRIPTION_SERVICE,
+        r.NOTE_CONSULT,
+        r.STATUT
+    FROM Rendezvous AS r
+    JOIN Employe AS e ON r.CODE_EMPLOYE = e.CODE_EMPLOYE
+    JOIN Service AS s ON r.ID_SERVICE   = s.ID_SERVICE
+    WHERE r.CODE_EMPLOYE = :codeEmploye
+    ORDER BY r.JOUR, r.HEURE
+";
+
 
     $pstmt = $cnx->prepare($query);
     $pstmt->bindValue(':codeEmploye', $codeEmploye);
@@ -65,7 +66,7 @@ try {
         foreach ($resultats as $row) {
             // Ajout rendez-vous
             $response['rendezvous'][] = [
-                'id' => $row['NUM_RDV'],
+                'num_rdv' => $row['NUM_RDV'],
                 'date' => $row['DATE_RDV'],
                 'heure' => $row['HEURE'],
                 'duree' => $row['DUREE'],
