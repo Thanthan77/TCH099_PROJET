@@ -18,6 +18,7 @@ require_once('./db/Database.php');
 
 try {
     $cnx = Database::getInstance();
+    $cnx->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $check = $cnx->prepare("SELECT COURRIEL FROM Patient WHERE COURRIEL = :courriel");
     $check->bindParam(':courriel', $data['COURRIEL']);
     $check->execute();
@@ -51,4 +52,6 @@ try {
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['error' => 'Erreur serveur']);
+} finally {
+    $cnx = null;
 }
