@@ -41,14 +41,13 @@
     </section>
 
     <!-- Dossier patient -->
-     <section id="dossier" class="tab-content hidden">
+    <section id="dossier" class="tab-content hidden">
       <h2>Dossier patient</h2>
       <p><strong>Nom :</strong> <span id="patient-nom">-</span></p>
       <p><strong>Date de naissance :</strong> <span id="patient-dob">-</span></p>
+      <p><strong>Numéro de rendez-vous :</strong> <span id="patient-numrdv">-</span></p>
       <p><strong>Numéro Assurance Maladie :</strong> <span id="patient-assm">-</span></p>
-      <label for="note">Note de soin :</label>
-      <textarea id="note" placeholder="Écrire une note de soin..."></textarea>
-      <button id="enregistrer-note">Enregistrer</button>
+      <label>Note de consultation :</label>
     </section>
 
 
@@ -81,7 +80,6 @@
     </section>
   </main>
 
-  <script src="../script/get_handle_data.js"></script>
   <script>
   const API_URL = 'http://localhost/api/';
   const codeEmploye = new URLSearchParams(window.location.search).get("codeEmploye");
@@ -130,10 +128,12 @@
             <td>${nomService}</td>
             <td>
               <button onclick="afficherDossier(
-                '${escapeHtml(patient.PRENOM_PATIENT || '')}',
-                '${escapeHtml(patient.NOM_PATIENT || '')}',
-                '${escapeHtml(patient.DATE_NAISSANCE || '')}',
-                '${escapeHtml(patient.NO_ASSURANCE_MALADIE || '')}'
+              '${escapeHtml(patient.PRENOM_PATIENT || '')}',
+              '${escapeHtml(patient.NOM_PATIENT || '')}',
+              '${escapeHtml(patient.DATE_NAISSANCE || '')}',
+              '${escapeHtml(patient.NO_ASSURANCE_MALADIE || '')}',
+              ${rdv.num_rdv},
+              '${escapeHtml(rdv.note || '')}'
               )">Voir dossier</button>
             </td>
           </tr>
@@ -165,16 +165,47 @@
       .replace(/'/g, "&#039;");
   }
 
-  function afficherDossier(prenom, nom, dateNaissance, assurance) {
-    document.getElementById('dossier').classList.remove('hidden');
-    document.getElementById('patient-nom').textContent = `${prenom} ${nom}`;
-    document.getElementById('patient-dob').textContent = dateNaissance || 'Date inconnue';
-    document.getElementById('patient-assm').textContent = assurance || 'Assurance indisponible';
+    function afficherDossier(prenom, nom, dateNaissance, assurance,numrdv, note) {
 
-    // Réinitialiser champ texte et case à cocher
-    document.getElementById('note-soin').value = '';
-    document.getElementById('soin-complete').checked = false;
-  }
+      document.getElementById('patient-nom').textContent  = `${prenom} ${nom}`;
+      document.getElementById('patient-dob').textContent  = dateNaissance || 'Date inconnue';
+      document.getElementById('patient-assm').textContent = assurance    || 'Indisponible';
+      document.getElementById('patient-numrdv').textContent = numrdv || 'Numrdv inconnue';
+
+      const sec = document.getElementById('dossier');
+      sec.classList.remove('hidden');
+
+      sec.querySelectorAll('textarea, button.js-save').forEach(el => el.remove());
+
+      // créer le textarea
+      const ta = document.createElement('textarea');
+      ta.placeholder = 'Écrire une note de soins…';
+      note="";
+      ta.value = note;
+      sec.appendChild(ta);
+
+      // créer le bouton Enregistrer
+      const btn = document.createElement('button');
+      btn.textContent = 'Enregistrer';
+      btn.classList.add('js-save');
+      btn.addEventListener('click', async () => {
+        const newNote = ta.value.trim();
+        const r = await fetch(`${API_URL}note/${numrdv}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ numRdv: numrdv, noteConsult: newNote })
+        });
+        const j = await r.json();
+        if (r.ok && j.status === 'success') {
+          alert('Note mise à jour avec succès !');
+          chargerAfficherRendezVous();
+          showTab('rdv');
+        } else {
+          alert(`Erreur: ${j.error || r.statusText}`);
+        }
+      });
+      sec.appendChild(btn);
+    }
 
     async function chargerAfficherHoraires() {
   try {
@@ -204,19 +235,14 @@
 }
 
 
-  function showTab(id) {
-    const sections = document.querySelectorAll('.tab-content');
-    sections.forEach(sec => sec.classList.add('hidden'));
-    document.getElementById(id).classList.remove('hidden');
-  }
+    document.addEventListener('DOMContentLoaded', () => {
+      chargerAfficherRendezVous();
+      chargerAfficherHoraires();
+      window.showTab        = showTab;
+      window.afficherDossier = afficherDossier;
 
-  window.showTab = showTab;
-
-  document.addEventListener('DOMContentLoaded', () => {
-  chargerAfficherRendezVous();
-  chargerAfficherHoraires();
-});
-</script>
+    });
+  </script>
 
 
 </body>

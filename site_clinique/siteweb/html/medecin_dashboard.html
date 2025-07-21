@@ -46,7 +46,6 @@
       <p><strong>Numéro de rendez-vous :</strong> <span id="patient-numrdv">-</span></p>
       <p><strong>Numéro Assurance Maladie :</strong> <span id="patient-assm">-</span></p>
       <label>Note de consultation :</label>
-      <!-- textarea et bouton seront créés ici par JavaScript -->
     </section>
 
     <!-- Section Horaire -->
@@ -142,7 +141,7 @@
       }).join('');
     }
 
-    function afficherDossier(prenom, nom, dateNaissance, assurance,numrdv, rdvId, note) {
+    function afficherDossier(prenom, nom, dateNaissance, assurance,numrdv, note) {
 
       document.getElementById('patient-nom').textContent  = `${prenom} ${nom}`;
       document.getElementById('patient-dob').textContent  = dateNaissance || 'Date inconnue';
@@ -152,7 +151,6 @@
       const sec = document.getElementById('dossier');
       sec.classList.remove('hidden');
 
-      // supprimer anciens éléments s'ils existent
       sec.querySelectorAll('textarea, button.js-save').forEach(el => el.remove());
 
       // créer le textarea
