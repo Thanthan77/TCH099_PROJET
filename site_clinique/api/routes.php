@@ -37,7 +37,7 @@ put($URL. '/note/$numRdv', 'endpoints/note_put.php');
 
 post($URL.'/login_patient', 'endpoints/login_patient.php'); 
 
-
+post($URL.'/inscription_patient', 'endpoints/inscription_patient.php'); 
 
 
 
