@@ -39,7 +39,7 @@ post($URL.'/login_patient', 'endpoints/login_patient.php');
 
 post($URL.'/inscription_patient', 'endpoints/inscription_patient.php'); 
 
-
+put($URL. '/modifier_patient', 'endpoints/modifier_patient.php');
 
 // Route de secours pour les pages non trouvées
 any($URL.'/404', 'views/404.php');
