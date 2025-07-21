@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <!--Header-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:background="#0077CB"
+        android:gravity="center_vertical">
+
+        <!--Lien mes rdv-->
+        <TextView
+            android:id="@+id/lien_mes_rdv"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/mes_rendez_vous_venir"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:gravity="start" />
+
+        <!--Lien profil-->
+        <TextView
+            android:id="@+id/lien_profil"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/mon_profil"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:gravity="center" />
+
+        <!--Lien déconnexion-->
+        <TextView
+            android:id="@+id/lien_deconnexion"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/d_connexion"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:gravity="end" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="16dp">
+
+        <!--Afficher logo et Prendre un rendez-vous-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:src="@drawable/vitalis"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/prendre_un_rdv"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+
+        <!--Afficher progression-->
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="86dp"
+            android:src="@drawable/prise_rdv1" />
+    </LinearLayout>
+
+
+    <!--Liste services-->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingHorizontal="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#F0F0F0"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/service"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginBottom="16dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="20dp">
+
+                <!--Détails service 1-->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/_1_consultation_g_n_rale"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/valuation_de_sant_pour_tout_probl_me"
+                        android:textSize="12sp"
+                        android:textColor="#444444" />
+                </LinearLayout>
+
+                <!--Bouton prise de service 1-->
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_rdv1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:text="@string/prendre_rdv"
+                    android:textColor="#FFFFFF"
+                    android:textAllCaps="false"
+                    android:textSize="12sp"
+                    android:background="@drawable/button_rounded" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="20dp">
+
+                <!--Détails service 2-->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/_2_suivi_de_grossesse"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/suivi_m_dical_de_grossesse"
+                        android:textSize="12sp"
+                        android:textColor="#444444" />
+                </LinearLayout>
+
+                <!--Bouton prise de service 2-->
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_rdv2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:text="@string/prendre_rdv"
+                    android:textColor="#FFFFFF"
+                    android:textAllCaps="false"
+                    android:textSize="12sp"
+                    android:background="@drawable/button_rounded" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="20dp">
+
+                <!--Détails service 3-->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/_3_suivi_de_maladies_chroniques"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/contr_le_r_gulier_diab_te_hypertension_etc"
+                        android:textSize="12sp"
+                        android:textColor="#444444" />
+                </LinearLayout>
+
+                <!--Bouton prise de service 3-->
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_rdv3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:text="@string/prendre_rdv"
+                    android:textColor="#FFFFFF"
+                    android:textAllCaps="false"
+                    android:textSize="12sp"
+                    android:background="@drawable/button_rounded" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="20dp">
+
+                <!--Détails service 4-->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/_4_d_pistage_itss"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/test_pour_infections_transmissibles_sexuellement_et_par_le_sang"
+                        android:textSize="12sp"
+                        android:textColor="#444444" />
+                </LinearLayout>
+
+                <!--Bouton prise de service 4-->
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_rdv4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:text="@string/prendre_rdv"
+                    android:textColor="#FFFFFF"
+                    android:textAllCaps="false"
+                    android:textSize="12sp"
+                    android:background="@drawable/button_rounded" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="20dp">
+
+                <!--Détails service 5-->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="5. Vaccination"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Vaccin de routine, voyage ou saisonnier"
+                        android:textSize="12sp"
+                        android:textColor="#444444" />
+                </LinearLayout>
+
+                <!--Bouton prise de service 5-->
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_rdv5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:text="@string/prendre_rdv"
+                    android:textColor="#FFFFFF"
+                    android:textAllCaps="false"
+                    android:textSize="12sp"
+                    android:background="@drawable/button_rounded" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="20dp">
+
+                <!--Détails service 6-->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/_6_pr_l_vement_sanguin_test_d_urine"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/prise_de_sang_et_ou_test_urinaire"
+                        android:textSize="12sp"
+                        android:textColor="#444444" />
+                </LinearLayout>
+
+                <!--Bouton prise de service 6-->
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_rdv6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:text="@string/prendre_rdv"
+                    android:textColor="#FFFFFF"
+                    android:textAllCaps="false"
+                    android:textSize="12sp"
+                    android:background="@drawable/button_rounded" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="20dp">
+
+                <!--Détails service 7-->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/_7_urgence_mineure"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/blessures_l_g_res_infections_douleurs_mod_r_es_etc"
+                        android:textSize="12sp"
+                        android:textColor="#444444" />
+                </LinearLayout>
+
+                <!--Bouton prise de service 7-->
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_rdv7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:text="@string/prendre_rdv"
+                    android:textColor="#FFFFFF"
+                    android:textAllCaps="false"
+                    android:textSize="12sp"
+                    android:background="@drawable/button_rounded" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!--Footer-->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="12dp"
+        android:text="@string/footer"
+        android:textSize="12sp"
+        android:textColor="#000000" />
+</LinearLayout>

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <!--Header-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:background="#0077CB"
+        android:padding="12dp"
+        android:gravity="center_vertical">
+
+        <!--Lien retour-->
+        <TextView
+            android:id="@+id/btn_retour_profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="<"
+            android:textColor="#FFFFFF"
+            android:textSize="29dp" />
+    </LinearLayout>
+
+    <!--Afficher logo et Modifier mon profil-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="16dp">
+
+            <ImageView
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:src="@drawable/vitalis"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/modifier_mon_profil"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#000000" />
+        </LinearLayout>
+
+        <!--Formulaire modifier profil-->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:gravity="center_horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#F0F0F0"
+                android:padding="16dp"
+                android:layout_marginBottom="16dp">
+
+                <!--Informations non modifiables-->
+                <TextView android:text="@string/pr_nom" style="@style/TitreChampProfil" />
+                <EditText android:id="@+id/profil_prenom" style="@style/ChampProfilLectureSeule" />
+
+                <TextView android:text="@string/nom" style="@style/TitreChampProfil" />
+                <EditText android:id="@+id/profil_nom" style="@style/ChampProfilLectureSeule" />
+
+                <TextView android:text="@string/num_ro_d_assurance_maladie" style="@style/TitreChampProfil" />
+                <EditText android:id="@+id/profil_nam" style="@style/ChampProfilLectureSeule" />
+
+                <TextView android:text="@string/date_de_naissance" style="@style/TitreChampProfil" />
+                <EditText android:id="@+id/profil_naissance" style="@style/ChampProfilLectureSeule" />
+
+                <!--Informations modifiables-->
+                <TextView android:text="Adresse :" style="@style/TitreChampProfil" />
+                <EditText android:id="@+id/profil_adresse_autocomplete" style="@style/ChampProfilModifiable" />
+
+                <TextView android:text="@string/num_ro_civique" style="@style/TitreChampProfil" />
+                <EditText android:id="@+id/profil_civique" style="@style/ChampProfilModifiable" />
+
+                <TextView android:text="@string/rue" style="@style/TitreChampProfil" />
+                <EditText android:id="@+id/profil_rue" style="@style/ChampProfilModifiable" />
+
+                <TextView android:text="@string/ville" style="@style/TitreChampProfil" />
+                <EditText android:id="@+id/profil_ville" style="@style/ChampProfilModifiable" />
+
+                <TextView android:text="@string/code_postal" style="@style/TitreChampProfil" />
+                <EditText android:id="@+id/profil_postal" style="@style/ChampProfilModifiable" />
+
+                <TextView android:text="@string/e_mail" style="@style/TitreChampProfil" />
+                <EditText android:id="@+id/profil_email" style="@style/ChampProfilModifiable" />
+
+                <TextView android:text="@string/confirmer_l_adresse_e_mail" style="@style/TitreChampProfil" />
+                <EditText android:id="@+id/profil_email_confirme" style="@style/ChampProfilModifiable" />
+
+                <TextView android:text="@string/num_ro_de_t_l_phone" style="@style/TitreChampProfil" />
+                <EditText android:id="@+id/profil_tel" style="@style/ChampProfilModifiable" />
+
+                <!--Bouton appliquer changements-->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_appliquer_changements"
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/button_rounded"
+                android:text="@string/appliquer_les_changements"
+                android:textColor="#FFFFFF"
+                android:textAllCaps="false"
+                android:textSize="14sp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/modifier"
+                    android:textColor="#444444"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:lineSpacingExtra="4dp"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+        <!--Footer-->
+    <TextView
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="12dp"
+        android:text="@string/footer"
+        android:textSize="12sp"
+        android:textColor="#000000" />
+    </LinearLayout>
+</LinearLayout>

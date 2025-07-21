@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical"
+android:background="#FFFFFF">
+
+<!--Header-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:background="#0077CB"
+        android:gravity="center_vertical">
+
+        <!--Lien mes rdv-->
+        <TextView
+            android:id="@+id/lien_mes_rdv"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/mes_rendez_vous_venir"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:gravity="start" />
+
+        <!--Lien profil-->
+        <TextView
+            android:id="@+id/lien_profil"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/mon_profil"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:gravity="center" />
+
+        <!--Lien déconnexion-->
+        <TextView
+            android:id="@+id/lien_deconnexion"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/d_connexion"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:gravity="end" />
+    </LinearLayout>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="16dp">
+
+    <!--Afficher logo et Prendre un rendez-vous-->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:src="@drawable/vitalis"
+            android:layout_marginEnd="12dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/prendre_un_rdv"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:gravity="center_vertical" />
+    </LinearLayout>
+
+    <!--Afficher progression-->
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="86dp"
+        android:src="@drawable/prise_rdv3" />
+</LinearLayout>
+
+<!--Zone grise MODIFIER ICIIIIIIIIIII!!!!!!!!!!!!! FAUT AUSSI AJOUTER UN BOUTON PRENDRE UN AUTRE RDV-->
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:paddingHorizontal="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#F0F0F0"
+        android:padding="16dp">
+    </LinearLayout>
+</ScrollView>
+
+<!--Footer-->
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:padding="12dp"
+    android:text="@string/footer"
+    android:textSize="12sp"
+    android:textColor="#000000" />
+</LinearLayout>

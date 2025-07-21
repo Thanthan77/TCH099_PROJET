@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <!--Header-->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#0077CB" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!--Logo-->
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/vitalis" />
+
+        <!--Inscription-->
+        <TextView
+            android:id="@+id/inscription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="@string/inscription"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!--Formulaire d'inscription-->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="24dp">
+
+            <EditText
+                android:id="@+id/inscription_prenom"
+                android:hint="@string/pr_nom"
+                style="@style/ChampFormulaire" />
+
+            <EditText
+                android:id="@+id/inscription_nom"
+                android:hint="@string/nom"
+                style="@style/ChampFormulaire" />
+
+            <EditText
+                android:id="@+id/inscription_nam"
+                android:hint="@string/num_ro_d_assurance_maladie"
+                style="@style/ChampFormulaire" />
+
+            <EditText
+                android:id="@+id/inscription_naissance"
+                android:hint="@string/date_de_naissance"
+                style="@style/ChampFormulaire" />
+
+            <EditText
+                android:id="@+id/inscription_adresse_autocomplete"
+                android:hint="@string/entrez_votre_adresse"
+                style="@style/ChampFormulaire"
+                android:focusable="false"
+                android:clickable="true" />
+
+            <!-- Suite des champs d’adresse -->
+            <EditText
+                android:id="@+id/inscription_civique"
+                android:hint="@string/num_ro_civique"
+                style="@style/ChampFormulaire" />
+
+            <EditText
+                android:id="@+id/inscription_rue"
+                android:hint="@string/rue"
+                style="@style/ChampFormulaire" />
+
+            <EditText
+                android:id="@+id/inscription_ville"
+                android:hint="@string/ville"
+                style="@style/ChampFormulaire" />
+
+            <EditText
+                android:id="@+id/inscription_postal"
+                android:hint="@string/code_postal"
+                style="@style/ChampFormulaire" />
+
+            <EditText
+                android:id="@+id/inscription_tel"
+                android:hint="@string/num_ro_de_t_l_phone"
+                style="@style/ChampFormulaire" />
+
+            <EditText
+                android:id="@+id/inscription_email"
+                android:hint="@string/e_mail"
+                style="@style/ChampFormulaire" />
+
+            <EditText
+                android:id="@+id/inscription_email_confirmation"
+                android:hint="Confirmez votre adresse e-mail"
+                style="@style/ChampFormulaire" />
+
+            <EditText
+                android:id="@+id/inscription_mdp"
+                android:hint="@string/mdp"
+                style="@style/ChampFormulaire"
+                android:inputType="textPassword" />
+
+            <EditText
+                android:id="@+id/inscription_mdp_confirmation"
+                android:hint="@string/confirmez_votre_mot_de_passe"
+                style="@style/ChampFormulaire"
+                android:inputType="textPassword" />
+
+            <!--Bouton créer votre compte-->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_creer_compte"
+                android:layout_width="230dp"
+                android:layout_height="43dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/button_rounded"
+                android:text="@string/cr_ez_votre_compte"
+                android:textColor="#FFFFFF"
+                android:textAllCaps="false"
+                android:textSize="14sp" />
+
+            <!--Lien connexion-->
+            <TextView
+                android:id="@+id/lien_connexion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/vous_avez_d_j_un_compte"
+                android:textColor="#0076D7"
+                android:layout_marginTop="12dp" />
+            <!--Footer-->
+            <TextView
+                android:id="@+id/footer_inscription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="12dp"
+                android:text="@string/footer"
+                android:textColor="#000000"
+                android:textSize="12sp"
+                android:layout_marginTop="30dp"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
