@@ -12,9 +12,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.appmobile.basesedonnes.DbUtil;
+import com.example.appmobile.basesedonnes.clientContact;
 
-import basesedonnes.DbUtil;
-import basesedonnes.clientContact;
+import com.example.appmobile.basesedonnes.DbUtil;
 
 public class pageinfogenerale extends AppCompatActivity implements View.OnClickListener {
 
@@ -34,16 +35,16 @@ public class pageinfogenerale extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inscription);
 
-        messageInfo = findViewById(R.id.titreinscription);
-        nom = findViewById(R.id.editTextNom);
-        prenom = findViewById(R.id.editTextPrenom);
-        courriel = findViewById(R.id.editTextTextEmailLogin);
-        telephone = findViewById(R.id.editTextPhonelogin);
-        assurancemaladie = findViewById(R.id.editTextcarteassurance);
-        naissance = findViewById(R.id.editTextDatelogin);
-        motPasse = findViewById(R.id.editTextTextPasswordlogin);
-        confirmationPasse = findViewById(R.id.editTextTextconfirmationlogin);
-        soumis = findViewById(R.id.buttoninfogene);
+        messageInfo = findViewById(R.id.inscription);
+        nom = findViewById(R.id.inscription_nom);
+        prenom = findViewById(R.id.inscription_prenom);
+        courriel = findViewById(R.id.inscription_email);
+        telephone = findViewById(R.id.inscription_tel);
+        assurancemaladie = findViewById(R.id.inscription_nam);
+        naissance = findViewById(R.id.inscription_naissance);
+        motPasse = findViewById(R.id.inscription_mdp);
+        confirmationPasse = findViewById(R.id.inscription_mdp_confirmation);
+        soumis = findViewById(R.id.btn_creer_compte);
         soumis.setOnClickListener(this);
 
         afficherDernierPatient(); // ← Affiche les infos enregistrées automatiquement
@@ -51,7 +52,7 @@ public class pageinfogenerale extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.buttoninfogene) {
+        if (v.getId() == R.id.btn_creer_compte) {
 
             String nomPatient = nom.getText().toString();
             String prenomPatient = prenom.getText().toString();

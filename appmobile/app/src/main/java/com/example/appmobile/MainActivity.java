@@ -17,6 +17,7 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
+    private TextView titre;
     private EditText connexion_email, connexion_mdp;
     private Button btn_se_connecter;
     private TextView messageErreur;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        titre=(TextView)findViewById(R.id.connexion);
         connexion_email = findViewById(R.id.connexion_email);
         connexion_mdp = findViewById(R.id.connexion_mdp);
         btn_se_connecter = findViewById(R.id.btn_se_connecter);

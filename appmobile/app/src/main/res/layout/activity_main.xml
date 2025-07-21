@@ -43,16 +43,16 @@
             <EditText
                 android:id="@+id/connexion_email"
                 style="@style/ChampFormulaire"
-                android:hint="@string/adresse_e_mail"
-                android:inputType="textEmailAddress"
-                android:layout_marginTop="24dp" />
+                android:layout_marginTop="24dp"
+                android:hint="email"
+                android:inputType="textEmailAddress" />
 
             <EditText
                 android:id="@+id/connexion_mdp"
                 style="@style/ChampFormulaire"
-                android:hint="@string/mot_de_passe"
-                android:inputType="textPassword"
-                android:layout_marginTop="12dp" />
+                android:layout_marginTop="12dp"
+                android:hint="mot de passe"
+                android:inputType="textPassword" />
 
             <!--Bouton se connecter-->
             <androidx.appcompat.widget.AppCompatButton

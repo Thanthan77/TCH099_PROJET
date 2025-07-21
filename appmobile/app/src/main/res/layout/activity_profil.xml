@@ -74,6 +74,9 @@
 
 
     <!--Liste informations personnelles-->
+
+    <!--Footer-->
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -82,65 +85,114 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_margin="24dp"
             android:background="#F0F0F0"
+            android:orientation="vertical"
             android:padding="16dp">
 
-            <TextView android:text="@string/pr_nom" style="@style/TitreChampProfil" />
-            <EditText android:id="@+id/profil_prenom" style="@style/ChampProfilLectureSeule" />
+            <TextView
+                style="@style/TitreChampProfil"
+                android:text="Prenom" />
 
-            <TextView android:text="@string/nom" style="@style/TitreChampProfil" />
-            <EditText android:id="@+id/profil_nom" style="@style/ChampProfilLectureSeule" />
+            <EditText
+                android:id="@+id/profil_prenom"
+                style="@style/ChampProfilLectureSeule" />
 
-            <TextView android:text="@string/num_ro_d_assurance_maladie" style="@style/TitreChampProfil" />
-            <EditText android:id="@+id/profil_nam" style="@style/ChampProfilLectureSeule" />
+            <TextView
+                style="@style/TitreChampProfil"
+                android:text="Nom" />
 
-            <TextView android:text="@string/date_de_naissance" style="@style/TitreChampProfil" />
-            <EditText android:id="@+id/profil_naissance" style="@style/ChampProfilLectureSeule" />
+            <EditText
+                android:id="@+id/profil_nom"
+                style="@style/ChampProfilLectureSeule" />
 
-            <TextView android:text="@string/num_ro_civique" style="@style/TitreChampProfil" />
-            <EditText android:id="@+id/profil_civique" style="@style/ChampProfilLectureSeule" />
+            <TextView
+                style="@style/TitreChampProfil"
+                android:text="Numero d'assurance maladie" />
 
-            <TextView android:text="@string/rue" style="@style/TitreChampProfil" />
-            <EditText android:id="@+id/profil_rue" style="@style/ChampProfilLectureSeule" />
+            <EditText
+                android:id="@+id/profil_nam"
+                style="@style/ChampProfilLectureSeule" />
 
-            <TextView android:text="@string/ville" style="@style/TitreChampProfil" />
-            <EditText android:id="@+id/profil_ville" style="@style/ChampProfilLectureSeule" />
+            <TextView
+                style="@style/TitreChampProfil"
+                android:text="Date de naissance" />
 
-            <TextView android:text="@string/code_postal" style="@style/TitreChampProfil" />
-            <EditText android:id="@+id/profil_postal" style="@style/ChampProfilLectureSeule" />
+            <EditText
+                android:id="@+id/profil_naissance"
+                style="@style/ChampProfilLectureSeule" />
 
-            <TextView android:text="@string/e_mail" style="@style/TitreChampProfil" />
-            <EditText android:id="@+id/profil_email" style="@style/ChampProfilLectureSeule" />
+            <TextView
+                style="@style/TitreChampProfil"
+                android:text="Numero civique" />
 
-            <TextView android:text="@string/num_ro_de_t_l_phone" style="@style/TitreChampProfil" />
-            <EditText android:id="@+id/profil_tel" style="@style/ChampProfilLectureSeule" />
+            <EditText
+                android:id="@+id/profil_civique"
+                style="@style/ChampProfilLectureSeule" />
+
+            <TextView
+                style="@style/TitreChampProfil"
+                android:text="Rue" />
+
+            <EditText
+                android:id="@+id/profil_rue"
+                style="@style/ChampProfilLectureSeule" />
+
+            <TextView
+                style="@style/TitreChampProfil"
+                android:text="Ville" />
+
+            <EditText
+                android:id="@+id/profil_ville"
+                style="@style/ChampProfilLectureSeule" />
+
+            <TextView
+                style="@style/TitreChampProfil"
+                android:text="@string/code_postal" />
+
+            <EditText
+                android:id="@+id/profil_postal"
+                style="@style/ChampProfilLectureSeule" />
+
+            <TextView
+                style="@style/TitreChampProfil"
+                android:text="@string/e_mail" />
+
+            <EditText
+                android:id="@+id/profil_email"
+                style="@style/ChampProfilLectureSeule" />
+
+            <TextView
+                style="@style/TitreChampProfil"
+                android:text="@string/num_ro_de_t_l_phone" />
+
+            <EditText
+                android:id="@+id/profil_tel"
+                style="@style/ChampProfilLectureSeule" />
 
             <!--Lien modifier les informations personnelles-->
             <TextView
                 android:id="@+id/lien_modifier_infos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/modifiez_vos_informations"
-                android:textColor="#0076D7"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="16dp"
+                android:text="@string/modifiez_vos_informations"
+                android:textColor="#0076D7" />
 
             <!--Lien modifier le mdp-->
             <TextView
                 android:id="@+id/lien_modifier_mdp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/changez_votre_mot_de_passe"
-                android:textColor="#0076D7"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="20dp"/>
+                android:layout_marginBottom="20dp"
+                android:text="@string/changez_votre_mot_de_passe"
+                android:textColor="#0076D7" />
         </LinearLayout>
     </ScrollView>
 
-    <!--Footer-->
     <TextView
     android:id="@+id/footer_profil"
     android:layout_width="match_parent"

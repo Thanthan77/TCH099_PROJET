@@ -4,6 +4,8 @@ package com.example.appmobile.basesedonnes;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.appmobile.pageinfogenerale;
+
 public class DbUtil extends SQLiteOpenHelper {
 
         public DbUtil(pageinfogenerale context) {

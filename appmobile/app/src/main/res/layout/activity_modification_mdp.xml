@@ -72,9 +72,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/mot_de_passe_actuel"
-            android:textColor="#000000"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="8dp"
+            android:text="mot de passe actuel"
+            android:textColor="#000000" />
 
         <EditText
             android:id="@+id/ancien_mdp"
@@ -90,9 +90,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/nouveau_mot_de_passe"
-            android:textColor="#000000"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="12dp"
+            android:text="nouveau mot de passe"
+            android:textColor="#000000" />
 
         <EditText
             android:id="@+id/nouveau_mdp"
@@ -108,9 +108,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/confirmer_le_nouveau_mot_de_passe"
-            android:textColor="#000000"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="12dp"
+            android:text="confirmer le nouveau de passe"
+            android:textColor="#000000" />
 
         <EditText
             android:id="@+id/confirmer_mdp"
@@ -130,7 +130,7 @@
             android:layout_height="43dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/button_rounded"
-            android:text="@string/appliquer_le_changement"
+            android:text="Appliquer le changement"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:textSize="14sp"

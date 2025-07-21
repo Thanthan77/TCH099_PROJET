@@ -38,89 +38,89 @@
     <!--Formulaire d'inscription-->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="1101dp"
         android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:gravity="center_horizontal"
+            android:orientation="vertical"
             android:padding="24dp">
 
             <EditText
                 android:id="@+id/inscription_prenom"
-                android:hint="@string/pr_nom"
-                style="@style/ChampFormulaire" />
+                style="@style/ChampFormulaire"
+                android:hint="@string/pr_nom" />
 
             <EditText
                 android:id="@+id/inscription_nom"
-                android:hint="@string/nom"
-                style="@style/ChampFormulaire" />
+                style="@style/ChampFormulaire"
+                android:hint="@string/nom" />
 
             <EditText
                 android:id="@+id/inscription_nam"
-                android:hint="@string/num_ro_d_assurance_maladie"
-                style="@style/ChampFormulaire" />
+                style="@style/ChampFormulaire"
+                android:hint="@string/num_ro_d_assurance_maladie" />
 
             <EditText
                 android:id="@+id/inscription_naissance"
-                android:hint="@string/date_de_naissance"
-                style="@style/ChampFormulaire" />
+                style="@style/ChampFormulaire"
+                android:hint="@string/date_de_naissance" />
 
             <EditText
                 android:id="@+id/inscription_adresse_autocomplete"
-                android:hint="@string/entrez_votre_adresse"
                 style="@style/ChampFormulaire"
+                android:clickable="true"
                 android:focusable="false"
-                android:clickable="true" />
+                android:hint="@string/entrez_votre_adresse" />
 
             <!-- Suite des champs d’adresse -->
             <EditText
                 android:id="@+id/inscription_civique"
-                android:hint="@string/num_ro_civique"
-                style="@style/ChampFormulaire" />
+                style="@style/ChampFormulaire"
+                android:hint="@string/num_ro_civique" />
 
             <EditText
                 android:id="@+id/inscription_rue"
-                android:hint="@string/rue"
-                style="@style/ChampFormulaire" />
+                style="@style/ChampFormulaire"
+                android:hint="@string/rue" />
 
             <EditText
                 android:id="@+id/inscription_ville"
-                android:hint="@string/ville"
-                style="@style/ChampFormulaire" />
+                style="@style/ChampFormulaire"
+                android:hint="@string/ville" />
 
             <EditText
                 android:id="@+id/inscription_postal"
-                android:hint="@string/code_postal"
-                style="@style/ChampFormulaire" />
+                style="@style/ChampFormulaire"
+                android:hint="@string/code_postal" />
 
             <EditText
                 android:id="@+id/inscription_tel"
-                android:hint="@string/num_ro_de_t_l_phone"
-                style="@style/ChampFormulaire" />
+                style="@style/ChampFormulaire"
+                android:hint="@string/num_ro_de_t_l_phone" />
 
             <EditText
                 android:id="@+id/inscription_email"
-                android:hint="@string/e_mail"
-                style="@style/ChampFormulaire" />
+                style="@style/ChampFormulaire"
+                android:hint="@string/e_mail" />
 
             <EditText
                 android:id="@+id/inscription_email_confirmation"
-                android:hint="Confirmez votre adresse e-mail"
-                style="@style/ChampFormulaire" />
+                style="@style/ChampFormulaire"
+                android:hint="Confirmez votre adresse e-mail" />
 
             <EditText
                 android:id="@+id/inscription_mdp"
-                android:hint="@string/mdp"
                 style="@style/ChampFormulaire"
+                android:hint="@string/mdp"
                 android:inputType="textPassword" />
 
             <EditText
                 android:id="@+id/inscription_mdp_confirmation"
-                android:hint="@string/confirmez_votre_mot_de_passe"
                 style="@style/ChampFormulaire"
+                android:hint="@string/confirmez_votre_mot_de_passe"
                 android:inputType="textPassword" />
 
             <!--Bouton créer votre compte-->
@@ -131,8 +131,8 @@
                 android:layout_marginTop="20dp"
                 android:background="@drawable/button_rounded"
                 android:text="@string/cr_ez_votre_compte"
-                android:textColor="#FFFFFF"
                 android:textAllCaps="false"
+                android:textColor="#FFFFFF"
                 android:textSize="14sp" />
 
             <!--Lien connexion-->
@@ -140,20 +140,20 @@
                 android:id="@+id/lien_connexion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:text="@string/vous_avez_d_j_un_compte"
-                android:textColor="#0076D7"
-                android:layout_marginTop="12dp" />
+                android:textColor="#0076D7" />
             <!--Footer-->
             <TextView
                 android:id="@+id/footer_inscription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
                 android:gravity="center"
                 android:padding="12dp"
                 android:text="@string/footer"
                 android:textColor="#000000"
-                android:textSize="12sp"
-                android:layout_marginTop="30dp"/>
+                android:textSize="12sp" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
