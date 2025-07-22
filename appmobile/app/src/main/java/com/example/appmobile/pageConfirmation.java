@@ -23,16 +23,7 @@ public class pageConfirmation extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_page_confirmation);
-
-        titreconfir =(TextView)findViewById(R.id.textViewPageConfirmationrv);
-        dateconf=(EditText)findViewById(R.id.editTextDateConfirmation);
-        timeconfirm=(EditText)findViewById(R.id.editTextTimeConfimation);
-        numberrdv=(EditText) findViewById(R.id.editTextNumberdeconfirmation);
-
-
-
-
+        setContentView(R.layout.activity_prise_confirmation);
 
     }
 }
