@@ -1,5 +1,6 @@
     const API_URL     = 'http://localhost/api/';
     const codeEmploye = new URLSearchParams(window.location.search).get('codeEmploye');
+    
     let currentRdvId  = null;
 
     function showTab(id) {

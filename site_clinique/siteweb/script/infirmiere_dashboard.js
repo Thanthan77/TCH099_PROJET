@@ -1,130 +1,122 @@
- const API_URL = 'http://localhost/api/';
-  const codeEmploye = new URLSearchParams(window.location.search).get("codeEmploye");
+const API_URL = 'http://localhost/api/';
+const codeEmploye = new URLSearchParams(window.location.search).get("codeEmploye");
 
-  async function chargerAfficherRendezVous() {
-    try {
-      if (!codeEmploye) {
-        throw new Error("Code employé manquant dans l'URL");
-      }
+async function chargerAfficherRendezVous() {
+  try {
+    if (!codeEmploye) {
+      throw new Error("Code employé manquant dans l'URL");
+    }
 
-      // 1. Charger les rendez-vous de l'infirmière
-      const response = await fetch(`${API_URL}rendezvous/${codeEmploye}`);
-      if (!response.ok) {
-        throw new Error(`Erreur HTTP: ${response.status}`);
-      }
-      const data = await response.json();
+    const response = await fetch(`${API_URL}rendezvous/${codeEmploye}`);
+    if (!response.ok) {
+      throw new Error(`Erreur HTTP: ${response.status}`);
+    }
+    const data = await response.json();
 
-      // 2. Charger les patients
-      const patientsRes = await fetch(`${API_URL}patients`);
-      const listePatients = await patientsRes.json();
+    const patientsRes = await fetch(`${API_URL}patients`);
+    const listePatients = await patientsRes.json();
 
-      // 3. Préparer les services
-      const servicesMap = {};
-      data.services.forEach(service => {
-        servicesMap[service.id] = service.nom;
-      });
+    const servicesMap = {};
+    data.services.forEach(service => {
+      servicesMap[service.id] = service.nom;
+    });
 
-      // 4. Affichage dans le tableau
-      const tbody = document.querySelector('#rdv tbody');
-      if (!tbody) throw new Error("Élément #rdv tbody introuvable");
+    const tbody = document.querySelector('#rdv tbody');
+    if (!tbody) throw new Error("Élément #rdv tbody introuvable");
 
-      if (!data.rendezvous || data.rendezvous.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5">Aucun rendez-vous prévu</td></tr>';
-        return;
-      }
+    if (!data.rendezvous || data.rendezvous.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5">Aucun rendez-vous prévu</td></tr>';
+      return;
+    }
 
-      tbody.innerHTML = data.rendezvous.map(rdv => {
-        const patient = listePatients.find(p => p.COURRIEL === rdv.email) || {};
-        const nomService = servicesMap[rdv.service_id] || "Service inconnu";
+    tbody.innerHTML = data.rendezvous.map(rdv => {
+      const patient = listePatients.find(p => p.COURRIEL === rdv.email) || {};
+      const nomService = servicesMap[rdv.service_id] || "Service inconnu";
 
-        return `
-          <tr>
-            <td>${rdv.date}</td>
-            <td>${rdv.heure} (${rdv.duree} min)</td>
-            <td>${patient.PRENOM_PATIENT || 'Inconnu'} ${patient.NOM_PATIENT || ''}</td>
-            <td>${nomService}</td>
-            <td>
-              <button onclick="afficherDossier(
+      return `
+        <tr>
+          <td>${rdv.date}</td>
+          <td>${rdv.heure} (${rdv.duree} min)</td>
+          <td>${patient.PRENOM_PATIENT || 'Inconnu'} ${patient.NOM_PATIENT || ''}</td>
+          <td>${nomService}</td>
+          <td>
+            <button onclick="afficherDossier(
               '${escapeHtml(patient.PRENOM_PATIENT || '')}',
               '${escapeHtml(patient.NOM_PATIENT || '')}',
               '${escapeHtml(patient.DATE_NAISSANCE || '')}',
               '${escapeHtml(patient.NO_ASSURANCE_MALADIE || '')}',
               ${rdv.num_rdv},
               '${escapeHtml(rdv.note || '')}'
-              )">Voir dossier</button>
-            </td>
-          </tr>
-        `;
-      }).join('');
-
-    } catch (error) {
-      console.error('Erreur:', error);
-      const errorHtml = `
-        <tr>
-          <td colspan="5" class="error">
-            Erreur de chargement: ${error.message}
-            <button onclick="chargerAfficherRendezVous()">Réessayer</button>
+            )">Voir dossier</button>
           </td>
         </tr>
       `;
-      const tbody = document.querySelector('#rdv tbody');
-      if (tbody) tbody.innerHTML = errorHtml;
-    }
+    }).join('');
+
+  } catch (error) {
+    console.error('Erreur:', error);
+    const errorHtml = `
+      <tr>
+        <td colspan="5" class="error">
+          Erreur de chargement: ${error.message}
+          <button onclick="chargerAfficherRendezVous()">Réessayer</button>
+        </td>
+      </tr>
+    `;
+    const tbody = document.querySelector('#rdv tbody');
+    if (tbody) tbody.innerHTML = errorHtml;
   }
+}
 
-  function escapeHtml(str) {
-    if (!str) return '';
-    return str.toString()
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.toString()
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
-    function afficherDossier(prenom, nom, dateNaissance, assurance,numrdv, note) {
+function afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, note) {
+  document.getElementById('patient-nom').textContent = `${prenom} ${nom}`;
+  document.getElementById('patient-dob').textContent = dateNaissance || 'Date inconnue';
+  document.getElementById('patient-assm').textContent = assurance || 'Indisponible';
+  document.getElementById('patient-numrdv').textContent = numrdv || 'Numrdv inconnue';
 
-      document.getElementById('patient-nom').textContent  = `${prenom} ${nom}`;
-      document.getElementById('patient-dob').textContent  = dateNaissance || 'Date inconnue';
-      document.getElementById('patient-assm').textContent = assurance    || 'Indisponible';
-      document.getElementById('patient-numrdv').textContent = numrdv || 'Numrdv inconnue';
+  const sec = document.getElementById('dossier');
+  sec.classList.remove('hidden');
 
-      const sec = document.getElementById('dossier');
-      sec.classList.remove('hidden');
+  sec.querySelectorAll('textarea, button.js-save').forEach(el => el.remove());
 
-      sec.querySelectorAll('textarea, button.js-save').forEach(el => el.remove());
+  const ta = document.createElement('textarea');
+  ta.placeholder = 'Écrire une note de soins…';
+  ta.value = note;
+  sec.appendChild(ta);
 
-      // créer le textarea
-      const ta = document.createElement('textarea');
-      ta.placeholder = 'Écrire une note de soins…';
-      note="";
-      ta.value = note;
-      sec.appendChild(ta);
-
-      // créer le bouton Enregistrer
-      const btn = document.createElement('button');
-      btn.textContent = 'Enregistrer';
-      btn.classList.add('js-save');
-      btn.addEventListener('click', async () => {
-        const newNote = ta.value.trim();
-        const r = await fetch(`${API_URL}note/${numrdv}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ numRdv: numrdv, noteConsult: newNote })
-        });
-        const j = await r.json();
-        if (r.ok && j.status === 'success') {
-          alert('Note mise à jour avec succès !');
-          chargerAfficherRendezVous();
-          showTab('rdv');
-        } else {
-          alert(`Erreur: ${j.error || r.statusText}`);
-        }
-      });
-      sec.appendChild(btn);
+  const btn = document.createElement('button');
+  btn.textContent = 'Enregistrer';
+  btn.classList.add('js-save');
+  btn.addEventListener('click', async () => {
+    const newNote = ta.value.trim();
+    const r = await fetch(`${API_URL}note/${numrdv}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ numRdv: numrdv, noteConsult: newNote })
+    });
+    const j = await r.json();
+    if (r.ok && j.status === 'success') {
+      alert('Note mise à jour avec succès !');
+      chargerAfficherRendezVous();
+      showTab('rdv');
+    } else {
+      alert(`Erreur: ${j.error || r.statusText}`);
     }
+  });
+  sec.appendChild(btn);
+}
 
-    async function chargerAfficherHoraires() {
+async function chargerAfficherHoraires() {
   try {
     const res = await fetch(`${API_URL}horaires`);
     const data = await res.json();
@@ -151,11 +143,17 @@
   }
 }
 
+function showTab(id) {
+  document.querySelectorAll('.tab-content')
+    .forEach(sec => sec.classList.add('hidden'));
+  const target = document.getElementById(id);
+  if (target) target.classList.remove('hidden');
+}
 
-    document.addEventListener('DOMContentLoaded', () => {
-      chargerAfficherRendezVous();
-      chargerAfficherHoraires();
-      window.showTab        = showTab;
-      window.afficherDossier = afficherDossier;
+window.showTab = showTab;
+window.afficherDossier = afficherDossier;
 
-    });
+document.addEventListener('DOMContentLoaded', () => {
+  chargerAfficherRendezVous();
+  chargerAfficherHoraires();
+});
