@@ -1,7 +1,7 @@
 <?php
 // update_rendezvous_note.php
 
-require_once __DIR__ . '/../db/Database.php';
+require_once(__DIR__.'/../../db/Database.php');
 header('Content-Type: application/json; charset=UTF-8');
 
 // 1) On n’accepte que la méthode PUT

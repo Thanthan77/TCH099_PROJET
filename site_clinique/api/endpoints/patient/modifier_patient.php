@@ -1,6 +1,6 @@
 <?php
 require_once(__DIR__.'/../jwt/utils.php');
-require_once(__DIR__.'/../db/Database.php');
+require_once(__DIR__.'/../../db/Database.php');
 
 header('Content-Type: application/json');
 
