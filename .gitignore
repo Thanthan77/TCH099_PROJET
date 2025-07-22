@@ -2,3 +2,4 @@
 *.properties
 *.xml
 appmobile/.idea/workspace.xml
+appmobile/local.properties
