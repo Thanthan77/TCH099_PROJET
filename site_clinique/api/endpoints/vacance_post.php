@@ -14,19 +14,13 @@ try {
     $cnx = Database::getInstance();
     $cnx->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Vérifier les champs requis
-    if (!isset($data['codeEmploye'], $data['dateException'], $data['heureDebut'], $data['heureFin'])) {
-        http_response_code(400);
-        echo json_encode(['error' => 'Champs requis manquants.']);
-        exit;
-    }
 
     $sql = "INSERT INTO Exception_horaire (CODE_EMPLOYE, DATE_EXCEPTION, HEURE_DEBUT, HEURE_FIN, TYPE_EXCEPTION)
             VALUES (:code, :date, :debut, :fin, :type)";
 
     $stmt = $cnx->prepare($sql);
 
-    $stmt->bindValue(':code', $data['codeEmploye'], PDO::PARAM_INT);
+    $stmt->bindValue(':code', $codeEmploye);
     $stmt->bindValue(':date', $data['dateException']);
     $stmt->bindValue(':debut', $data['heureDebut']);
     $stmt->bindValue(':fin', $data['heureFin']);

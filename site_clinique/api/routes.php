@@ -29,12 +29,23 @@ get($URL.'/services','endpoints/services_get.php');
 // GET pour avoir la liste de tous les employées
 get($URL.'/employes', 'endpoints/employees_get.php');
 
+// GET pour avoir les horaires des employes
 get($URL.'/horaires','endpoints/horaire_get.php');
 
 // PUT pour avoir ajouter une note de consultation à un dossier
 put($URL. '/note/$numRdv', 'endpoints/note_put.php');
 
-post($URL.'/vacance','endpoints/vacance_post.php');
+//POST pour une demande de vacance d'un medecin ou infirmier
+post($URL.'/vacance/employe/$codeEmploye','endpoints/vacance_post.php');
+
+// GET pour avoir la liste des demandes de vacances
+get($URL.'/vacances','endpoints/vacances_get.php');
+
+// PUT pour accepter ou refuser une demande de vacance
+put($URL.'/vacance/$idException','endpoints/vacance_put.php');
+
+
+
 
 // Section Patients
 
