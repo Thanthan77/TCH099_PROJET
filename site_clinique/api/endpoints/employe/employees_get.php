@@ -1,6 +1,6 @@
 <?php
 // employee_endpoint.php
-require_once(__DIR__.'/../db/Database.php');
+require_once(__DIR__.'/../../db/Database.php');
 
 header('Content-Type: application/json');
 header('Cache-Control: no-cache');
