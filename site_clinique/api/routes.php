@@ -34,6 +34,8 @@ get($URL.'/horaires','endpoints/horaire_get.php');
 // PUT pour avoir ajouter une note de consultation à un dossier
 put($URL. '/note/$numRdv', 'endpoints/note_put.php');
 
+post($URL.'/vacance','endpoints/vacance_post.php');
+
 // Section Patients
 
 // POST pour le login de patient (génération du token JWT)
