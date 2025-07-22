@@ -12,37 +12,37 @@ get($URL, 'views/index.php');
 // Section Employes
 
 // POST pour le login des employe (génération du token JWT)
-post($URL.'/login', 'endpoints/login.php'); 
+post($URL.'/login', 'endpoints/employe/login.php'); 
 
 // GET pour avoir la listes de tous les rendezVous
-get($URL.'/rendezvous','endpoints/rendezVous_get.php');
+get($URL.'/rendezvous','endpoints/employe/rendezVous_get.php');
 
 // GET pour avoir la listes de tous les rendezVous d'un employe
-get($URL.'/rendezvous/$codeEmploye', 'endpoints/rendezVousEmploye_get.php');
+get($URL.'/rendezvous/$codeEmploye', 'endpoints/employe/rendezVousEmploye_get.php');
 
 // GET pour avoir la listes de tous les patients
-get($URL.'/patients','endpoints/patients_get.php');
+get($URL.'/patients','endpoints/employe/patients_get.php');
 
 // GET pour avoir la liste de tous les services
-get($URL.'/services','endpoints/services_get.php');
+get($URL.'/services','endpoints/employe/services_get.php');
 
 // GET pour avoir la liste de tous les employées
-get($URL.'/employes', 'endpoints/employees_get.php');
+get($URL.'/employes', 'endpoints/employe/employees_get.php');
 
 // GET pour avoir les horaires des employes
-get($URL.'/horaires','endpoints/horaire_get.php');
+get($URL.'/horaires','endpoints/employe/horaire_get.php');
 
 // PUT pour avoir ajouter une note de consultation à un dossier
-put($URL. '/note/$numRdv', 'endpoints/note_put.php');
+put($URL. '/note/$numRdv', 'endpoints/employe/note_put.php');
 
 //POST pour une demande de vacance d'un medecin ou infirmier
-post($URL.'/vacance/employe/$codeEmploye','endpoints/vacance_post.php');
+post($URL.'/vacance/employe/$codeEmploye','endpoints/employe/vacance_post.php');
 
 // GET pour avoir la liste des demandes de vacances
-get($URL.'/vacances','endpoints/vacances_get.php');
+get($URL.'/vacances','endpoints/employe/vacances_get.php');
 
 // PUT pour accepter ou refuser une demande de vacance
-put($URL.'/vacance/$idException','endpoints/vacance_put.php');
+put($URL.'/vacance/$idException','endpoints/employe/vacance_put.php');
 
 
 
@@ -50,13 +50,13 @@ put($URL.'/vacance/$idException','endpoints/vacance_put.php');
 // Section Patients
 
 // POST pour le login de patient (génération du token JWT)
-post($URL.'/login_patient', 'endpoints/login_patient.php'); 
+post($URL.'/login_patient', 'endpoints/patient/login_patient.php'); 
 
 // POST pour l'inscription du patient 
-post($URL.'/inscription_patient', 'endpoints/inscription_patient.php'); 
+post($URL.'/inscription_patient', 'endpoints/patient/inscription_patient.php'); 
 
 // PUT modifie les informations des patients 
-put($URL. '/modifier_patient', 'endpoints/modifier_patient.php');
+put($URL. '/modifier_patient', 'endpoints/patient/modifier_patient.php');
 
 
 
