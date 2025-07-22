@@ -148,7 +148,7 @@
 
             <TextView
                 style="@style/TitreChampProfil"
-                android:text="@string/code_postal" />
+                android:text="Code postal" />
 
             <EditText
                 android:id="@+id/profil_postal"
@@ -156,7 +156,7 @@
 
             <TextView
                 style="@style/TitreChampProfil"
-                android:text="@string/e_mail" />
+                android:text="email" />
 
             <EditText
                 android:id="@+id/profil_email"
@@ -164,7 +164,7 @@
 
             <TextView
                 style="@style/TitreChampProfil"
-                android:text="@string/num_ro_de_t_l_phone" />
+                android:text="numero telephone" />
 
             <EditText
                 android:id="@+id/profil_tel"

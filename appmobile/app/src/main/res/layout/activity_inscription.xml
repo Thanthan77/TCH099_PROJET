@@ -51,26 +51,31 @@
             <EditText
                 android:id="@+id/inscription_prenom"
                 style="@style/ChampFormulaire"
+                android:layout_height="48dp"
                 android:hint="@string/pr_nom" />
 
             <EditText
                 android:id="@+id/inscription_nom"
                 style="@style/ChampFormulaire"
+                android:layout_height="48dp"
                 android:hint="@string/nom" />
 
             <EditText
                 android:id="@+id/inscription_nam"
                 style="@style/ChampFormulaire"
+                android:layout_height="48dp"
                 android:hint="@string/num_ro_d_assurance_maladie" />
 
             <EditText
                 android:id="@+id/inscription_naissance"
                 style="@style/ChampFormulaire"
+                android:layout_height="48dp"
                 android:hint="@string/date_de_naissance" />
 
             <EditText
                 android:id="@+id/inscription_adresse_autocomplete"
                 style="@style/ChampFormulaire"
+                android:layout_height="48dp"
                 android:clickable="true"
                 android:focusable="false"
                 android:hint="@string/entrez_votre_adresse" />
@@ -79,47 +84,56 @@
             <EditText
                 android:id="@+id/inscription_civique"
                 style="@style/ChampFormulaire"
+                android:layout_height="48dp"
                 android:hint="@string/num_ro_civique" />
 
             <EditText
                 android:id="@+id/inscription_rue"
                 style="@style/ChampFormulaire"
+                android:layout_height="48dp"
                 android:hint="@string/rue" />
 
             <EditText
                 android:id="@+id/inscription_ville"
                 style="@style/ChampFormulaire"
+                android:layout_height="48dp"
                 android:hint="@string/ville" />
 
             <EditText
                 android:id="@+id/inscription_postal"
                 style="@style/ChampFormulaire"
+                android:layout_height="48dp"
                 android:hint="@string/code_postal" />
 
             <EditText
                 android:id="@+id/inscription_tel"
                 style="@style/ChampFormulaire"
+                android:layout_height="48dp"
                 android:hint="@string/num_ro_de_t_l_phone" />
 
             <EditText
                 android:id="@+id/inscription_email"
                 style="@style/ChampFormulaire"
+                android:layout_height="48dp"
                 android:hint="@string/e_mail" />
 
             <EditText
                 android:id="@+id/inscription_email_confirmation"
                 style="@style/ChampFormulaire"
+                android:layout_height="48dp"
                 android:hint="Confirmez votre adresse e-mail" />
 
             <EditText
                 android:id="@+id/inscription_mdp"
                 style="@style/ChampFormulaire"
+                android:layout_height="48dp"
                 android:hint="@string/mdp"
                 android:inputType="textPassword" />
 
             <EditText
                 android:id="@+id/inscription_mdp_confirmation"
                 style="@style/ChampFormulaire"
+                android:layout_height="48dp"
                 android:hint="@string/confirmez_votre_mot_de_passe"
                 android:inputType="textPassword" />
 
@@ -127,7 +141,7 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_creer_compte"
                 android:layout_width="230dp"
-                android:layout_height="43dp"
+                android:layout_height="48dp"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/button_rounded"
                 android:text="@string/cr_ez_votre_compte"
