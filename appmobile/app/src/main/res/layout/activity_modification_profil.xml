@@ -78,20 +78,40 @@
 
                 <!--Informations non modifiables-->
                 <TextView android:text="@string/pr_nom" style="@style/TitreChampProfil" />
-                <EditText android:id="@+id/profil_prenom" style="@style/ChampProfilLectureSeule" />
+
+                <EditText
+                    android:id="@+id/profil_prenom"
+                    style="@style/ChampProfilLectureSeule"
+                    android:layout_height="48dp" />
 
                 <TextView android:text="@string/nom" style="@style/TitreChampProfil" />
-                <EditText android:id="@+id/profil_nom" style="@style/ChampProfilLectureSeule" />
+
+                <EditText
+                    android:id="@+id/profil_nom"
+                    style="@style/ChampProfilLectureSeule"
+                    android:layout_height="48dp" />
 
                 <TextView android:text="@string/num_ro_d_assurance_maladie" style="@style/TitreChampProfil" />
-                <EditText android:id="@+id/profil_nam" style="@style/ChampProfilLectureSeule" />
+
+                <EditText
+                    android:id="@+id/profil_nam"
+                    style="@style/ChampProfilLectureSeule"
+                    android:layout_height="48dp" />
 
                 <TextView android:text="@string/date_de_naissance" style="@style/TitreChampProfil" />
-                <EditText android:id="@+id/profil_naissance" style="@style/ChampProfilLectureSeule" />
+
+                <EditText
+                    android:id="@+id/profil_naissance"
+                    style="@style/ChampProfilLectureSeule"
+                    android:layout_height="48dp" />
 
                 <!--Informations modifiables-->
                 <TextView android:text="Adresse :" style="@style/TitreChampProfil" />
-                <EditText android:id="@+id/profil_adresse_autocomplete" style="@style/ChampProfilModifiable" />
+
+                <EditText
+                    android:id="@+id/profil_adresse_autocomplete"
+                    style="@style/ChampProfilModifiable"
+                    android:layout_height="48dp" />
 
                 <TextView android:text="@string/num_ro_civique" style="@style/TitreChampProfil" />
                 <EditText android:id="@+id/profil_civique" style="@style/ChampProfilModifiable" />

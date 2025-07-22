@@ -1,3 +1,5 @@
+package com.example.appmobile;
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.widget.EditText;
