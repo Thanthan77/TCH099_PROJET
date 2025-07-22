@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONObject;
@@ -19,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText connexion_email, connexion_mdp;
     private Button btn_se_connecter;
     private TextView lienInscription;
-    private TextView lienMotDePasse ;
+    private TextView lienMotDePasse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         connexion_mdp = findViewById(R.id.connexion_mdp);
         btn_se_connecter = findViewById(R.id.btn_se_connecter);
         lienInscription = findViewById(R.id.lien_inscription);
-        lienMotDePasse = findViewById(R.id.lien_modifier_mdp) ;
+        lienMotDePasse = findViewById(R.id.lien_modifier_mdp);
 
         // Ouvre la page d'inscription
         // Dans onCreate :
