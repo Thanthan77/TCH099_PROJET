@@ -4,11 +4,11 @@ package com.example.appmobile.basesedonnes;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.appmobile.pageinfogenerale;
+import com.example.appmobile.PageInscription;
 
 public class DbUtil extends SQLiteOpenHelper {
 
-        public DbUtil(pageinfogenerale context) {
+        public DbUtil(PageInscription context) {
             super(context, "clientContact.Db", null, 1);
         }
 
