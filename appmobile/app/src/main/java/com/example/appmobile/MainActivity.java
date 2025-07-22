@@ -1,6 +1,8 @@
 package com.example.appmobile;
 
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,12 +17,13 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView titre;
     private EditText connexion_email, connexion_mdp;
     private Button btn_se_connecter;
     private TextView messageErreur;
+    private TextView lienInscription ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +34,10 @@ public class MainActivity extends AppCompatActivity {
         connexion_email = findViewById(R.id.connexion_email);
         connexion_mdp = findViewById(R.id.connexion_mdp);
         btn_se_connecter = findViewById(R.id.btn_se_connecter);
+        lienInscription= findViewById<TextView>(R.id.lien_inscription);
         messageErreur = new TextView(this);
 
+        lienInscription.setOnClickListener(this);
         btn_se_connecter.setOnClickListener(v -> {
             String courriel = connexion_email.getText().toString().trim();
             String mdp = connexion_mdp.getText().toString().trim();
@@ -44,6 +49,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
+       lienInscription.setOnClickListener(new View.OnClickListener() {
+        @Override
+        void onClick(View view) {
+            Intent intent = new Intent(MainActivity.this, PageInscription.class);
+            startActivity(intent);
+
+        }
+    }}
+
+
+
 
     private class ConnexionTask extends AsyncTask<String, Void, String> {
         @Override

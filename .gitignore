@@ -1,1 +1,4 @@
 /TCH99 reste des bails
+*.properties
+*.xml
+appmobile/.idea/workspace.xml

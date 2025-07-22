@@ -15,9 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.appmobile.basesedonnes.DbUtil;
 import com.example.appmobile.basesedonnes.clientContact;
 
-import com.example.appmobile.basesedonnes.DbUtil;
-
-public class pageinfogenerale extends AppCompatActivity implements View.OnClickListener {
+public class PageInscription extends AppCompatActivity implements View.OnClickListener {
 
     private TextView messageInfo;
     private EditText nom;
