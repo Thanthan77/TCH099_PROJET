@@ -56,4 +56,5 @@
     <string name="nouveau_mot_de_passe">Nouveau mot de passe :</string>
     <string name="confirmer_le_nouveau_mot_de_passe">Confirmer le nouveau mot de passe :</string>
     <string name="mes_prochains_rendez_vous">Mes prochains rendez-vous</string>
+    <string name="lt"><![CDATA[<]]></string>
 </resources>
