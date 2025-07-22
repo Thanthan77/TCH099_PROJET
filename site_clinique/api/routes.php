@@ -44,6 +44,9 @@ get($URL.'/vacances','endpoints/employe/vacances_get.php');
 // PUT pour accepter ou refuser une demande de vacance
 put($URL.'/vacance/$idException','endpoints/employe/vacance_put.php');
 
+//POST pour créer un nouvel employe
+post($URL.'/employe','endpoints/employe/employe_post.php');
+
 
 
 

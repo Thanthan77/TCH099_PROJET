@@ -14,7 +14,7 @@ if (
     exit();
 }
 
-require_once('./db/Database.php');
+require_once(__DIR__.'/../../db/Database.php');
 
 try {
     $cnx = Database::getInstance();
@@ -30,7 +30,7 @@ try {
 
     $stmt = $cnx->prepare("
         INSERT INTO Patient (COURRIEL, PRENOM_PATIENT, NOM_PATIENT, MOT_DE_PASSE, NUM_TEL,
-                             NUM_CIVIQUE, RUE, VILLE, CODE_POSTAL, NO_ASSURANCE_MALADIE, DATE_NAISSANCE)
+                    NUM_CIVIQUE, RUE, VILLE, CODE_POSTAL, NO_ASSURANCE_MALADIE, DATE_NAISSANCE)
         VALUES (:courriel, :prenom, :nom, :mdp, :tel, :civique, :rue, :ville, :cp, :ramq, :naissance)
     ");
 

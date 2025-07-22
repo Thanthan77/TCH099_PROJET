@@ -15,7 +15,7 @@ if ($username=='' || $mdp=='') { //formulaire mal rempli
     exit();
 }
 
-require_once('./db/Database.php');
+require_once(__DIR__.'/../../db/Database.php');
 $cnx = $pstmt = null;
 try {
     $cnx = Database::getInstance();

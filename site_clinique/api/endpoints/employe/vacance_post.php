@@ -1,6 +1,6 @@
 <?php
 
-require_once(__DIR__ . '/../db/Database.php');
+require_once(__DIR__.'/../../db/Database.php');
 
 // Pour éviter les erreurs de "headers already sent"
 ob_start();
