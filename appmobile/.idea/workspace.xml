@@ -17,7 +17,6 @@
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_inscription.xml">
         <config>
-          <state>Portrait</state>
           <theme>@style/Theme.Appmobile</theme>
         </config>
       </layout>
@@ -69,8 +68,7 @@
   <component name="ChangeListManager">
     <list default="true" id="dcf4d458-1d77-4f2b-bb29-e2a68eeb6bd2" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/appmobile/pageConfirmation.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/appmobile/pageConfirmation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_modification_profil.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_modification_profil.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_modification_mdp.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_modification_mdp.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
