@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText connexion_email, connexion_mdp;
     private Button btn_se_connecter;
     private TextView lienInscription;
+    private TextView lienMotDePasse ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,15 +31,27 @@ public class MainActivity extends AppCompatActivity {
         connexion_mdp = findViewById(R.id.connexion_mdp);
         btn_se_connecter = findViewById(R.id.btn_se_connecter);
         lienInscription = findViewById(R.id.lien_inscription);
+        lienMotDePasse = findViewById(R.id.lien_modifier_mdp) ;
 
         // Ouvre la page d'inscription
-        lienInscription.setOnClickListener(new View.OnClickListener() {
+        // Dans onCreate :
+        View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, PageInscription.class);
-                startActivity(intent);
+                int id = view.getId();
+
+                if (id == R.id.lien_inscription) {
+                    startActivity(new Intent(MainActivity.this, PageInscription.class));
+                } else if (id == R.id.lien_modifier_mdp) {
+                    startActivity(new Intent(MainActivity.this, modificationMotPasse.class));
+                }
             }
-        });
+        };
+
+// Appliquer le même listener à plusieurs vues
+        lienInscription.setOnClickListener(listener);
+        lienMotDePasse.setOnClickListener(listener);
+
 
         // Gestion du bouton de connexion
         btn_se_connecter.setOnClickListener(v -> {

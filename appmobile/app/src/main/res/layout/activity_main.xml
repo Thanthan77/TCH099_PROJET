@@ -75,6 +75,14 @@
                 android:textColor="#0076D7"
                 android:layout_marginTop="10dp" />
 
+            <TextView
+                android:id="@+id/lien_modifier_mdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/mot_de_passe_oubli_modifier_le_mot_de_passe"
+                android:textColor="#0076D7" />
+
             <!--Footer-->
             <TextView
                 android:id="@+id/info"
@@ -85,6 +93,7 @@
                 android:text="@string/footer"
                 android:textColor="#000000"
                 android:textSize="12sp" />
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
