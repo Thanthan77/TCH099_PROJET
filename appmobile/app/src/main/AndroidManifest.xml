@@ -21,6 +21,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".PageInscription" />
+        <activity android:name=".modificationMotPasse" />
     </application>
 
 </manifest>
