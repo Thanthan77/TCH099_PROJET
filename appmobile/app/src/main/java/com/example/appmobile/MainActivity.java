@@ -1,8 +1,5 @@
 package com.example.appmobile;
 
-
-import static androidx.core.content.ContextCompat.startActivity;
-
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,34 +7,53 @@ import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
-
 import org.json.JSONObject;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity {
 
     private TextView titre;
     private EditText connexion_email, connexion_mdp;
     private Button btn_se_connecter;
-    private TextView messageErreur;
-    private TextView lienInscription ;
+    private TextView lienInscription;
+    private TextView lienMotDePasse ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        titre=(TextView)findViewById(R.id.connexion);
+        titre = findViewById(R.id.connexion);
         connexion_email = findViewById(R.id.connexion_email);
         connexion_mdp = findViewById(R.id.connexion_mdp);
         btn_se_connecter = findViewById(R.id.btn_se_connecter);
-        lienInscription= findViewById<TextView>(R.id.lien_inscription);
-        messageErreur = new TextView(this);
+        lienInscription = findViewById(R.id.lien_inscription);
+        lienMotDePasse = findViewById(R.id.lien_modifier_mdp) ;
 
-        lienInscription.setOnClickListener(this);
+        // Ouvre la page d'inscription
+        // Dans onCreate :
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int id = view.getId();
+
+                if (id == R.id.lien_inscription) {
+                    startActivity(new Intent(MainActivity.this, PageInscription.class));
+                } else if (id == R.id.lien_modifier_mdp) {
+                    startActivity(new Intent(MainActivity.this, modificationMotPasse.class));
+                }
+            }
+        };
+
+// Appliquer le même listener à plusieurs vues
+        lienInscription.setOnClickListener(listener);
+        lienMotDePasse.setOnClickListener(listener);
+
+
+        // Gestion du bouton de connexion
         btn_se_connecter.setOnClickListener(v -> {
             String courriel = connexion_email.getText().toString().trim();
             String mdp = connexion_mdp.getText().toString().trim();
@@ -50,21 +66,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-
-
-       lienInscription.setOnClickListener(new View.OnClickListener() {
-        @Override
-        void onClick(View view) {
-            Intent intent = new Intent(MainActivity.this, PageInscription.class);
-            startActivity(intent);
-
-        }
-    }}
-
-
-
-
-    private class ConnexionTask extends AsyncTask<String, Void, String> {
+    // Tâche de connexion au serveur
+    public class ConnexionTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
             String courriel = params[0];
@@ -88,8 +91,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
 
                 int code = conn.getResponseCode();
-
                 InputStream is = (code == 200) ? conn.getInputStream() : conn.getErrorStream();
+
                 BufferedReader reader = new BufferedReader(new InputStreamReader(is, "utf-8"));
                 StringBuilder response = new StringBuilder();
                 String line;
@@ -109,21 +112,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 JSONObject response = new JSONObject(result);
 
                 if (response.has("token")) {
-                    // Connexion réussie
                     String token = response.getString("token");
                     String courriel = response.getString("COURRIEL");
 
-                    // Tu peux stocker le token si nécessaire
                     Toast.makeText(MainActivity.this, "Connexion réussie", Toast.LENGTH_SHORT).show();
 
-                    // Redirige vers la prochaine activité
-                    Intent intent = new Intent(MainActivity.this, com.example.appmobile.PageMesRDV.class);
+                    Intent intent = new Intent(MainActivity.this, PageMesRDV.class);
                     intent.putExtra("token", token);
                     intent.putExtra("courriel", courriel);
                     startActivity(intent);
                     finish();
                 } else {
-                    // Erreur retournée par le serveur
                     String erreur = response.optString("error", "Identifiants incorrects");
                     Toast.makeText(MainActivity.this, erreur, Toast.LENGTH_SHORT).show();
                 }

@@ -26,6 +26,8 @@ public class PageInscription extends AppCompatActivity implements View.OnClickLi
     private EditText naissance;
     private EditText motPasse;
     private EditText confirmationPasse;
+
+    private EditText adresse ;
     private Button soumis;
 
     @Override
@@ -43,6 +45,7 @@ public class PageInscription extends AppCompatActivity implements View.OnClickLi
         motPasse = findViewById(R.id.inscription_mdp);
         confirmationPasse = findViewById(R.id.inscription_mdp_confirmation);
         soumis = findViewById(R.id.btn_creer_compte);
+        adresse = findViewById(R.id.inscription_adresse_autocomplete) ;
         soumis.setOnClickListener(this);
 
         afficherDernierPatient(); // ← Affiche les infos enregistrées automatiquement
@@ -60,6 +63,8 @@ public class PageInscription extends AppCompatActivity implements View.OnClickLi
             String naissancePatient = naissance.getText().toString();
             String motPassePatient = motPasse.getText().toString();
             String confPassePatient = confirmationPasse.getText().toString();
+            String adressePatient = adresse.getText().toString() ;
+
 
             if (!motPassePatient.equals(confPassePatient)) {
                 Toast.makeText(this, "Les mots de passe ne correspondent pas", Toast.LENGTH_SHORT).show();
@@ -79,6 +84,7 @@ public class PageInscription extends AppCompatActivity implements View.OnClickLi
             valeurs.put(clientContact.PatientContract.Colonnes.NO_ASSURANCE, assurancePatient);
             valeurs.put(clientContact.PatientContract.Colonnes.DATE_NAISSANCE, naissancePatient);
             valeurs.put(clientContact.PatientContract.Colonnes.MOT_DE_PASSE, motPassePatient);
+
 
             long resultat = db.insert(clientContact.PatientContract.TABLE_NAME, null, valeurs);
 
@@ -119,6 +125,7 @@ public class PageInscription extends AppCompatActivity implements View.OnClickLi
             telephone.setText(telPatient);
             assurancemaladie.setText(assurancePatient);
             naissance.setText(naissancePatient);
+
         }
 
         curseur.close();
