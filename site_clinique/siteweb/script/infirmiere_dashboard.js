@@ -1,6 +1,11 @@
 const API_URL = 'http://localhost/api/';
 const codeEmploye = new URLSearchParams(window.location.search).get("codeEmploye");
 
+// 🔒 Vérifie la session à l’ouverture
+if (!sessionStorage.getItem("isConnected")) {
+  window.location.replace("../html/index.html");
+}
+
 async function chargerAfficherRendezVous() {
   try {
     if (!codeEmploye) {
@@ -156,4 +161,33 @@ window.afficherDossier = afficherDossier;
 document.addEventListener('DOMContentLoaded', () => {
   chargerAfficherRendezVous();
   chargerAfficherHoraires();
+});
+
+// Accessible depuis le HTML
+window.toggleUserMenu = function () {
+  const menu = document.getElementById("userDropdown");
+  menu.style.display = (menu.style.display === "block") ? "none" : "block";
+};
+
+// Fermer le menu si clic à l'extérieur
+window.addEventListener("click", function (event) {
+  const icon = document.querySelector(".user-menu-icon");
+  const menu = document.getElementById("userDropdown");
+
+  if (!menu.contains(event.target) && event.target !== icon) {
+    menu.style.display = "none";
+  }
+});
+
+// Activer bouton "Se déconnecter"
+document.addEventListener("DOMContentLoaded", function () {
+  const logoutBtn = document.getElementById("btn-logout");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      sessionStorage.clear();
+      localStorage.clear();
+      window.location.href = "../html/index.html"; // adapte si nécessaire
+    });
+  }
 });

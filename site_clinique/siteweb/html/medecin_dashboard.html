@@ -2,6 +2,9 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>Tableau de bord - Médecin</title>
   <link rel="stylesheet" href="../css/medecin_dashboard.css" />
   <script src="../script/medecin_dashboard.js" defer></script>
@@ -14,6 +17,15 @@
       <img src="../image/logo.png" alt="Logo" class="logo" />
       <h1>Clinique VITALIS – Espace Médecin</h1>
     </div>
+    <div class="user-menu-container">
+    <img src="../image/menu.png" alt="Menu" class="user-menu-icon" onclick="toggleUserMenu()" />
+    <div class="user-dropdown" id="userDropdown">
+      <a href="#" id="btn-profile">Modifier profil</a>
+      <a href="../html/mot_de_passe.html" id="btn-password">Changer mot de passe</a>
+      <a href="../html/index.html" id="btn-logout">Se déconnecter</a>
+    </div>
+</div>
+
   </header>
 
   <nav class="tabs">
