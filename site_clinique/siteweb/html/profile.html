@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Profil Employé</title>
+  <link rel="stylesheet" href="../css/profile.css" />
+  <script src="../script/profile.js" defer></script>
+</head>
+<body>
+
+  <header>
+    <div class="logo-container">
+      <img src="../image/logo.png" alt="Logo" class="logo" />
+    </div>
+    <h1>Clinique VITALIS – Profil</h1>
+
+    <div class="user-menu-container">
+      <img src="../image/menu.png" alt="Menu utilisateur" class="user-menu-icon" onclick="toggleUserMenu()" />
+      <div class="user-dropdown" id="userDropdown">
+        <a href="../html/mot_de_passe.html" id="btn-password">Changer mot de passe</a>
+        <a href="../html/index.html" id="btn-logout">Se déconnecter</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <h2>Profil de l'Employé</h2>
+
+      <form id="formProfil">
+        <label for="numero">Numéro d'employé</label>
+        <input type="text" id="numero" name="numero" value="EMP12345" readonly>
+
+        <label for="nom">Nom complet</label>
+        <input type="text" id="nom" name="nom" value="Jean Dupont" readonly>
+
+        <label for="sexe">Sexe</label>
+        <input type="text" id="sexe" name="sexe" value="Homme" readonly>
+
+        <label for="poste">Poste</label>
+        <input type="text" id="poste" name="poste" value="Infirmier" readonly>
+
+        <label for="email">Courriel</label>
+        <input type="email" id="email" name="email" value="jean.dupont@example.com" readonly>
+
+        <label for="telephone">Téléphone</label>
+        <input type="tel" id="telephone" name="telephone" value="514-123-4567" readonly>
+
+        <label for="adresse">Adresse</label>
+        <textarea id="adresse" name="adresse" rows="3" readonly>123 Rue Exemple, Montréal, QC</textarea>
+
+        <button type="button" id="editBtn">Modifier le profil</button>
+        <button type="submit" id="saveBtn" style="display:none;">Enregistrer les modifications</button>
+      </form>
+    </div>
+  </main>
+
+</body>
+</html>
