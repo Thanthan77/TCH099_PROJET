@@ -24,14 +24,14 @@ document.getElementById("connexion").addEventListener("submit", function (e) {
     })
     .then(data => {
         if (data.token && data.CODE_EMPLOYE) {
-            // ✅ Stocker les infos dans le localStorage
+            // Stocker les infos dans le localStorage
             localStorage.setItem('token', data.token);
             localStorage.setItem('codeEmploye', data.CODE_EMPLOYE);
 
-            // ✅ Stocker l'état connecté dans sessionStorage
+            // Stocker l'état connecté dans sessionStorage
             sessionStorage.setItem('isConnected', '1');
 
-            // ✅ Déterminer le rôle selon le premier chiffre
+            // Déterminer le rôle selon le premier chiffre
             const premierChiffre = data.CODE_EMPLOYE.toString().charAt(0);
             let redirectUrl = '';
 
@@ -64,5 +64,12 @@ document.getElementById("connexion").addEventListener("submit", function (e) {
     .catch(error => {
         console.error("Erreur:", error);
         errDiv.innerText = error.message || "Erreur lors de la connexion";
+    });
+
+    window.addEventListener("pageshow", () => {
+        const isConnected = sessionStorage.getItem("isConnected");
+        if (isConnected !== '1') {
+            window.location.reload();
+        }
     });
 });

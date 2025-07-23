@@ -1,9 +1,13 @@
 const API_URL = "http://localhost/api/";
 
-// 🔒 Vérifie la session à l’ouverture
-if (!sessionStorage.getItem("isConnected")) {
-  window.location.replace("../html/index.html");
+function verifierConnexion() {
+  if (sessionStorage.getItem("isConnected") !== '1') {
+    window.location.replace("../html/index.html");
+  }
 }
+
+document.addEventListener("DOMContentLoaded", verifierConnexion);
+window.addEventListener("pageshow", verifierConnexion);
 
   document.addEventListener("DOMContentLoaded", () => {
     chargerRendezVous();
