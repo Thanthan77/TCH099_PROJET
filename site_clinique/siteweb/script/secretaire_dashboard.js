@@ -1,7 +1,7 @@
 const API_URL = "http://localhost/api/";
 
 function verifierConnexion() {
-  if (sessionStorage.getItem("isConnected") !== '1') {
+  if (localStorage.getItem("isConnected") !== '1' && sessionStorage.getItem("isConnected") !== '1') {
     window.location.replace("../html/index.html");
   }
 }
@@ -35,7 +35,6 @@ window.addEventListener("pageshow", verifierConnexion);
         rendezvous.forEach(rdv => {
             const row = document.createElement("tr");
 
-            // Nom selon le poste
             let nomAffiche;
             if (rdv.POSTE === "Médecin") {
                 nomAffiche = `Dr. ${rdv.NOM_EMPLOYE}`;
@@ -65,7 +64,6 @@ window.addEventListener("pageshow", verifierConnexion);
 
   function modifierRdv(numRdv) {
     alert("Modifier le rendez-vous #" + numRdv);
-    // Tu peux pré-remplir le formulaire de création ici si tu veux permettre l'édition.
   }
 
   function annulerRdv(numRdv) {
@@ -78,7 +76,7 @@ window.addEventListener("pageshow", verifierConnexion);
             return res.json();
         })
         .then(() => {
-            chargerRendezVous(); // Recharger après suppression
+            chargerRendezVous();
         })
         .catch(err => {
             alert("Erreur : " + err.message);
@@ -88,12 +86,12 @@ window.addEventListener("pageshow", verifierConnexion);
 
   document.addEventListener("DOMContentLoaded", () => {
   chargerRendezVous();
-  chargerPatients(); // On charge les infos des patients ici
+  chargerPatients();
 });
 
 async function chargerPatients() {
   try {
-    const response = await fetch(`${API_URL}patients`); // adapte le chemin à ton endpoint exact
+    const response = await fetch(`${API_URL}patients`);
     if (!response.ok) throw new Error("Échec du chargement des patients");
 
     const patients = await response.json();
@@ -121,13 +119,11 @@ async function chargerPatients() {
   }
 }
 
-// Accessible depuis le HTML
 window.toggleUserMenu = function () {
   const menu = document.getElementById("userDropdown");
   menu.style.display = (menu.style.display === "block") ? "none" : "block";
 };
 
-// Fermer le menu si clic à l'extérieur
 window.addEventListener("click", function (event) {
   const icon = document.querySelector(".user-menu-icon");
   const menu = document.getElementById("userDropdown");
@@ -137,7 +133,6 @@ window.addEventListener("click", function (event) {
   }
 });
 
-// Activer bouton "Se déconnecter"
 document.addEventListener("DOMContentLoaded", function () {
   const logoutBtn = document.getElementById("btn-logout");
   if (logoutBtn) {
@@ -145,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
       e.preventDefault();
       sessionStorage.clear();
       localStorage.clear();
-      window.location.href = "../html/index.html"; // adapte si nécessaire
+      window.location.href = "../html/index.html";
     });
   }
 });

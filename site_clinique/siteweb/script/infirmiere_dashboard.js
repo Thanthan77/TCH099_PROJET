@@ -2,7 +2,7 @@ const API_URL = 'http://localhost/api/';
 const codeEmploye = new URLSearchParams(window.location.search).get("codeEmploye");
 
 function verifierConnexion() {
-  if (sessionStorage.getItem("isConnected") !== '1') {
+  if (localStorage.getItem("isConnected") !== '1' && sessionStorage.getItem("isConnected") !== '1') {
     window.location.replace("../html/index.html");
   }
 }
@@ -167,13 +167,11 @@ document.addEventListener('DOMContentLoaded', () => {
   chargerAfficherHoraires();
 });
 
-// Accessible depuis le HTML
 window.toggleUserMenu = function () {
   const menu = document.getElementById("userDropdown");
   menu.style.display = (menu.style.display === "block") ? "none" : "block";
 };
 
-// Fermer le menu si clic à l'extérieur
 window.addEventListener("click", function (event) {
   const icon = document.querySelector(".user-menu-icon");
   const menu = document.getElementById("userDropdown");
@@ -183,7 +181,6 @@ window.addEventListener("click", function (event) {
   }
 });
 
-// Activer bouton "Se déconnecter"
 document.addEventListener("DOMContentLoaded", function () {
   const logoutBtn = document.getElementById("btn-logout");
   if (logoutBtn) {
@@ -191,7 +188,7 @@ document.addEventListener("DOMContentLoaded", function () {
       e.preventDefault();
       sessionStorage.clear();
       localStorage.clear();
-      window.location.href = "../html/index.html"; // adapte si nécessaire
+      window.location.href = "../html/index.html";
     });
   }
 });
