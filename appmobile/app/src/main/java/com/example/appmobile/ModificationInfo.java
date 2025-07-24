@@ -44,7 +44,7 @@ public class ModificationInfo extends AppCompatActivity implements View.OnClickL
         modifInfo = (Button) findViewById(R.id.btn_appliquer_changements);
 
         modifInfo.setOnClickListener(this);
-        
+
 
     }
 
