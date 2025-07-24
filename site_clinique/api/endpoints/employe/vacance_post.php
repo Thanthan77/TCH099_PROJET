@@ -2,12 +2,11 @@
 
 require_once(__DIR__.'/../../db/Database.php');
 
-// Pour éviter les erreurs de "headers already sent"
+
 ob_start();
 
 header('Content-Type: application/json');
 
-// Lecture des données JSON envoyées dans le body
 $data = json_decode(file_get_contents('php://input'), true);
 
 try {
@@ -24,7 +23,7 @@ try {
     $stmt->bindValue(':date', $data['dateException']);
     $stmt->bindValue(':debut', $data['heureDebut']);
     $stmt->bindValue(':fin', $data['heureFin']);
-    $stmt->bindValue(':type', 'ATTENTE'); // Valeur fixée ici
+    $stmt->bindValue(':type', 'ATTENTE'); 
 
     $stmt->execute();
 

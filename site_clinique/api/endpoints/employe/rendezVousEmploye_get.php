@@ -13,7 +13,7 @@ try {
         exit();
     }
 
-    // Requête optimisée avec tous les JOINS nécessaires
+
    $query = "
     SELECT 
         r.NUM_RDV,
@@ -43,7 +43,7 @@ try {
     $pstmt->execute();
     $resultats = $pstmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Structure de réponse organisée
+
     $response = [
         'employe' => null,
         'rendezvous' => [],
@@ -51,7 +51,6 @@ try {
     ];
 
     if (!empty($resultats)) {
-        // Infos employé (premier enregistrement)
         $first = $resultats[0];
         $response['employe'] = [
             'code' => $first['CODE_EMPLOYE'],
@@ -60,11 +59,9 @@ try {
             'poste' => $first['POSTE']
         ];
 
-        // Rendez-vous et services (avec déduplication)
         $servicesCache = [];
         
         foreach ($resultats as $row) {
-            // Ajout rendez-vous
             $response['rendezvous'][] = [
                 'num_rdv' => $row['NUM_RDV'],
                 'date' => $row['DATE_RDV'],
@@ -74,7 +71,6 @@ try {
                 'service_id' => $row['ID_SERVICE']
             ];
 
-            // Gestion des services uniques
             if (!isset($servicesCache[$row['ID_SERVICE']])) {
                 $servicesCache[$row['ID_SERVICE']] = true;
                 $response['services'][] = [

@@ -1,28 +1,11 @@
 <?php
-require_once(__DIR__.'/../jwt/utils.php');
 require_once(__DIR__.'/../../db/Database.php');
 
 header('Content-Type: application/json');
 
-// Vérification du token
-$headers = getallheaders();
-if (!isset($headers['Authorization']) || !str_starts_with($headers['Authorization'], 'Bearer ')) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Token manquant ou invalide']);
-    exit();
-}
 
-$token = substr($headers['Authorization'], 7);
-$payload = verify_jwt($token);
-if (!$payload || !isset($payload['COURRIEL'])) {
-    http_response_code(403);
-    echo json_encode(['error' => 'Token invalide']);
-    exit();
-}
+$courriel = $data['COURRIEL'];
 
-$courriel = $payload['COURRIEL'];
-
-// Lecture des données
 $data = json_decode(file_get_contents('php://input'), true);
 if (!$data || !isset($data['NUM_TEL'], $data['NUM_CIVIQUE'], $data['RUE'], $data['VILLE'], $data['CODE_POSTAL'])) {
     http_response_code(400);

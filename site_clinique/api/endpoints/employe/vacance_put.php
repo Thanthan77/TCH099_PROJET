@@ -27,7 +27,6 @@ try {
 
     $cnx = Database::getInstance();
 
-    // Vérifie si l'exception existe et est en ATTENTE
     $checkQuery = "SELECT * FROM Exception_horaire WHERE ID_EXC = :id AND TYPE_EXCEPTION = 'ATTENTE'";
     $stmt = $cnx->prepare($checkQuery);
     $stmt->bindValue(':id', $idException);
@@ -41,7 +40,7 @@ try {
     }
 
     if ($action === 'accept') {
-        // Met à jour le type d'exception à VACANCES
+
         $updateQuery = "UPDATE Exception_horaire SET TYPE_EXCEPTION = 'VACANCES' WHERE ID_EXC = :id";
         $stmt = $cnx->prepare($updateQuery);
         $stmt->bindValue(':id', $idException);
@@ -50,7 +49,7 @@ try {
         http_response_code(200);
         echo json_encode(["status" => "success", "message" => "Exception acceptée"]);
     } else {
-        // Supprime la ligne
+
         $deleteQuery = "DELETE FROM Exception_horaire WHERE ID_EXC = :id AND TYPE_EXCEPTION = 'ATTENTE'";
         $stmt = $cnx->prepare($deleteQuery);
         $stmt->bindValue(':id', $idException);

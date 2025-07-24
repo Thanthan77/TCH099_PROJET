@@ -7,7 +7,6 @@ header('Content-Type: application/json');
 try {
     $cnx = Database::getInstance();
 
-    // Requête avec JOIN pour récupérer le nom du service et les infos de l'employé
     $pstmt = $cnx->prepare("
         SELECT 
             r.NUM_RDV,
