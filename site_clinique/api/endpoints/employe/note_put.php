@@ -3,6 +3,8 @@
 require_once(__DIR__.'/../../db/Database.php');
 header('Content-Type: application/json; charset=UTF-8');
 
+$input = json_decode(file_get_contents('php://input'), true);
+
 if ($_SERVER['REQUEST_METHOD'] !== 'PUT') {
     http_response_code(405);
     header('Allow: PUT');
@@ -12,7 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'PUT') {
     exit();
 }
 
-$input = json_decode(file_get_contents('php://input'), true);
 if (
     !isset($input['numRdv']) ||
     !isset($input['noteConsult'])

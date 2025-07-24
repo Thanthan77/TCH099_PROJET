@@ -2,17 +2,17 @@
 
 require_once(__DIR__.'/../../db/Database.php');
 
-ob_start(); // Pour éviter les erreurs de "headers already sent"
+ob_start(); 
 header('Content-Type: application/json');
 
-// Lecture des données JSON envoyées
+
 $data = json_decode(file_get_contents('php://input'), true);
 
 try {
     $cnx = Database::getInstance();
     $cnx->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Génération d'un mot de passe aléatoire (10 caractères)
+    // Génération d'un mot de passe aléatoire
     function genererMotDePasse($longueur = 10) {
         $caracteres = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=';
         return substr(str_shuffle(str_repeat($caracteres, ceil($longueur/strlen($caracteres)))), 0, $longueur);
@@ -39,7 +39,7 @@ try {
         echo json_encode([
             'status' => 'OK',
             'message' => 'Employé ajouté avec succès',
-            'motDePasseTemporaire' => $motDePasseClair  // à communiquer une seule fois
+            'motDePasseTemporaire' => $motDePasseClair  // mot de passe temporaire
         ]);
     } else {
         http_response_code(500);
