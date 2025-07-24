@@ -10,6 +10,19 @@ header('Content-Type: application/json');
 $data = json_decode(file_get_contents('php://input'), true);
 
 try {
+
+    $codeEmploye = $data['codeEmploye'] ?? null;
+    $dateException = $data['dateException'] ?? null;
+    $heureDebut = $data['heureDebut'] ?? null;
+    $heureFin = $data['heureFin'] ?? null;
+
+    // Verification qu'il y a des données dans tous les champs du body
+    if (!$codeEmploye || !$dateException || !$heureDebut || !$heureFin) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Données manquantes ou invalides']);
+        exit;
+    }
+
     $cnx = Database::getInstance();
     $cnx->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 

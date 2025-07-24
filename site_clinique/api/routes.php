@@ -47,7 +47,11 @@ put($URL.'/vacance/$idException','endpoints/employe/vacance_put.php');
 //POST pour créer un nouvel employe
 post($URL.'/employe','endpoints/employe/employe_post.php');
 
+//PUT pour mettre a jour les profiles des employés
+put($URL.'/employe/user/$codeEmploye','endpoints/employe/employe_put.php');
 
+//PUT pour deplacer un rendez vous
+put($URL.'/rendezvous/id/$numRdv','endpoints/employe/rendezvous_put.php');
 
 
 // Section Patients

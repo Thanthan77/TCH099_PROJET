@@ -1,9 +1,6 @@
 <?php
 
 ob_start();
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
 require_once(__DIR__.'/../../db/Database.php');
 
@@ -11,11 +8,11 @@ header('Content-Type: application/json');
 
 $cnx = $pstmt = null;
 
+$json = file_get_contents('php://input');
+
+$data = json_decode($json, true);
+
 try {
-    $json = file_get_contents('php://input');
-    $data = json_decode($json, true);
-
-
 
     $action = strtolower(trim($data['action']));
 
