@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity ;
 
 import org.json.JSONObject;
 
@@ -14,7 +14,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
 
     private TextView titre;
     private EditText connexion_email, connexion_mdp;
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private class ConnexionTask extends AsyncTask<String, Void, String> {
+    public class ConnexionTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... params) {
