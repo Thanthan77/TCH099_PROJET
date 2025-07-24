@@ -7,7 +7,7 @@ $data = json_decode(file_get_contents('php://input'), true);
 $code_employe = $data['CODE_EMPLOYE'];
 $mdp = $data['MOT_DE_PASSE'];
 
-if $code_employe=='' || $mdp=='') { 
+if ($code_employe=='' || $mdp=='') { 
     http_response_code(401);
     echo json_encode(['error' => 'Identifiants invalides']);
     exit();
@@ -18,7 +18,7 @@ $cnx = $pstmt = null;
 try {
     $cnx = Database::getInstance();
     $pstmt = $cnx->prepare("SELECT * FROM Employe WHERE CODE_EMPLOYE=:codeEmploye");
-    $pstmt->bindParam(':codeEmploye'$code_employe);
+    $pstmt->bindParam(':codeEmploye',$code_employe);
     $pstmt->execute();
     
     $pstmt->setFetchMode(PDO::FETCH_ASSOC);

@@ -23,24 +23,6 @@ try {
         exit;
     }
 
-    // Verification du format de la date (annee-mois-jour)
-    $date = DateTime::createFromFormat('Y-m-d', $dateException);
-    if (!$date || $date->format('Y-m-d') !== $dateException) {
-        http_response_code(400);
-        echo json_encode(['error' => 'Format de date invalide']);
-        exit;
-    }
-
-    // Verification de l'heure de debut et fin s'ils sont dans le bon format
-    $debut = DateTime::createFromFormat('H:i', $heureDebut);
-    $fin = DateTime::createFromFormat('H:i', $heureFin);
-
-    if (!$debut || $debut->format('H:i') !== $heureDebut ||!$fin || $fin->format('H:i') !== $heureFin) {
-        http_response_code(400);
-        echo json_encode(['error' => 'Format d\'heure invalide']);
-        exit;
-    }
-
     $cnx = Database::getInstance();
     $cnx->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
