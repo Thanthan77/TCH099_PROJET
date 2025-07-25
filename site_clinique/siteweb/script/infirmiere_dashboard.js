@@ -162,9 +162,70 @@ function showTab(id) {
 window.showTab = showTab;
 window.afficherDossier = afficherDossier;
 
+let demandeEnvoyee = false;
+
 document.addEventListener('DOMContentLoaded', () => {
   chargerAfficherRendezVous();
   chargerAfficherHoraires();
+
+  const btnVacances = document.querySelector("#vacances button");
+
+  if (btnVacances) {
+    btnVacances.addEventListener("click", async function (e) {
+      if (demandeEnvoyee) return; // protection double-clic
+      
+      e.preventDefault();
+      demandeEnvoyee = true;
+      btnVacances.disabled = true;
+
+      const errDiv = document.getElementById("erreur-vacances");
+      errDiv.innerText = "";
+
+      const dateDebut = document.getElementById("date-debut").value;
+      const dateFin = document.getElementById("date-fin").value;
+
+      if (!codeEmploye || !dateDebut || !dateFin) {
+        errDiv.style.color = "red";
+        errDiv.innerText = "Veuillez remplir toutes les informations.";
+        btnVacances.disabled = false;
+        demandeEnvoyee = false;
+        return;
+      }
+
+      const data = { dateDebut, dateFin };
+
+      try {
+        const response = await fetch(`${API_URL}vacance/employe/${codeEmploye}`, {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const rawText = await response.text();
+        const json = JSON.parse(rawText);
+
+        if (!response.ok) {
+          throw new Error(json.error || "Erreur inconnue");
+        }
+
+        if (json.status === "OK") {
+          errDiv.style.color = "green";
+          errDiv.innerText = json.message || "Demande envoyée avec succès.";
+        } else {
+          throw new Error(json.error || "Échec de l'envoi.");
+        }
+
+      } catch (error) {
+        console.error("Erreur lors de la demande :", error);
+        errDiv.style.color = "red";
+        errDiv.innerText = error.message || "Réponse du serveur invalide.";
+      } finally {
+        btnVacances.disabled = false;
+        demandeEnvoyee = false;
+      }
+    });
+  }
+
 });
 
 window.toggleUserMenu = function () {
