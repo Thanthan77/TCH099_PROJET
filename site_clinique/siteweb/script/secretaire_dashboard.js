@@ -95,20 +95,22 @@ async function chargerPatients() {
     if (!response.ok) throw new Error("Échec du chargement des patients");
 
     const patients = await response.json();
-    const tbody = document.querySelector("#patients tbody");
+    const tbody = document.querySelector("#table-patients");
     tbody.innerHTML = "";
 
     if (patients.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="4">Aucun patient trouvé</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="5">Aucun patient trouvé</td></tr>`;
       return;
     }
 
     patients.forEach(p => {
       const row = document.createElement("tr");
+      row.classList.add("ligne-patient");
       row.innerHTML = `
-        <td>${p.PRENOM_PATIENT} ${p.NOM_PATIENT}</td>
-        <td>${p.DATE_NAISSANCE}</td>
-        <td>${p.NO_ASSURANCE_MALADIE}</td>
+        <td class="col-prenom">${p.PRENOM_PATIENT}</td>
+        <td class="col-nom">${p.NOM_PATIENT}</td>
+        <td class="col-date">${p.DATE_NAISSANCE}</td>
+        <td class="col-assurance">${p.NO_ASSURANCE_MALADIE}</td>
         <td>${p.NUM_TEL} / ${p.COURRIEL}</td>
       `;
       tbody.appendChild(row);
@@ -118,6 +120,7 @@ async function chargerPatients() {
     console.error("Erreur lors du chargement des patients :", err);
   }
 }
+
 
 window.toggleUserMenu = function () {
   const menu = document.getElementById("userDropdown");
@@ -142,5 +145,63 @@ document.addEventListener("DOMContentLoaded", function () {
       localStorage.clear();
       window.location.href = "../html/index.html";
     });
+  }
+});
+
+
+function toggleFiltres() {
+  const filtreSection = document.getElementById("filtreSection");
+  if (!filtreSection) {
+    console.error("❌ Élément filtre introuvable !");
+    return;
+  }
+
+  if (filtreSection.classList.contains("hidden")) {
+    filtreSection.classList.remove("hidden");
+  } else {
+    filtreSection.classList.add("hidden");
+  }
+}
+
+
+function filtrerPatients() {
+  const prenom = document.getElementById('filtrePrenom').value.toLowerCase();
+  const nom = document.getElementById('filtreNom').value.toLowerCase();
+  const dateNaissance = document.getElementById('filtreDateNaissance').value;
+  const assurance = document.getElementById('filtreAssurance').value.toLowerCase();
+
+  const lignes = document.querySelectorAll('.ligne-patient');
+
+  lignes.forEach(ligne => {
+    const prenomCell = ligne.querySelector('.col-prenom')?.textContent.toLowerCase() || "";
+    const nomCell = ligne.querySelector('.col-nom')?.textContent.toLowerCase() || "";
+    const dateCell = ligne.querySelector('.col-date')?.textContent || "";
+    const assuranceCell = ligne.querySelector('.col-assurance')?.textContent.toLowerCase() || "";
+
+    const correspond =
+      prenomCell.includes(prenom) &&
+      nomCell.includes(nom) &&
+      dateCell.includes(dateNaissance) &&
+      assuranceCell.includes(assurance);
+
+    ligne.style.display = correspond ? '' : 'none';
+  });
+}
+
+
+function reinitialiserFiltres() {
+  document.getElementById('filtrePrenom').value = '';
+  document.getElementById('filtreNom').value = '';
+  document.getElementById('filtreDateNaissance').value = '';
+  document.getElementById('filtreAssurance').value = '';
+  filtrerPatients();
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  const filtreIcone = document.querySelector(".filtre-icon");
+  if (filtreIcone) {
+    filtreIcone.addEventListener("click", toggleFiltres);
+  } else {
+    console.error("❌ Icône de filtre introuvable !");
   }
 });
