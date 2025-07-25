@@ -29,7 +29,6 @@
   <nav class="tabs">
     <button onclick="showTab('comptes')">Comptes utilisateurs</button>
     <button onclick="showTab('vacances')">Demandes de vacances</button>
-    <button onclick="showTab('secretaires')">Assignation secrétaires</button>
     <button onclick="showTab('infirmiers')">Assignation infirmiers</button>
   </nav>
 
@@ -74,23 +73,6 @@
           <tr>
             <td>Dr. Tremblay</td><td>Médecin</td><td>2025-08-01</td><td>2025-08-10</td><td>En attente</td>
             <td><button>Accepter</button> <button class="danger">Refuser</button></td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-    <!-- Secrétaires -->
-    <section id="secretaires" class="tab-content hidden">
-      <h2>Assignation des secrétaires</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Médecin</th><th>Secrétaire assignée</th><th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Dr. Lavoie</td><td>Aucune</td><td><button>Assigner</button></td>
           </tr>
         </tbody>
       </table>
