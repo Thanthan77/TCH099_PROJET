@@ -18,14 +18,13 @@
       <h1>Clinique VITALIS – Espace Médecin</h1>
     </div>
     <div class="user-menu-container">
-    <img src="../image/menu.png" alt="Menu" class="user-menu-icon" onclick="toggleUserMenu()" />
-    <div class="user-dropdown" id="userDropdown">
-      <a href="../html/profile.html" id="btn-profile">Accéder au profil</a>
-      <a href="../html/mot_de_passe.html" id="btn-password">Changer mot de passe</a>
-      <a href="../html/index.html" id="btn-logout">Se déconnecter</a>
+      <img src="../image/menu.png" alt="Menu" class="user-menu-icon" onclick="toggleUserMenu()" />
+      <div class="user-dropdown" id="userDropdown">
+        <a href="../html/profile.html" id="btn-profile">Accéder au profil</a>
+        <a href="../html/mot_de_passe.html" id="btn-password">Changer mot de passe</a>
+        <a href="../html/index.html" id="btn-logout">Se déconnecter</a>
+      </div>
     </div>
-</div>
-
   </header>
 
   <nav class="tabs">
@@ -37,7 +36,14 @@
   <main>
     <!-- Section Rendez‑vous -->
     <section id="rdv" class="tab-content">
-      <h2>Mes rendez‑vous de la semaine</h2>
+      <div class="rdv-header">
+        <h2 class="rdv-title">Mes rendez-vous de la semaine</h2>
+        <div class="rdv-actions">
+          <img src="../image/liste.png" alt="Vue Liste" class="rdv-view-icon" onclick="afficherVueListe()" />
+          <img src="../image/calendar.png" alt="Vue Calendrier" class="rdv-view-icon" onclick="afficherVueCalendrier()" />
+        </div>
+      </div>
+
       <table>
         <thead>
           <tr>
