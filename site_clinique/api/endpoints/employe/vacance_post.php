@@ -2,47 +2,46 @@
 
 require_once(__DIR__.'/../../db/Database.php');
 
-
 ob_start();
-
 header('Content-Type: application/json');
 
 $data = json_decode(file_get_contents('php://input'), true);
 
 try {
+    $dateDebut = $data['dateDebut'] ?? null;
+    $dateFin = $data['dateFin'] ?? null;
 
-    $codeEmploye = $data['codeEmploye'] ?? null;
-    $dateException = $data['dateException'] ?? null;
-    $heureDebut = $data['heureDebut'] ?? null;
-    $heureFin = $data['heureFin'] ?? null;
-
-    // Verification qu'il y a des données dans tous les champs du body
-    if (!$codeEmploye || !$dateException || !$heureDebut || !$heureFin) {
+    // Vérification des champs requis
+    if (!$dateDebut || !$dateFin) {
         http_response_code(400);
         echo json_encode(['error' => 'Données manquantes ou invalides']);
+        exit;
+    }
+
+    // Validation des dates 
+    if (strtotime($dateFin) < strtotime($dateDebut)) {
+        http_response_code(400);
+        echo json_encode(['error' => 'La date de fin doit être postérieure ou égale à la date de début']);
         exit;
     }
 
     $cnx = Database::getInstance();
     $cnx->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-
-    $sql = "INSERT INTO Exception_horaire (CODE_EMPLOYE, DATE_EXCEPTION, HEURE_DEBUT, HEURE_FIN, TYPE_EXCEPTION)
-            VALUES (:code, :date, :debut, :fin, :type)";
+    $sql = "INSERT INTO Exception_horaire (CODE_EMPLOYE, DATE_DEBUT, DATE_FIN, TYPE_EXCEPTION)
+            VALUES (:code, :debut, :fin, :type)";
 
     $stmt = $cnx->prepare($sql);
-
-    $stmt->bindValue(':code', $codeEmploye);
-    $stmt->bindValue(':date', $data['dateException']);
-    $stmt->bindValue(':debut', $data['heureDebut']);
-    $stmt->bindValue(':fin', $data['heureFin']);
-    $stmt->bindValue(':type', 'ATTENTE'); 
+    $stmt->bindValue(':code', $codeEmploye); 
+    $stmt->bindValue(':debut', $dateDebut);
+    $stmt->bindValue(':fin', $dateFin);
+    $stmt->bindValue(':type', 'ATTENTE');
 
     $stmt->execute();
 
     if ($stmt->rowCount() >= 1) {
         http_response_code(200);
-        echo json_encode(['status' => 'OK', 'message' => 'Exception insérée avec le statut ATTENTE']);
+        echo json_encode(['status' => 'OK', 'message' => 'Demande de vacance en ATTENTE']);
     } else {
         http_response_code(500);
         echo json_encode(['error' => 'Échec de l\'insertion']);

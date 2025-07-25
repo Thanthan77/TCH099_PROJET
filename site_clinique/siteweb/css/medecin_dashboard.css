@@ -104,8 +104,6 @@ button:hover {
   background-color: #023e8a;
 }
 
-.hidden { display: none; }
-
 .user-menu-container {
   position: absolute;
   top: 20px;
@@ -144,4 +142,33 @@ button:hover {
 
 header {
   position: relative;
+}
+
+.rdv-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.rdv-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+  margin-right: auto;
+}
+
+.rdv-actions {
+  display: flex;
+  gap: 10px;
+  padding-right: 5px;
+}
+
+.rdv-view-icon {
+  width: 32px !important;
+  height: 32px !important;
+  cursor: pointer;
+  object-fit: contain;
+  display: block;
 }

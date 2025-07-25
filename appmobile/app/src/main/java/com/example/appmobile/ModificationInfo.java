@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -47,20 +46,10 @@ public class ModificationInfo extends AppCompatActivity implements View.OnClickL
         modifInfo.setOnClickListener(this);
 
 
-        
-
     }
 
     @Override
     public void onClick(View view) {
-
-        if (view == modifInfo) {
-            if ((numCivique.getText().toString()).length() > 3 ){
-                Toast.makeText(this, "Numéro civique érroné", Toast.LENGTH_SHORT).show();
-            } if (( numCell.getText().toString()).length() > 10) {
-                Toast.makeText(this, "Numéro de cellulaire  érroné", Toast.LENGTH_SHORT).show();
-            }
-        }
 
 
 
