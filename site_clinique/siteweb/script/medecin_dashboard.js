@@ -160,6 +160,7 @@ window.addEventListener("click", function (event) {
   }
 });
 
+
 document.addEventListener("DOMContentLoaded", function () {
   const logoutBtn = document.getElementById("btn-logout");
   if (logoutBtn) {
@@ -171,3 +172,55 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+
+
+
+
+document.getElementById("vacances").querySelector("button").addEventListener("click", function (e) {
+    e.preventDefault();
+    const errDiv = document.getElementById("erreur-vacances");
+    errDiv.innerText = "";
+
+    const dateDebut = document.getElementById("date-debut").value;
+    const dateFin = document.getElementById("date-fin").value;
+    const codeEmploye = window.codeEmploye; // Assure-toi que cette variable est bien définie quelque part
+
+    if (!codeEmploye || !dateDebut || !dateFin) {
+        errDiv.innerText = "Veuillez remplir toutes les informations.";
+        return;
+    }
+
+    const data = {
+        codeEmploye: codeEmploye,
+        dateDebut: dateDebut,
+        dateFin: dateFin
+    };
+
+    fetch("http://localhost/vacance/employe/" + codeEmploye, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw new Error(err.error); });
+        }
+        return response.json();
+    })
+    .then(result => {
+        if (result.status === "OK") {
+            errDiv.style.color = "green";
+            errDiv.innerText = result.message;
+        } else {
+            throw new Error(result.error || "Échec de l'envoi.");
+        }
+    })
+    .catch(error => {
+        console.error("Erreur:", error);
+        errDiv.style.color = "red";
+        errDiv.innerText = error.message || "Erreur lors de la demande.";
+    });
+});
+
+
+
