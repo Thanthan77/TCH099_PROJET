@@ -12,7 +12,80 @@ window.addEventListener("pageshow", verifierConnexion);
     document.addEventListener('DOMContentLoaded', () => {
       showTab('comptes');
       chargerAfficherComptes();
+
+
+
+      const refreshBtn = document.getElementById('refresh-btn');
+  refreshBtn.addEventListener('click', chargerDemandesVacances);
+  chargerDemandesVacances(); // Chargement initial
+});
+
+async function chargerDemandesVacances() {
+  const url = 'http://localhost/api/vacances';
+
+  try {
+    const response = await fetch(url);
+    const demandes = await response.json();
+
+    if (!response.ok) {
+      alert('Erreur de chargement des vacances.');
+      console.error(demandes);
+      return;
+    }
+
+    const tbody = document.querySelector('#vacances table tbody');
+    tbody.innerHTML = '';
+
+    demandes.forEach((demande) => {
+      const tr = document.createElement('tr');
+
+      tr.innerHTML = `
+        <td>${demande.NOM || 'N/A'}</td>
+        <td>${demande.ROLE || 'N/A'}</td>
+        <td>${demande.DATE_DEBUT}</td>
+        <td>${demande.DATE_FIN}</td>
+        <td>En attente</td>
+        <td>
+          <button onclick="traiterExceptionVacances(${demande.ID_EXC}, 'accept')">Accepter</button>
+          <button class="danger" onclick="traiterExceptionVacances(${demande.ID_EXC}, 'reject')">Refuser</button>
+        </td>
+      `;
+
+      tbody.appendChild(tr);
     });
+  } catch (erreur) {
+    console.error('Erreur lors du fetch des demandes :', erreur);
+    alert('Une erreur est survenue pendant le chargement.');
+  }
+}
+
+async function traiterExceptionVacances(idException, action) {
+  const url = `http://localhost/api/vacance/${idException}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ action: action }),
+    });
+
+    const resultat = await response.json();
+
+    if (response.ok) {
+      alert(resultat.message);
+      chargerDemandesVacances(); // Mise à jour de la liste
+    } else {
+      alert(`Erreur : ${resultat.error}`);
+    }
+  } catch (erreur) {
+    console.error('Erreur réseau ou serveur :', erreur);
+    alert('Une erreur s’est produite.');
+  
+  }
+
+}
 
     function showTab(id) {
       document.querySelectorAll('.tab-content').forEach(sec => {
@@ -101,3 +174,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+
+
+
+
+

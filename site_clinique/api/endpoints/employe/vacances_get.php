@@ -2,13 +2,25 @@
 
 require_once(__DIR__.'/../../db/Database.php');
 
-// Réponse JSON
 header('Content-Type: application/json');
 
 try {
     $cnx = Database::getInstance();
 
-    $pstmt = $cnx->prepare("SELECT * FROM Exception_horaire WHERE TYPE_EXCEPTION = :type");
+    $sql = "
+        SELECT 
+            eh.ID_EXC,
+            e.NOM_EMPLOYE AS NOM,
+            e.POSTE AS ROLE,
+            eh.DATE_DEBUT,
+            eh.DATE_FIN
+        FROM Exception_horaire eh
+        JOIN Employe e ON eh.CODE_EMPLOYE = e.CODE_EMPLOYE
+        WHERE eh.TYPE_EXCEPTION = :type
+        ORDER BY eh.DATE_DEBUT ASC
+    ";
+
+    $pstmt = $cnx->prepare($sql);
     $pstmt->bindValue(':type', 'ATTENTE', PDO::PARAM_STR);
     $pstmt->setFetchMode(PDO::FETCH_ASSOC);
     $pstmt->execute();
@@ -23,7 +35,6 @@ try {
         "message" => $e->getMessage()
     ]);
 } finally {
-    
     if (isset($cnx)) {
         $cnx = null;
     }
