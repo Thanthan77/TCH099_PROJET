@@ -206,13 +206,25 @@ window.addEventListener("click", function (event) {
           errDiv.style.color = "green";
           errDiv.innerText = json.message || "Demande envoyée avec succès.";
         } else {
-          throw new Error(json.error || "Échec de l'envoi.");
+          errDiv.style.color = "red";
+          if (data.error && data.error.includes("SQLSTATE[23000]") && data.error.includes("Duplicate entry")) {
+            errDiv.innerText = " Cette date a deja été prise";
+          } else {
+            errDiv.innerText = data.error || "Une erreur s'est produite lors de la demande.";
+          } 
         }
 
       } catch (error) {
         console.error("Erreur lors de la demande :", error);
         errDiv.style.color = "red";
-        errDiv.innerText = error.message || "Réponse du serveur invalide.";
+
+        if (error.message.includes("SQLSTATE[23000]") && error.message.includes("Duplicate entry")) {
+          errDiv.innerText = " Cette date a deja été prise";
+        } else{
+          errDiv.innerText = error.message || "Réponse du serveur invalide.";
+        }
+
+        
       } finally {
         btnVacances.disabled = false;
         demandeEnvoyee = false;
