@@ -25,29 +25,39 @@
 
   <main>
     <div class="container">
-      <h2>Profil de l'Employé</h2>
+      <h2>Profil</h2>
 
       <form id="formProfil">
         <label for="numero">Numéro d'employé</label>
-        <input type="text" id="numero" name="numero" value="EMP12345" readonly>
+        <input type="text" id="numero" name="numero" readonly>
 
-        <label for="nom">Nom complet</label>
-        <input type="text" id="nom" name="nom" value="Jean Dupont" readonly>
+        <label for="prenom">Prenom</label>
+        <input type="text" id="prenom" name="prenom" readonly>
+
+        <label for="nom">Nom</label>
+        <input type="text" id="nom" name="nom" readonly>
+
+        <label for="date_naissance">Date de naissance</label>
+        <input type="date" id="date_naissance" name="date_naissance" readonly>
 
         <label for="sexe">Sexe</label>
-        <input type="text" id="sexe" name="sexe" value="Homme" readonly>
+        <input type="text" id="sexe" name="sexe" readonly>
+
+        <label for="etat_civil">État civil</label>
+        <input type="text" id="etat_civil" name="etat_civil" readonly>
 
         <label for="poste">Poste</label>
-        <input type="text" id="poste" name="poste" value="Infirmier" readonly>
+        <input type="text" id="poste" name="poste" readonly>
 
         <label for="email">Courriel</label>
-        <input type="email" id="email" name="email" value="jean.dupont@example.com" readonly>
+        <input type="email" id="email" name="email" readonly>
 
         <label for="telephone">Téléphone</label>
-        <input type="tel" id="telephone" name="telephone" value="514-123-4567" readonly>
+        <input type="tel" id="telephone" name="telephone" readonly>
 
         <label for="adresse">Adresse</label>
-        <textarea id="adresse" name="adresse" rows="3" readonly>123 Rue Exemple, Montréal, QC</textarea>
+        <input type="text" id="adresse" name="adresse" readonly>
+
 
         <button type="button" id="editBtn">Modifier le profil</button>
         <button type="submit" id="saveBtn" style="display:none;">Enregistrer les modifications</button>

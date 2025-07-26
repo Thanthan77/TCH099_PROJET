@@ -42,7 +42,7 @@ window.addEventListener("pageshow", verifierConnexion);
             <td>${escapeHtml(emp.CODE_EMPLOYE)}</td>
             <td>${escapeHtml(emp.POSTE)}</td>
             <td>
-              <button onclick="modifierEmploye('${emp.CODE_EMPLOYE}')">Modifier</button>
+              <button onclick="ouvrirProfil('${emp.CODE_EMPLOYE}')">Profil</button>
               <button class="danger" onclick="supprimerEmploye('${emp.CODE_EMPLOYE}')">Supprimer</button>
             </td>
           </tr>
@@ -66,8 +66,8 @@ window.addEventListener("pageshow", verifierConnexion);
       }[s]));
     }
 
-    function modifierEmploye(code) {
-      window.location.href = `modifier_employe.html?codeEmploye=${code}`;
+    function ouvrirProfil(code) {
+      window.location.href = `../html/profile.html?codeEmploye=${code}`;
     }
 
     function supprimerEmploye(code) {
