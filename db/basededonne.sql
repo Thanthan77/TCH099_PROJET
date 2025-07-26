@@ -10,7 +10,11 @@ CREATE TABLE Employe (
   CODE_EMPLOYE   INT           PRIMARY KEY,
   PRENOM_EMPLOYE VARCHAR(30),
   NOM_EMPLOYE    VARCHAR(30),
+  ETAT_CIVIL     ENUM('Celibataire','Marier'),
   MOT_DE_PASSE   VARCHAR(30),
+  COURRIEL       VARCHAR(30),
+  TELEPHONE      BIGINT,
+  ADRESSE        VARCHAR(100),
   POSTE          VARCHAR(30)
 );
 
@@ -65,7 +69,7 @@ CREATE TABLE Exception_horaire (
   CODE_EMPLOYE   INT                NOT NULL,
   DATE_DEBUT    DATE              NOT NULL,
   DATE_FIN      DATE              NOT NULL,
-  TYPE_EXCEPTION ENUM('VACANCES','INDISPONIBLE', 'ATTENTE') NOT NULL,
+  TYPE_EXCEPTION ENUM('VACANCES', 'ATTENTE') NOT NULL,
   CONSTRAINT FK_EXC_EMP FOREIGN KEY (CODE_EMPLOYE)
     REFERENCES Employe(CODE_EMPLOYE) ON DELETE CASCADE
 );
@@ -96,16 +100,20 @@ INSERT INTO Service (ID_SERVICE, NOM, DESCRIPTION) VALUES
   (6, 'Prélèvement sanguin / test urine','Prise de sang ou test urinaire'),
   (7, 'Urgence mineure',                'Blessures légères, infections, douleurs modérées');
 
-INSERT INTO Employe (CODE_EMPLOYE, PRENOM_EMPLOYE, NOM_EMPLOYE, MOT_DE_PASSE, POSTE) VALUES
-  (100, 'Alice',   'Durand',   'Au8$kLm3Tq',  'Médecin'),
-  (101, 'Jean',    'Dupont',   'jD4#Rt9YpV',  'Médecin'),
-  (102, 'Monique', 'Jodoin',   'Mr5!Nq2KbZ',  'Médecin'),
-  (200, 'Bruno',   'Martin',   'Bx7%Re1JmP',  'Infirmier'),
-  (201, 'Isabelle','Langlois', 'Iu3&Ka8LdY',  'Infirmier'),
-  (202, 'Dominic', 'Dublois',  'Dp6@Vz4XcQ',  'Infirmier'),
-  (300, 'Claire',  'Moreau',   'Cn9#Hj2MfW',  'Secrétaire'),
-  (301, 'Xavier',  'Dubé',     'Xb5$Qn3RpK',  'Secrétaire'),
-  (400, 'George',  'Smith',    'Gt8!Lz1WfR',  'Administrateur');
+INSERT INTO Employe (
+  CODE_EMPLOYE, PRENOM_EMPLOYE, NOM_EMPLOYE, ETAT_CIVIL, MOT_DE_PASSE,
+  COURRIEL, TELEPHONE, ADRESSE, POSTE
+) VALUES
+  (100, 'Alice',    'Durand',   'Celibataire', 'Au8$kLm3Tq',  'alice.durand@example.com',   5141234567, '123 rue des Lilas',     'Médecin'),
+  (101, 'Jean',     'Dupont',   'Marier',      'jD4#Rt9YpV',  'jean.dupont@example.com',    5141234568, '456 rue des Érables',   'Médecin'),
+  (102, 'Monique',  'Jodoin',   'Celibataire', 'Mr5!Nq2KbZ',  'monique.jodoin@example.com', 5141234569, '789 rue des Pins',      'Médecin'),
+  (200, 'Bruno',    'Martin',   'Marier',      'Bx7%Re1JmP',  'bruno.martin@example.com',   5141234570, '321 rue Ontario',       'Infirmier'),
+  (201, 'Isabelle', 'Langlois', 'Celibataire', 'Iu3&Ka8LdY',  'isabelle.langlois@example.com',5141234571, '654 rue Mont-Royal',   'Infirmier'),
+  (202, 'Dominic',  'Dublois',  'Celibataire', 'Dp6@Vz4XcQ',  'dominic.dublois@example.com',5141234572, '987 rue Sherbrooke',    'Infirmier'),
+  (300, 'Claire',   'Moreau',   'Marier',      'Cn9#Hj2MfW',  'claire.moreau@example.com',  5141234573, '135 rue Papineau',      'Secrétaire'),
+  (301, 'Xavier',   'Dubé',     'Celibataire', 'Xb5$Qn3RpK',  'xavier.dube@example.com',     5141234574, '246 rue Sainte-Catherine', 'Secrétaire'),
+  (400, 'George',   'Smith',    'Marier',      'Gt8!Lz1WfR',  'george.smith@example.com',   5141234575, '369 rue Berri',         'Administrateur');
+
 
 INSERT INTO Patient (
   COURRIEL, PRENOM_PATIENT, NOM_PATIENT, MOT_DE_PASSE,
@@ -189,8 +197,8 @@ INSERT INTO Horaire (CODE_EMPLOYE, HEURE_DEBUT, HEURE_FIN, JOURS) VALUES
 INSERT INTO Exception_horaire (CODE_EMPLOYE, DATE_DEBUT, DATE_FIN, TYPE_EXCEPTION) VALUES
   (100, '2025-07-01', '2025-07-15', 'VACANCES'),
   (101, '2025-08-10', '2025-08-10', 'ATTENTE'),
-  (102, '2025-06-05', '2025-06-07', 'INDISPONIBLE'),
-  (200, '2025-09-12', '2025-09-12', 'INDISPONIBLE'),
+  (102, '2025-06-05', '2025-06-07', 'VACANCES'),
+  (200, '2025-09-12', '2025-09-12', 'VACANCES'),
   (201, '2025-07-20', '2025-07-25', 'ATTENTE'),
   (202, '2025-08-01', '2025-08-14', 'VACANCES');
 
