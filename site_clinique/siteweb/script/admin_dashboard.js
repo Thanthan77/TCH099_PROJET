@@ -1,13 +1,22 @@
 const API_URL = 'http://localhost/api/';
 
-function verifierConnexion() {
-  if (localStorage.getItem("isConnected") !== '1' && sessionStorage.getItem("isConnected") !== '1') {
-    window.location.replace("../html/index.html");
-  }
+const codeInUrl = new URLSearchParams(window.location.search).get("codeEmploye");
+const codeSession = sessionStorage.getItem("codeEmploye") || localStorage.getItem("codeEmploye");
+
+// Vérifie la session de connexion
+if (!codeSession || (!sessionStorage.getItem("isConnected") && !localStorage.getItem("isConnected"))) {
+  window.location.replace("../html/index.html");
 }
 
-document.addEventListener("DOMContentLoaded", verifierConnexion);
-window.addEventListener("pageshow", verifierConnexion);
+// 🔐 Empêche d'accéder à un autre dashboard via URL
+if (codeInUrl && codeInUrl !== codeSession) {
+  alert("Accès interdit : vous ne pouvez consulter que votre propre tableau de bord.");
+  const url = new URL(window.location.href);
+  url.searchParams.set("codeEmploye", codeSession);
+  window.location.replace(url);
+} else {
+  window.codeEmploye = codeInUrl || codeSession;
+}
     
     document.addEventListener('DOMContentLoaded', () => {
       showTab('comptes');
