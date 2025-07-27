@@ -20,7 +20,7 @@ if (estAdmin) {
   codeEmploye = codeInUrl || codeSession;
 } else {
   if (codeInUrl && codeInUrl !== codeSession) {
-    alert("⛔ Accès interdit : vous ne pouvez consulter que votre propre profil.");
+    alert("Accès interdit : vous ne pouvez consulter que votre propre profil.");
     codeEmploye = codeSession;
 
     const url = new URL(window.location.href);
@@ -101,6 +101,7 @@ document.getElementById("formProfil").addEventListener("submit", async function 
   e.preventDefault();
 
   const data = {
+    action: "update",
     CODE_EMPLOYE: codeEmploye,
     PRENOM: document.getElementById("prenom").value,
     NOM: document.getElementById("nom").value,
@@ -127,10 +128,10 @@ document.getElementById("formProfil").addEventListener("submit", async function 
       throw new Error(json.error || "Échec de mise à jour.");
     }
 
-    alert("✅ Profil mis à jour avec succès dans la base de données.");
+    alert(" Profil mis à jour avec succès dans la base de données.");
   } catch (err) {
     console.error("Erreur lors de l'enregistrement :", err);
-    alert("❌ Erreur lors de la mise à jour : " + err.message);
+    alert("Erreur lors de la mise à jour : " + err.message);
   } finally {
     modifiables.forEach(id => {
       const field = document.getElementById(id);

@@ -126,8 +126,8 @@ async function traiterExceptionVacances(idException, action) {
             <td>${escapeHtml(emp.CODE_EMPLOYE)}</td>
             <td>${escapeHtml(emp.POSTE)}</td>
             <td>
-              <button onclick="ouvrirProfil('${emp.CODE_EMPLOYE}')">Profil</button>
-              <button class="danger" onclick="supprimerEmploye('${emp.CODE_EMPLOYE}')">Supprimer</button>
+              <button onclick="ouvrirProfil(,${emp.CODE_EMPLOYE}')">Profil</button>
+              <button class="danger" onclick="supprimerEmploye(${emp.CODE_EMPLOYE}')">Supprimer</button>
             </td>
           </tr>
         `).join('');
@@ -153,12 +153,33 @@ async function traiterExceptionVacances(idException, action) {
     function ouvrirProfil(code) {
       window.location.href = `../html/profile.html?codeEmploye=${code}`;
     }
+function supprimerEmploye(code) {
+  if (!confirm("Confirmer la suppression de l'employé ?")) return;
 
-    function supprimerEmploye(code) {
-      if (!confirm("Confirmer la suppression de l'employé ?")) return;
-      // TODO : appeler DELETE `${API_URL}employes/${code}`
-      alert("Suppression non implémentée");
+  fetch(`${API_URL}employes`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      action: "delete",
+      CODE_EMPLOYE: code
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === "OK") {
+      alert(`Employé ${data.codeEmploye} supprimé avec succès`);
+    } else {
+      alert(`Erreur : ${data.error}`);
     }
+  })
+  .catch(error => {
+    console.error("Erreur lors de la suppression :", error);
+    alert("Une erreur s'est produite lors de la suppression");
+  });
+}
+
 
 window.toggleUserMenu = function () {
   const menu = document.getElementById("userDropdown");
