@@ -30,7 +30,7 @@ public class PageInscription extends AppCompatActivity implements View.OnClickLi
     private EditText motPasse, confirmationPasse, adresse;
     private Button soumis;
 
-    private static final String BASE_URL = "https://TON_DOMAINE/api/"; // 🔁 Remplace ça
+    private static final String BASE_URL = "http://localhost/api"; // 🔁 Remplace ça
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
