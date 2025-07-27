@@ -8,7 +8,7 @@ if (!codeSession || (!sessionStorage.getItem("isConnected") && !localStorage.get
   window.location.replace("../html/index.html");
 }
 
-// 🔐 Empêche d'accéder à un autre dashboard via URL
+// Empêche d'accéder à un autre dashboard via URL
 if (codeInUrl && codeInUrl !== codeSession) {
   alert("Accès interdit : vous ne pouvez consulter que votre propre tableau de bord.");
   const url = new URL(window.location.href);
@@ -21,11 +21,6 @@ if (codeInUrl && codeInUrl !== codeSession) {
     document.addEventListener('DOMContentLoaded', () => {
       showTab('comptes');
       chargerAfficherComptes();
-
-
-
-      const refreshBtn = document.getElementById('refresh-btn');
-  refreshBtn.addEventListener('click', chargerDemandesVacances);
   chargerDemandesVacances(); // Chargement initial
 });
 
@@ -73,12 +68,19 @@ async function traiterExceptionVacances(idException, action) {
 
   try {
     const response = await fetch(url, {
-      method: 'POST',
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ action: action }),
     });
+
+      const contentType = response.headers.get('content-type');
+
+    if (!contentType || !contentType.includes('application/json')) {
+      const raw = await response.text();
+      throw new Error("Réponse non-JSON : " + raw);
+    }
 
     const resultat = await response.json();
 
