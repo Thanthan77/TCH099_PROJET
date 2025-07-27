@@ -1,52 +1,52 @@
 package com.example.appmobile;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
 
-import androidx.appcompat.app.AppCompatActivity ;
+import androidx.appcompat.app.AppCompatActivity;
 
-import org.json.JSONObject;
+import com.google.gson.annotations.SerializedName;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity {
 
-    private TextView titre;
     private EditText connexion_email, connexion_mdp;
     private Button btn_se_connecter;
     private TextView lienInscription, lienMotDePasse;
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        titre = findViewById(R.id.connexion);
+        // 🔗 Références UI
         connexion_email = findViewById(R.id.connexion_email);
         connexion_mdp = findViewById(R.id.connexion_mdp);
         btn_se_connecter = findViewById(R.id.btn_se_connecter);
         lienInscription = findViewById(R.id.lien_inscription);
         lienMotDePasse = findViewById(R.id.lien_modifier_mdp);
 
+        // 🔧 Initialisation Retrofit
+        initRetrofit();
 
-        View.OnClickListener listener = view -> {
-            int id = view.getId();
-            if (id == R.id.lien_inscription) {
-                startActivity(new Intent(MainActivity.this, PageInscription.class));
-            } else if (id == R.id.lien_modifier_mdp) {
-                startActivity(new Intent(MainActivity.this, modificationMotPasse.class));
-            }
-        };
+        // 🧭 Navigation vers Inscription et Mot de Passe
+        lienInscription.setOnClickListener(view ->
+                startActivity(new Intent(MainActivity.this, PageInscription.class))
+        );
 
-        lienInscription.setOnClickListener(listener);
-        lienMotDePasse.setOnClickListener(listener);
+        lienMotDePasse.setOnClickListener(view ->
+                startActivity(new Intent(MainActivity.this, modificationMotPasse.class))
+        );
 
-
+        // ✅ Action bouton "Se connecter"
         btn_se_connecter.setOnClickListener(v -> {
             String courriel = connexion_email.getText().toString().trim();
             String mdp = connexion_mdp.getText().toString().trim();
@@ -54,82 +54,79 @@ public class MainActivity extends AppCompatActivity  {
             if (courriel.isEmpty() || mdp.isEmpty()) {
                 Toast.makeText(this, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show();
             } else {
-                new ConnexionTask().execute(courriel, mdp);
-
+                seConnecter(courriel, mdp);
             }
         });
     }
 
+    // 🔧 Création instance Retrofit
+    private void initRetrofit() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://10.0.2.2:8080/") // ← backend local ou distant
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
 
-    public class ConnexionTask extends AsyncTask<String, Void, String> {
+        apiService = retrofit.create(ApiService.class);
+    }
 
-        @Override
-        protected String doInBackground(String... params) {
-            String courriel = params[0];
-            String motDePasse = params[1];
+    // 🚀 Envoi de la requête de connexion
+    private void seConnecter(String courriel, String motDePasse) {
+        LoginRequest request = new LoginRequest(courriel, motDePasse);
+        Call<LoginResponse> call = apiService.login(request);
 
-            try {
-                URL url = new URL("http://10.0.2.2/api/login_patient");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/json; utf-8");
-                conn.setRequestProperty("Accept", "application/json");
-                conn.setDoOutput(true);
-
-                JSONObject jsonParam = new JSONObject();
-                jsonParam.put("COURRIEL", courriel);
-                jsonParam.put("MOT_DE_PASSE", motDePasse);
-
-                try (OutputStream os = conn.getOutputStream()) {
-                    byte[] input = jsonParam.toString().getBytes("utf-8");
-                    os.write(input, 0, input.length);
-                }
-
-                InputStream is = (conn.getResponseCode() == 200)
-                        ? conn.getInputStream()
-                        : conn.getErrorStream();
-
-                BufferedReader br = new BufferedReader(new InputStreamReader(is, "utf-8"));
-                StringBuilder response = new StringBuilder();
-                String line;
-                while ((line = br.readLine()) != null) {
-                    response.append(line);
-                }
-                br.close();
-
-                return response.toString();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                return "{\"error\": \"Erreur de connexion au serveur\"}";
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            try {
-                JSONObject response = new JSONObject(result);
-
-                if (response.has("token")) {
-                    String token = response.getString("token");
-                    String courriel = response.getString("COURRIEL");
+        call.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    String token = response.body().getToken();
+                    String emailRecu = response.body().getCourriel();
 
                     Toast.makeText(MainActivity.this, "Connexion réussie", Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(MainActivity.this, PageMesRDV.class);
                     intent.putExtra("token", token);
-                    intent.putExtra("courriel", courriel);
+                    intent.putExtra("courriel", emailRecu);
                     startActivity(intent);
                     finish();
                 } else {
-                    String erreur = response.optString("error", "Identifiants incorrects");
-                    Toast.makeText(MainActivity.this, erreur, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Identifiants invalides", Toast.LENGTH_SHORT).show();
                 }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(MainActivity.this, "Erreur de traitement de la réponse du serveur", Toast.LENGTH_SHORT).show();
             }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "Erreur réseau : " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // 📤 Classe de requête pour l’API
+    public class LoginRequest {
+        private String COURRIEL;
+        private String MOT_DE_PASSE;
+
+        public LoginRequest(String courriel, String motDePasse) {
+            this.COURRIEL = courriel;
+            this.MOT_DE_PASSE = motDePasse;
         }
+    }
+
+    // 📥 Classe de réponse attendue
+    public class LoginResponse {
+        @SerializedName("token")
+        private String token;
+
+        @SerializedName("COURRIEL")
+        private String courriel;
+
+        public String getToken() { return token; }
+
+        public String getCourriel() { return courriel; }
+    }
+
+    // 🌐 Interface Retrofit
+    public interface ApiService {
+        @retrofit2.http.POST("api/login_patient")
+        Call<LoginResponse> login(@retrofit2.http.Body LoginRequest request);
     }
 }
