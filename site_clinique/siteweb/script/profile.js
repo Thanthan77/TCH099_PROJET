@@ -115,7 +115,7 @@ document.getElementById("formProfil").addEventListener("submit", async function 
   };
 
   try {
-    const response = await fetch(`${API_URL}employes/${codeEmploye}`, {
+    const response = await fetch(`${API_URL}employe/user/${codeEmploye}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)

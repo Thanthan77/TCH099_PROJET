@@ -156,14 +156,13 @@ async function traiterExceptionVacances(idException, action) {
 function supprimerEmploye(code) {
   if (!confirm("Confirmer la suppression de l'employé ?")) return;
 
-  fetch(`${API_URL}employes`, {
+  fetch(`${API_URL}employe/user/${code}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      action: "delete",
-      CODE_EMPLOYE: code
+      action: "delete"
     })
   })
   .then(response => response.json())
