@@ -18,11 +18,12 @@
       <h1>Clinique VITALIS – Espace Administrateur</h1>
     </div>
     <div class="user-menu-container">
-    <img src="../image/menu.png" alt="Menu" class="user-menu-icon" onclick="toggleUserMenu()" />
-    <div class="user-dropdown" id="userDropdown">
-      <a href="../html/profile.html" id="btn-profile">Accéder au profil</a>
-      <a href="../html/mot_de_passe.html" id="btn-password">Changer mot de passe</a>
-      <a href="../html/index.html" id="btn-logout">Se déconnecter</a>
+      <img src="../image/menu.png" alt="Menu" class="user-menu-icon" onclick="toggleUserMenu()" />
+      <div class="user-dropdown" id="userDropdown">
+        <a href="../html/profile.html" id="btn-profile">Accéder au profil</a>
+        <a href="../html/mot_de_passe.html" id="btn-password">Changer mot de passe</a>
+        <a href="../html/index.html" id="btn-logout">Se déconnecter</a>
+      </div>
     </div>
   </header>
 
@@ -33,49 +34,52 @@
   </nav>
 
   <main>
-    <!-- Comptes -->
     <section id="comptes" class="tab-content">
-      <h2>Comptes utilisateurs</h2>
+      <div class="rdv-header">
+        <h2>Comptes utilisateurs</h2>
+        <div class="rdv-actions">
+          <img src="../image/filter.png" alt="Filtrer" class="filtre-icon" />
+          <button id="btn-creer-compte" onclick="ouvrirPopup()">Créer un compte</button>
+        </div>
+      </div>
+
+      <div class="patient-filter hidden" id="filtreSection">
+        <input type="text" id="filtrePrenom" placeholder="Prénom">
+        <input type="text" id="filtreNom" placeholder="Nom">
+        <input type="text" id="filtreCode" placeholder="Numéro Employé">
+        <select id="filtrePoste">
+          <option value="">Tous les rôles</option>
+          <option value="Médecin">Médecin</option>
+          <option value="Infirmière">Infirmière</option>
+          <option value="Secrétaire">Secrétaire</option>
+          <option value="Administrateur">Administrateur</option>
+        </select>
+        <button onclick="appliquerFiltreEmploye()">Filtrer</button>
+        <button onclick="reinitialiserFiltres()">Réinitialiser</button>
+      </div>
+      
       <table>
         <thead>
           <tr>
             <th>Nom</th><th>Code Employé</th><th>Rôle</th><th>Actions</th>
           </tr>
         </thead>
-        <tbody id="employe-table-body">
-          <!-- rempli dynamiquement -->
-        </tbody>
+        <tbody id="employe-table-body"></tbody>
       </table>
-
-      <h3>Ajouter un utilisateur</h3>
-      <label>Nom :</label><input type="text" />
-      <label>Code Employé :</label><input type="email" />
-      <label>Rôle :</label>
-      <select>
-        <option>Médecin</option>
-        <option>Infirmière</option>
-        <option>Secrétaire</option>
-        <option>Administrateur</option>
-      </select>
-      <button>Créer le compte</button>
     </section>
 
-    <!-- Vacances -->
-    <section id="vacances" class="tab-content">
-    <h2>Demandes de vacances</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Nom</th><th>Rôle</th><th>Début</th><th>Fin</th><th>Statut</th><th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        
-      </tbody>
-    </table>
-  </section>
+    <section id="vacances" class="tab-content hidden">
+      <h2>Demandes de vacances</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nom</th><th>Rôle</th><th>Début</th><th>Fin</th><th>Statut</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
 
-    <!-- Infirmiers -->
     <section id="infirmiers" class="tab-content hidden">
       <h2>Assignation des infirmiers/infirmières</h2>
       <table>
@@ -92,5 +96,28 @@
       </table>
     </section>
   </main>
+
+  <!-- Modal Création Compte -->
+  <div id="modal-creer-compte" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-button" id="fermer-modal">&times;</span>
+      <h2>Créer un nouveau compte</h2>
+      <form id="form-nouveau-compte">
+        <label>Prénom : <input type="text" name="prenom" required></label><br><br>
+        <label>Nom : <input type="text" name="nom" required></label><br><br>
+        <label>Poste :
+          <select name="poste" required>
+            <option value="Médecin">Médecin</option>
+            <option value="Infirmière">Infirmière</option>
+            <option value="Secrétaire">Secrétaire</option>
+            <option value="Administrateur">Administrateur</option>
+          </select>
+        </label><br><br>
+        <button type="submit">Créer</button>
+        <button type="button" id="annuler-modal">Annuler</button>
+      </form>
+    </div>
+  </div>
+
 </body>
 </html>
