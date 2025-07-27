@@ -8,7 +8,6 @@ $data = json_decode(file_get_contents('php://input'), true);
 
 
 $action = strtolower(trim($data['action'] ?? ''));
-$codeEmploye = $data['CODE_EMPLOYE'] ?? null;
 
 if (!$action || !in_array($action, ['update', 'delete']) || !$codeEmploye || !ctype_digit((string)$codeEmploye)) {
     http_response_code(400);
@@ -60,7 +59,7 @@ try {
         $stmt->bindValue(':dateNaissance', $data['DATE_NAISSANCE']);
         $stmt->bindValue(':sexe', $data['SEXE']);
         $stmt->bindValue(':poste', $data['POSTE']);
-        $stmt->bindValue(':code', $codeEmploye, PDO::PARAM_INT);
+        $stmt->bindValue(':code', $codeEmploye);
         $stmt->execute();
 
         if ($stmt->rowCount()) {
