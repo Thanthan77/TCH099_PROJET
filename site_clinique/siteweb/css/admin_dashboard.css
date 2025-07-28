@@ -1,3 +1,4 @@
+/* 🌐 GÉNÉRAL */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -65,7 +66,7 @@ main {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 table {
@@ -110,6 +111,7 @@ button.danger:hover {
   background-color: #a0031e;
 }
 
+/* 👤 Menu utilisateur */
 .user-menu-container {
   position: absolute;
   top: 20px;
@@ -146,6 +148,84 @@ button.danger:hover {
   background-color: #f1f1f1;
 }
 
-header {
+/* ➕ Modal création compte */
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
   position: relative;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* 📂 Filtres */
+.rdv-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rdv-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.filtre-icon {
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
+
+/* 🧑‍💼 Filtres employés */
+#filtreSection {
+  display: flex;
+  align-items: center; /* ✅ Centre verticalement tous les éléments */
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+#filtreSection input,
+#filtreSection select {
+  flex: 1;
+  min-width: 150px;
+}
+
+#filtreSection button {
+  padding: 4px 12px;        /* réduit la hauteur */
+  height: 32px;             /* limite la hauteur maximale */
+  font-size: 13px;          /* taille de texte modérée */
+  border-radius: 4px;
+  background-color: #0077b6;
+  color: white;
+  border: none;
+  cursor: pointer;
+  line-height: 1;           /* évite un bouton trop haut à cause du texte */
+}
+
+#filtreSection button:hover {
+  background-color: #005f99;
 }

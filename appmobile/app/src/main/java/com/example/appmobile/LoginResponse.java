@@ -9,7 +9,10 @@ public class LoginResponse {
     @SerializedName("COURRIEL")
     private String courriel;
 
-    public String getToken() { return token; }
+    @SerializedName("ID_PATIENT")
+    private int idPatient;
 
+    public String getToken() { return token; }
     public String getCourriel() { return courriel; }
+    public int getIdPatient() { return idPatient; }
 }
