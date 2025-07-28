@@ -1,64 +1,64 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <title>Tableau de bord - Médecin</title>
-  <link rel="stylesheet" href="../css/medecin_dashboard.css" />
-  <script src="../script/medecin_dashboard.js" defer></script>
-  <script src="../script/get_handle_data.js" defer></script>
+  <title>Tableau de bord - Infirmière</title>
+  <link rel="stylesheet" href="css/infirmiere_dashboard.css">
+  <script src="script/infirmiere_dashboard.js" defer></script>
+  <script src="script/get_handle_data.js" defer></script>
 </head>
 <body>
 
   <header>
     <div class="logo-container">
-      <img src="../image/logo.png" alt="Logo" class="logo" />
-      <h1>Clinique VITALIS – Espace Médecin</h1>
+      <img src="image/logo.png" alt="Logo" class="logo">
+      <h1>Clinique VITALIS – Espace Infirmière</h1>
     </div>
     <div class="user-menu-container">
-      <img src="../image/menu.png" alt="Menu" class="user-menu-icon" onclick="toggleUserMenu()" />
-      <div class="user-dropdown" id="userDropdown">
-        <a href="../html/profile.html" id="btn-profile">Accéder au profil</a>
-        <a href="../html/reinitialiser_mdp.html" id="btn-password">Changer mot de passe</a>
-        <a href="../html/index.html" id="btn-logout">Se déconnecter</a>
-      </div>
+    <img src="image/menu.png" alt="Menu" class="user-menu-icon" onclick="toggleUserMenu()" />
+    <div class="user-dropdown" id="userDropdown">
+      <a href="profile.html" id="btn-profile">Accéder au profil</a>
+      <a href="reinitialiser_mdp.html" id="btn-password">Changer mot de passe</a>
+      <a href="index.html" id="btn-logout">Se déconnecter</a>
     </div>
   </header>
 
   <nav class="tabs">
-    <button onclick="showTab('rdv')">Rendez‑vous</button>
+    <button onclick="showTab('rdv')">Rendez-vous</button>
     <button onclick="showTab('horaire')">Horaires</button>
     <button onclick="showTab('vacances')">Vacances</button>
   </nav>
 
   <main>
-    <!-- Section Rendez‑vous -->
+    <!-- RDV -->
     <section id="rdv" class="tab-content">
       <div class="rdv-header">
         <h2 class="rdv-title">Mes rendez-vous de la semaine</h2>
         <div class="rdv-actions">
-          <img src="../image/liste.png" alt="Vue Liste" class="rdv-view-icon" onclick="afficherVueListe()" />
-          <img src="../image/calendar.png" alt="Vue Calendrier" class="rdv-view-icon" onclick="afficherVueCalendrier()" />
+          <img src="image/liste.png" alt="Vue Liste" class="rdv-view-icon" onclick="afficherVueListe()" />
+          <img src="image/calendar.png" alt="Vue Calendrier" class="rdv-view-icon" onclick="afficherVueCalendrier()" />
         </div>
       </div>
-
+      
       <table>
         <thead>
           <tr>
-            <th>Date</th>
-            <th>Heure</th>
-            <th>Patient</th>
-            <th>Service</th>
-            <th>Action</th>
+            <th>Date</th><th>Heure</th><th>Patient</th><th>Service</th><th>Action</th>
           </tr>
         </thead>
-        <tbody></tbody>
+        <tbody>
+          <tr>
+            <td>2025-07-15</td><td>08:30</td><td>Marc Lefebvre</td><td>Vaccin</td>
+            <td><button onclick="showTab('dossier')">Voir dossier</button></td>
+          </tr>
+        </tbody>
       </table>
     </section>
 
-    <!-- Section Dossier patient -->
+    <!-- Dossier patient -->
     <section id="dossier" class="tab-content hidden">
       <h2>Dossier patient</h2>
       <p><strong>Nom :</strong> <span id="patient-nom">-</span></p>
@@ -67,6 +67,7 @@
       <p><strong>Numéro Assurance Maladie :</strong> <span id="patient-assm">-</span></p>
       <label>Note de consultation :</label>
     </section>
+
 
     <!-- Section Horaire -->
     <section id="horaire" class="tab-content hidden">
@@ -83,7 +84,8 @@
       </table>
     </section>
 
-    <!-- Section Vacances -->
+
+    <!-- Vacances -->
     <section id="vacances" class="tab-content hidden">
       <h2>Demande de vacances</h2>
       <label for="date-debut">Date de début :</label>
