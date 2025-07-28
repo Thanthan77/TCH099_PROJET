@@ -1,16 +1,17 @@
-package com.example.appmobile;
+package PagesRDV;
 
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class priserdv extends AppCompatActivity {
+import com.example.appmobile.R;
 
+public class pagePriseMoment  extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_prise_service);
+        setContentView(R.layout.activity_prise_moment);
 
 
 
