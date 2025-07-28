@@ -23,7 +23,7 @@ get($URL.'/rendezvous/$codeEmploye', 'endpoints/employe/rendezVousEmploye_get.ph
 // GET pour avoir la listes de tous les patients
 get($URL.'/patients','endpoints/employe/patients_get.php');
 
-// GET pour avoir la liste de tous les services
+// GET pour avoir la liste des noms de services
 get($URL.'/services','endpoints/employe/services_get.php');
 
 // GET pour avoir la liste de tous les employées
@@ -55,6 +55,9 @@ put($URL.'/rendezvous/id/$numRdv','endpoints/employe/rendezvous_put.php');
 
 //POST pour un suivi de rendez vous
 post($URL.'/rendezvous/secretaire','endpoints/employe/rendezVous_post.php');
+
+//GET pour avoir tous les professionels
+get($URL.'/professionnels','endpoints/employe/professionels_get.php');
 
 
 // Section Patients
