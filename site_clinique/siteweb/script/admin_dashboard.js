@@ -3,12 +3,12 @@ const API_URL = "http://localhost/api/";
 const codeInUrl = new URLSearchParams(window.location.search).get("codeEmploye");
 const codeSession = sessionStorage.getItem("codeEmploye") || localStorage.getItem("codeEmploye");
 
-// 🔐 Vérifie la session
+//  Vérifie la session
 if (!codeSession || (!sessionStorage.getItem("isConnected") && !localStorage.getItem("isConnected"))) {
   window.location.replace("../html/index.html");
 }
 
-// 🔐 Vérifie que l'utilisateur accède à son propre dashboard
+//  Vérifie que l'utilisateur accède à son propre dashboard
 if (codeInUrl && codeInUrl !== codeSession) {
   alert("Accès interdit : vous ne pouvez consulter que votre propre tableau de bord.");
   const url = new URL(window.location.href);
@@ -147,7 +147,7 @@ function reinitialiserFiltres() {
 
 window.reinitialiserFiltres = reinitialiserFiltres;
 
-// 🔽 Menu utilisateur
+//  Menu utilisateur
 window.toggleUserMenu = function () {
   const menu = document.getElementById("userDropdown");
   menu.style.display = (menu.style.display === "block") ? "none" : "block";
