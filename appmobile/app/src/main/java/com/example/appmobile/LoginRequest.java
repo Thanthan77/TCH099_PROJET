@@ -13,4 +13,5 @@ public class LoginRequest {
         this.courriel = courriel;
         this.motDePasse = motDePasse;
     }
+
 }

@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initRetrofit() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/") // Localhost pour l’émulateur
+                .baseUrl("http://10.0.2.2/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Intent intent = new Intent(MainActivity.this, PageMesRDV.class);
                     intent.putExtra("token", data.getToken());
-                    intent.putExtra("id_patient", data.getIdPatient());
+                    intent.putExtra("courriel", data.getCourriel());
                     startActivity(intent);
                     finish();
                 } else {
