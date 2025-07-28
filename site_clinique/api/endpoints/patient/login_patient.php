@@ -24,7 +24,7 @@ try {
     
     $pstmt->setFetchMode(PDO::FETCH_ASSOC);
     if ($result = $pstmt->fetch()) { 
-        if ($mdp == $result['MOT_DE_PASSE']) {
+        if (trim($mdp) === trim($result['MOT_DE_PASSE'])) {
             $token = generate_jwt([
                 'COURRIEL' => $courriel,
                 'exp' => time() + 3600
