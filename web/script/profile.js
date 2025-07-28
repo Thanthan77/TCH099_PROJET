@@ -8,7 +8,7 @@ let codeEmploye = null;
 
 function verifierConnexion() {
   if (!sessionStorage.getItem("isConnected") && !localStorage.getItem("isConnected")) {
-    window.location.replace("../html/index.html");
+    window.location.replace("index.html");
   }
 }
 
@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       e.preventDefault();
       sessionStorage.clear();
       localStorage.clear();
-      window.location.href = "../html/index.html";
+      window.location.href = "index.html";
     });
   }
 });

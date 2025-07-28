@@ -18,6 +18,7 @@ CREATE TABLE Employe (
   DATE_NAISSANCE  DATE,
   SEXE           ENUM('M','F'),
   POSTE          VARCHAR(30)
+
 );
 
 -- 3) PATIENT
@@ -115,9 +116,9 @@ INSERT INTO Employe (
   (200, 'Bruno',    'Martin',   'Marier',      'Bx7%Re1JmP',  'bruno.martin@example.com',   5141234570, '321 rue Ontario',           '1982-02-05', 'M', 'Infirmier'),
   (201, 'Isabelle', 'Langlois', 'Celibataire', 'Iu3&Ka8LdY',  'isabelle.langlois@example.com',5141234571, '654 rue Mont-Royal',     '1992-09-18', 'F', 'Infirmier'),
   (202, 'Dominic',  'Dublois',  'Celibataire', 'Dp6@Vz4XcQ',  'dominic.dublois@example.com',5141234572, '987 rue Sherbrooke',        '1988-12-03', 'M', 'Infirmier'),
-  (300, 'Claire',   'Moreau',   'Marier',      'Cn9#Hj2MfW',  'claire.moreau@example.com',  5141234573, '135 rue Papineau',          '1980-07-25', 'F', 'Secrétaire'),
-  (301, 'Xavier',   'Dubé',     'Celibataire', 'Xb5$Qn3RpK',  'xavier.dube@example.com',    5141234574, '246 rue Sainte-Catherine',  '1995-04-12', 'M', 'Secrétaire'),
-  (400, 'George',   'Smith',    'Marier',      'Gt8!Lz1WfR',  'george.smith@example.com',   5141234575, '369 rue Berri',             '1975-01-30', 'M', 'Administrateur');
+  (300, 'Claire',   'Moreau',   'Marier',     'Cn9#Hj2MfW',  'claire.moreau@example.com',  5141234573, '135 rue Papineau',          '1980-07-25', 'F', 'Secrétaire'),
+  (301, 'Xavier',   'Dubé',     'Celibataire' ,'Xb5$Qn3RpK',  'xavier.dube@example.com',    5141234574, '246 rue Sainte-Catherine',  '1995-04-12', 'M', 'Secrétaire'),
+  (400, 'George',   'Smith',    'Marier'      ,'Gt8!Lz1WfR',  'george.smith@example.com',   5141234575, '369 rue Berri',             '1975-01-30', 'M', 'Administrateur');
 
 INSERT INTO Patient (
   COURRIEL, PRENOM_PATIENT, NOM_PATIENT, MOT_DE_PASSE,

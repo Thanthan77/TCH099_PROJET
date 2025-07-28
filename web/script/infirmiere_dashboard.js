@@ -1,15 +1,15 @@
 const API_URL = 'http://localhost/api/';
-const codeEmploye = new URLSearchParams(window.location.search).get('codeEmploye');
+const codeEmploye = new URLSearchParams(window.location.search).get("codeEmploye");
 
 const codeInUrl = new URLSearchParams(window.location.search).get("codeEmploye");
 const codeSession = sessionStorage.getItem("codeEmploye") || localStorage.getItem("codeEmploye");
 
 // Vérifie la session de connexion
 if (!codeSession || (!sessionStorage.getItem("isConnected") && !localStorage.getItem("isConnected"))) {
-  window.location.replace("../html/index.html");
+  window.location.replace("index.html");
 }
 
-// 🔐 Empêche d'accéder à un autre dashboard via URL
+// Empêche d'accéder à un autre dashboard via URL
 if (codeInUrl && codeInUrl !== codeSession) {
   alert("Accès interdit : vous ne pouvez consulter que votre propre tableau de bord.");
   const url = new URL(window.location.href);
@@ -19,62 +19,81 @@ if (codeInUrl && codeInUrl !== codeSession) {
   window.codeEmploye = codeInUrl || codeSession;
 }
 
-function showTab(id) {
-  document.querySelectorAll('.tab-content')
-          .forEach(sec => sec.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
+async function chargerAfficherRendezVous() {
+  try {
+    if (!codeEmploye) {
+      throw new Error("Code employé manquant dans l'URL");
+    }
+
+    const response = await fetch(`${API_URL}rendezvous/${codeEmploye}`);
+    if (!response.ok) {
+      throw new Error(`Erreur HTTP: ${response.status}`);
+    }
+    const data = await response.json();
+
+    const patientsRes = await fetch(`${API_URL}patients`);
+    const listePatients = await patientsRes.json();
+
+    const servicesMap = {};
+    data.services.forEach(service => {
+      servicesMap[service.id] = service.nom;
+    });
+
+    const tbody = document.querySelector('#rdv tbody');
+    if (!tbody) throw new Error("Élément #rdv tbody introuvable");
+
+    if (!data.rendezvous || data.rendezvous.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5">Aucun rendez-vous prévu</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.rendezvous.map(rdv => {
+      const patient = listePatients.find(p => p.COURRIEL === rdv.email) || {};
+      const nomService = servicesMap[rdv.service_id] || "Service inconnu";
+
+      return `
+        <tr>
+          <td>${rdv.date}</td>
+          <td>${rdv.heure} (${rdv.duree} min)</td>
+          <td>${patient.PRENOM_PATIENT || 'Inconnu'} ${patient.NOM_PATIENT || ''}</td>
+          <td>${nomService}</td>
+          <td>
+            <button onclick="afficherDossier(
+              '${escapeHtml(patient.PRENOM_PATIENT || '')}',
+              '${escapeHtml(patient.NOM_PATIENT || '')}',
+              '${escapeHtml(patient.DATE_NAISSANCE || '')}',
+              '${escapeHtml(patient.NO_ASSURANCE_MALADIE || '')}',
+              ${rdv.num_rdv},
+              '${escapeHtml(rdv.note || '')}'
+            )">Voir dossier</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+  } catch (error) {
+    console.error('Erreur:', error);
+    const errorHtml = `
+      <tr>
+        <td colspan="5" class="error">
+          Erreur de chargement: ${error.message}
+          <button onclick="chargerAfficherRendezVous()">Réessayer</button>
+        </td>
+      </tr>
+    `;
+    const tbody = document.querySelector('#rdv tbody');
+    if (tbody) tbody.innerHTML = errorHtml;
+  }
 }
 
 function escapeHtml(str) {
-  return (str ?? '').toString()
+  if (!str) return '';
+  return str.toString()
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
-}
-
-async function chargerAfficherRendezVous() {
-  if (!codeEmploye) return;
-
-  const res = await fetch(`${API_URL}rendezvous/${codeEmploye}`);
-  const data = await res.json();
-
-  const patientsRes = await fetch(`${API_URL}patients`);
-  const listePatients = await patientsRes.json();
-
-  const servicesMap = {};
-  data.services.forEach(s => servicesMap[s.id] = s.nom);
-
-  const tbody = document.querySelector('#rdv tbody');
-  if (!data.rendezvous.length) {
-    tbody.innerHTML = '<tr><td colspan="5">Aucun rendez-vous prévu</td></tr>';
-    return;
-  }
-
-  tbody.innerHTML = data.rendezvous.map(rdv => {
-    const pat = listePatients.find(p => p.COURRIEL === rdv.email) || {};
-    const nomSvc = servicesMap[rdv.service_id] || 'Service inconnu';
-    return `
-      <tr>
-        <td>${rdv.date}</td>
-        <td>${rdv.heure} (${rdv.duree} min)</td>
-        <td>${pat.PRENOM_PATIENT || ''} ${pat.NOM_PATIENT || ''}</td>
-        <td>${nomSvc}</td>
-        <td>
-          <button onclick="
-            afficherDossier(
-              '${escapeHtml(pat.PRENOM_PATIENT)}',
-              '${escapeHtml(pat.NOM_PATIENT)}',
-              '${escapeHtml(pat.DATE_NAISSANCE)}',
-              '${escapeHtml(pat.NO_ASSURANCE_MALADIE)}',
-              ${rdv.num_rdv},
-              '${escapeHtml(rdv.note || '')}'
-            )">Voir dossier</button>
-        </td>
-      </tr>
-    `;
-  }).join('');
 }
 
 function afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, note) {
@@ -85,10 +104,11 @@ function afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, note) {
 
   const sec = document.getElementById('dossier');
   sec.classList.remove('hidden');
+
   sec.querySelectorAll('textarea, button.js-save').forEach(el => el.remove());
 
   const ta = document.createElement('textarea');
-  ta.placeholder = 'Écrire une note de consultation…';
+  ta.placeholder = 'Écrire une note de soins…';
   ta.value = note;
   sec.appendChild(ta);
 
@@ -133,6 +153,7 @@ async function chargerAfficherHoraires() {
         <td>${escapeHtml(h.HEURE)}</td>
       </tr>
     `).join('');
+
   } catch (error) {
     console.error("Erreur lors du chargement des horaires :", error);
     const tbody = document.querySelector('#horaire table tbody');
@@ -140,36 +161,21 @@ async function chargerAfficherHoraires() {
   }
 }
 
+function showTab(id) {
+  document.querySelectorAll('.tab-content')
+    .forEach(sec => sec.classList.add('hidden'));
+  const target = document.getElementById(id);
+  if (target) target.classList.remove('hidden');
+}
+
+window.showTab = showTab;
+window.afficherDossier = afficherDossier;
+
 let demandeEnvoyee = false;
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('button[data-tab]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id = btn.getAttribute('data-tab');
-      showTab(id);
-    });
-  });
-
   chargerAfficherRendezVous();
   chargerAfficherHoraires();
-
-  window.showTab = showTab;
-  window.afficherDossier = afficherDossier;
-});
-
-window.toggleUserMenu = function () {
-  const menu = document.getElementById("userDropdown");
-  menu.style.display = (menu.style.display === "block") ? "none" : "block";
-};
-
-window.addEventListener("click", function (event) {
-  const icon = document.querySelector(".user-menu-icon");
-  const menu = document.getElementById("userDropdown");
-
-  if (!menu.contains(event.target) && event.target !== icon) {
-    menu.style.display = "none";
-  }
-
 
   const btnVacances = document.querySelector("#vacances button");
 
@@ -240,9 +246,22 @@ window.addEventListener("click", function (event) {
       }
     });
   }
+
 });
 
+window.toggleUserMenu = function () {
+  const menu = document.getElementById("userDropdown");
+  menu.style.display = (menu.style.display === "block") ? "none" : "block";
+};
 
+window.addEventListener("click", function (event) {
+  const icon = document.querySelector(".user-menu-icon");
+  const menu = document.getElementById("userDropdown");
+
+  if (!menu.contains(event.target) && event.target !== icon) {
+    menu.style.display = "none";
+  }
+});
 
 document.addEventListener("DOMContentLoaded", function () {
   const logoutBtn = document.getElementById("btn-logout");
@@ -251,7 +270,7 @@ document.addEventListener("DOMContentLoaded", function () {
       e.preventDefault();
       sessionStorage.clear();
       localStorage.clear();
-      window.location.href = "../html/index.html";
+      window.location.href = "index.html";
     });
   }
 });
