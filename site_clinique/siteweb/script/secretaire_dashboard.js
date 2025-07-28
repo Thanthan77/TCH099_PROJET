@@ -56,7 +56,7 @@ if (codeInUrl && codeInUrl !== codeSession) {
                 <td>${rdv.HEURE}</td>
                 <td>${rdv.COURRIEL}</td>
                 <td>${nomAffiche}</td>
-                <td>${rdv.service}</td>
+                <td>${rdv.NOM_SERVICE}</td>
                 <td>
                     <button onclick="modifierRdv(${rdv.NUM_RDV})">Modifier</button>
                     <button class="danger" onclick="annulerRdv(${rdv.NUM_RDV})">Annuler</button>
