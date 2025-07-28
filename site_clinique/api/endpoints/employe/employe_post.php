@@ -2,7 +2,7 @@
 
 require_once(__DIR__.'/../../db/Database.php');
 
-ob_start(); 
+
 header('Content-Type: application/json');
 
 
@@ -51,5 +51,4 @@ try {
     echo json_encode(['error' => $e->getMessage()]);
 } finally {
     $cnx = null;
-    ob_end_flush();
 }

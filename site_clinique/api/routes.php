@@ -53,6 +53,9 @@ put($URL.'/employe/user/$codeEmploye','endpoints/employe/employe_put.php');
 //PUT pour deplacer un rendez vous
 put($URL.'/rendezvous/id/$numRdv','endpoints/employe/rendezvous_put.php');
 
+//POST pour un suivi de rendez vous
+post($URL.'/rendezvous/secretaire','endpoints/employe/rendezVous_post.php');
+
 
 // Section Patients
 
