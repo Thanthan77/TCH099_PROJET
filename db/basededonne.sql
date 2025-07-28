@@ -54,7 +54,7 @@ CREATE TABLE Rendezvous (
     REFERENCES Service(ID_SERVICE)    ON DELETE RESTRICT
 );
 
--- 5) HORAIRE (JOURS en VARCHAR pour libellés “Lundi au Jeudi”)
+-- 5) HORAIRE 
 CREATE TABLE Horaire (
   ID_HORAIRE    INT AUTO_INCREMENT PRIMARY KEY,
   CODE_EMPLOYE  INT               NOT NULL,
