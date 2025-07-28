@@ -26,7 +26,7 @@ try {
         FROM Rendezvous AS r
         JOIN Employe AS e ON r.CODE_EMPLOYE = e.CODE_EMPLOYE
         JOIN Service AS s ON r.ID_SERVICE   = s.ID_SERVICE
-        WHERE r.CODE_EMPLOYE = :codeEmploye
+        WHERE r.STATUT = 'CONFIRMÉ'
         ORDER BY r.JOUR, r.HEURE
     ");
 

@@ -11,8 +11,7 @@ get($URL, 'views/index.php');
 
 // Section Employes
 
-// POST pour le login des employe (génération du token JWT)
-post($URL.'/login', 'endpoints/employe/login.php'); 
+// GET --
 
 // GET pour avoir la listes de tous les rendezVous
 get($URL.'/rendezvous','endpoints/employe/rendezVous_get.php');
@@ -23,7 +22,7 @@ get($URL.'/rendezvous/$codeEmploye', 'endpoints/employe/rendezVousEmploye_get.ph
 // GET pour avoir la listes de tous les patients
 get($URL.'/patients','endpoints/employe/patients_get.php');
 
-// GET pour avoir la liste de tous les services
+// GET pour avoir la liste des noms de services
 get($URL.'/services','endpoints/employe/services_get.php');
 
 // GET pour avoir la liste de tous les employées
@@ -32,20 +31,33 @@ get($URL.'/employes', 'endpoints/employe/employees_get.php');
 // GET pour avoir les horaires des employes
 get($URL.'/horaires','endpoints/employe/horaire_get.php');
 
-// PUT pour avoir ajouter une note de consultation à un dossier
-put($URL. '/note/$numRdv', 'endpoints/employe/note_put.php');
+// GET pour avoir la liste des demandes de vacances
+get($URL.'/vacances','endpoints/employe/vacances_get.php');
+
+//GET pour avoir tous les professionels
+get($URL.'/professionnels','endpoints/employe/professionels_get.php');
+
+
+//POST--
+
+// POST pour le login des employe (génération du token JWT)
+post($URL.'/login', 'endpoints/employe/login.php'); 
+
 
 //POST pour une demande de vacance d'un medecin ou infirmier
 post($URL.'/vacance/employe/$codeEmploye','endpoints/employe/vacance_post.php');
 
-// GET pour avoir la liste des demandes de vacances
-get($URL.'/vacances','endpoints/employe/vacances_get.php');
-
-// PUT pour accepter ou refuser une demande de vacance
-put($URL.'/vacance/$idException','endpoints/employe/vacance_put.php');
+//POST pour un suivi de rendez vous
+post($URL.'/rendezvous/secretaire','endpoints/employe/rendezVous_post.php');
 
 //POST pour créer un nouvel employe
 post($URL.'/employe','endpoints/employe/employe_post.php');
+
+
+//PUT--
+
+// PUT pour accepter ou refuser une demande de vacance
+put($URL.'/vacance/$idException','endpoints/employe/vacance_put.php');
 
 //PUT pour mettre a jour les profiles des employés
 put($URL.'/employe/user/$codeEmploye','endpoints/employe/employe_put.php');
@@ -53,8 +65,10 @@ put($URL.'/employe/user/$codeEmploye','endpoints/employe/employe_put.php');
 //PUT pour deplacer un rendez vous
 put($URL.'/rendezvous/id/$numRdv','endpoints/employe/rendezvous_put.php');
 
-//POST pour un suivi de rendez vous
-post($URL.'/rendezvous/secretaire','endpoints/employe/rendezVous_post.php');
+
+
+// PUT pour avoir ajouter une note de consultation à un dossier
+put($URL. '/note/$numRdv', 'endpoints/employe/note_put.php');
 
 
 // Section Patients
