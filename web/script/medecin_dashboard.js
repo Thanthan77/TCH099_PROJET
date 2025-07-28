@@ -6,7 +6,7 @@ const codeSession = sessionStorage.getItem("codeEmploye") || localStorage.getIte
 
 // Vérifie la session de connexion
 if (!codeSession || (!sessionStorage.getItem("isConnected") && !localStorage.getItem("isConnected"))) {
-  window.location.replace("../html/index.html");
+  window.location.replace("index.html");
 }
 
 // 🔐 Empêche d'accéder à un autre dashboard via URL
@@ -251,7 +251,7 @@ document.addEventListener("DOMContentLoaded", function () {
       e.preventDefault();
       sessionStorage.clear();
       localStorage.clear();
-      window.location.href = "../html/index.html";
+      window.location.href = "index.html";
     });
   }
 });

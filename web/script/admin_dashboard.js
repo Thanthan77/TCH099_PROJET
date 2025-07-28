@@ -5,7 +5,7 @@ const codeSession = sessionStorage.getItem("codeEmploye") || localStorage.getIte
 
 //  Vérifie la session
 if (!codeSession || (!sessionStorage.getItem("isConnected") && !localStorage.getItem("isConnected"))) {
-  window.location.replace("../html/index.html");
+  window.location.replace("index.html");
 }
 
 //  Vérifie que l'utilisateur accède à son propre dashboard
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       sessionStorage.clear();
       localStorage.clear();
-      window.location.href = "../html/index.html";
+      window.location.href = "index.html";
     });
   }
 
