@@ -35,20 +35,6 @@ const modifiables = estAdmin
   ? ["prenom", "nom", "date_naissance", "sexe", "etat_civil", "poste", "email", "telephone", "adresse"]
   : ["email", "telephone", "adresse"];
 
-function toggleUserMenu() {
-  const menu = document.getElementById("userDropdown");
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
-}
-
-window.onclick = function (event) {
-  if (!event.target.matches('.user-menu-icon')) {
-    const dropdown = document.getElementById("userDropdown");
-    if (dropdown && dropdown.style.display === "block") {
-      dropdown.style.display = "none";
-    }
-  }
-};
-
 document.addEventListener("DOMContentLoaded", async () => {
   if (!codeEmploye) {
     alert("Impossible d'identifier l'utilisateur.");
@@ -77,77 +63,83 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("telephone").value      = employe.TELEPHONE || "";
     document.getElementById("adresse").value        = employe.ADRESSE || "";
 
+    // 💾 Enregistrer le mot de passe tel quel dans un champ caché
+    document.getElementById("motDePasse").value     = employe.MOT_DE_PASSE || "";
+
   } catch (err) {
     console.error("Erreur lors du chargement du profil :", err);
     alert("Erreur lors du chargement du profil.");
   }
-});
 
-// 🖊️ Activation de l'édition
-document.getElementById("editBtn").addEventListener("click", function () {
-  modifiables.forEach(id => {
-    const field = document.getElementById(id);
-    if (field) {
-      field.removeAttribute("readonly");
-      field.classList.add("editable");
-    }
-  });
+  // 🖊️ Activation de l'édition
+  const editBtn = document.getElementById("editBtn");
+  const saveBtn = document.getElementById("saveBtn");
 
-  document.getElementById("editBtn").style.display = "none";
-  document.getElementById("saveBtn").style.display = "inline-block";
-});
-
-document.getElementById("formProfil").addEventListener("submit", async function (e) {
-  e.preventDefault();
-
-  const data = {
-    action: "update",
-    CODE_EMPLOYE: codeEmploye,
-    PRENOM: document.getElementById("prenom").value,
-    NOM: document.getElementById("nom").value,
-    DATE_NAISSANCE: document.getElementById("date_naissance").value,
-    SEXE: document.getElementById("sexe").value,
-    ETAT_CIVIL: document.getElementById("etat_civil").value,
-    POSTE: document.getElementById("poste").value,
-    COURRIEL: document.getElementById("email").value,
-    TELEPHONE: document.getElementById("telephone").value,
-    ADRESSE: document.getElementById("adresse").value
-  };
-
-  try {
-    const response = await fetch(`${API_URL}employes/${codeEmploye}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
+  if (editBtn && saveBtn) {
+    editBtn.addEventListener("click", () => {
+      modifiables.forEach(id => {
+        const field = document.getElementById(id);
+        if (field) {
+          field.removeAttribute("readonly");
+          field.classList.add("editable");
+        }
+      });
+      editBtn.style.display = "none";
+      saveBtn.style.display = "inline-block";
     });
 
-    const rawText = await response.text();
-    const json = rawText ? JSON.parse(rawText) : {};
+    document.getElementById("formProfil").addEventListener("submit", async function (e) {
+      e.preventDefault();
 
-    if (!response.ok || json.status !== "success") {
-      throw new Error(json.error || "Échec de mise à jour.");
-    }
+      const data = {
+        action: "update",
+        CODE_EMPLOYE: codeEmploye,
+        PRENOM_EMPLOYE: document.getElementById("prenom").value,
+        NOM_EMPLOYE: document.getElementById("nom").value,
+        DATE_NAISSANCE: document.getElementById("date_naissance").value,
+        SEXE: document.getElementById("sexe").value,
+        ETAT_CIVIL: document.getElementById("etat_civil").value,
+        POSTE: document.getElementById("poste").value,
+        COURRIEL: document.getElementById("email").value,
+        TELEPHONE: document.getElementById("telephone").value,
+        ADRESSE: document.getElementById("adresse").value,
+        MOT_DE_PASSE: document.getElementById("motDePasse").value  // ➕ Inclus, inchangé
+      };
 
-    alert(" Profil mis à jour avec succès dans la base de données.");
-  } catch (err) {
-    console.error("Erreur lors de l'enregistrement :", err);
-    alert("Erreur lors de la mise à jour : " + err.message);
-  } finally {
-    modifiables.forEach(id => {
-      const field = document.getElementById(id);
-      if (field) {
-        field.setAttribute("readonly", true);
-        field.classList.remove("editable");
+      try {
+        const response = await fetch(`${API_URL}employe/user/${codeEmploye}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+
+        const rawText = await response.text();
+        const json = rawText ? JSON.parse(rawText) : {};
+
+        if (!response.ok || json.status !== "OK") {
+          throw new Error(json.error || "Échec de mise à jour.");
+        }
+
+        alert("Profil mis à jour avec succès dans la base de données.");
+      } catch (err) {
+        console.error("Erreur lors de l'enregistrement :", err);
+        alert("Erreur lors de la mise à jour : " + err.message);
+      } finally {
+        modifiables.forEach(id => {
+          const field = document.getElementById(id);
+          if (field) {
+            field.setAttribute("readonly", true);
+            field.classList.remove("editable");
+          }
+        });
+
+        editBtn.style.display = "inline-block";
+        saveBtn.style.display = "none";
       }
     });
-
-    document.getElementById("editBtn").style.display = "inline-block";
-    document.getElementById("saveBtn").style.display = "none";
   }
-});
 
-// 🔓 Déconnexion
-document.addEventListener("DOMContentLoaded", function () {
+  // 🔓 Déconnexion
   const logoutBtn = document.getElementById("btn-logout");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", function (e) {
@@ -158,3 +150,20 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+
+// ⬇️ Menu utilisateur
+function toggleUserMenu() {
+  const menu = document.getElementById("userDropdown");
+  if (menu) {
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+  }
+}
+
+window.onclick = function (event) {
+  if (!event.target.matches('.user-menu-icon')) {
+    const dropdown = document.getElementById("userDropdown");
+    if (dropdown && dropdown.style.display === "block") {
+      dropdown.style.display = "none";
+    }
+  }
+};
