@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("telephone").value      = employe.TELEPHONE || "";
     document.getElementById("adresse").value        = employe.ADRESSE || "";
 
-    // 💾 Enregistrer le mot de passe tel quel dans un champ caché
+    // Enregistrer le mot de passe tel quel dans un champ caché
     document.getElementById("motDePasse").value     = employe.MOT_DE_PASSE || "";
 
   } catch (err) {
@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     alert("Erreur lors du chargement du profil.");
   }
 
-  // 🖊️ Activation de l'édition
+  // Activation de l'édition
   const editBtn = document.getElementById("editBtn");
   const saveBtn = document.getElementById("saveBtn");
 
@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // 🔓 Déconnexion
+  // Déconnexion
   const logoutBtn = document.getElementById("btn-logout");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", function (e) {
@@ -151,7 +151,44 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-// ⬇️ Menu utilisateur
+// Retour au Dashboard
+const dashboardBtn = document.getElementById("btn-dashboard");
+if (dashboardBtn) {
+  dashboardBtn.addEventListener("click", function (e) {
+    e.preventDefault();
+    const code = sessionStorage.getItem("codeEmploye") || localStorage.getItem("codeEmploye");
+    if (!code) {
+      alert("Impossible de déterminer le tableau de bord.");
+      return;
+    }
+
+    const role = code.charAt(0);
+    let dashboardUrl = "";
+
+    switch (role) {
+      case '1':
+        dashboardUrl = "medecin_dashboard.html";
+        break;
+      case '2':
+        dashboardUrl = "infirmiere_dashboard.html";
+        break;
+      case '3':
+        dashboardUrl = "secretaire_dashboard.html";
+        break;
+      case '4':
+        dashboardUrl = "admin_dashboard.html";
+        break;
+      default:
+        dashboardUrl = "index.html";
+    }
+
+    dashboardUrl += `?codeEmploye=${encodeURIComponent(code)}`;
+    window.location.href = dashboardUrl;
+  });
+}
+
+
+// Menu utilisateur
 function toggleUserMenu() {
   const menu = document.getElementById("userDropdown");
   if (menu) {

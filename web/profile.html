@@ -5,6 +5,23 @@
   <title>Profil Employé</title>
   <link rel="stylesheet" href="css/profile.css" />
   <script src="script/profile.js" defer></script>
+  <script>
+    function retourDashboard() {
+      const code = sessionStorage.getItem("codeEmploye") || localStorage.getItem("codeEmploye");
+      if (!code) return;
+      const role = code.charAt(0);
+      let url = "";
+      switch (role) {
+        case '1': url = "medecin_dashboard.html"; break;
+        case '2': url = "infirmiere_dashboard.html"; break;
+        case '3': url = "secretaire_dashboard.html"; break;
+        case '4': url = "admin_dashboard.html"; break;
+        default: url = "index.html";
+      }
+      url += `?codeEmploye=${encodeURIComponent(code)}`;
+      window.location.href = url;
+    }
+  </script>
 </head>
 <body>
 
@@ -17,6 +34,7 @@
     <div class="user-menu-container">
       <img src="image/menu.png" alt="Menu utilisateur" class="user-menu-icon" onclick="toggleUserMenu()" />
       <div class="user-dropdown" id="userDropdown">
+        <a href="#" onclick="retourDashboard()">Dashboard</a>
         <a href="mot_de_passe.html" id="btn-password">Changer mot de passe</a>
         <a href="index.html" id="btn-logout">Se déconnecter</a>
       </div>
