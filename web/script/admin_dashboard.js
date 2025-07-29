@@ -1,6 +1,6 @@
 const API_URL = "http://localhost/api/";
 
-// 🔐 Vérifie la session
+// Vérifie la session
 const codeInUrl = new URLSearchParams(window.location.search).get("codeEmploye");
 const codeSession = sessionStorage.getItem("codeEmploye") || localStorage.getItem("codeEmploye");
 if (!codeSession || (!sessionStorage.getItem("isConnected") && !localStorage.getItem("isConnected"))) {
