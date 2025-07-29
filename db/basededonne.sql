@@ -42,7 +42,45 @@ CREATE TABLE Patient (
   DATE_NAISSANCE        DATE
 );
 
--- 4) RENDEZVOUS
+-- 4) HORAIRE 
+CREATE TABLE Horaire (
+  ID_HORAIRE    INT AUTO_INCREMENT PRIMARY KEY,
+  CODE_EMPLOYE  INT               NOT NULL,
+  HEURE_DEBUT   TIME              NOT NULL,
+  HEURE_FIN     TIME              NOT NULL,
+  JOURS         VARCHAR(50)       NOT NULL,
+  CONSTRAINT FK_HORAIRE_EMP FOREIGN KEY (CODE_EMPLOYE)
+    REFERENCES Employe(CODE_EMPLOYE) ON DELETE CASCADE
+);
+
+-- 5) EXCEPTION_HORAIRE
+CREATE TABLE Exception_horaire (
+  ID_EXC         INT AUTO_INCREMENT PRIMARY KEY,
+  CODE_EMPLOYE   INT                NOT NULL,
+  DATE_DEBUT     DATE              NOT NULL,
+  DATE_FIN       DATE              NOT NULL,
+  TYPE_EXCEPTION ENUM('VACANCES', 'ATTENTE') NOT NULL,
+  CONSTRAINT FK_EXC_EMP FOREIGN KEY (CODE_EMPLOYE)
+    REFERENCES Employe(CODE_EMPLOYE) ON DELETE CASCADE,
+  CONSTRAINT UQ_EXC_DATE_DEBUT UNIQUE (DATE_DEBUT),
+  CONSTRAINT UQ_EXC_DATE_FIN UNIQUE (DATE_FIN)
+);
+
+
+
+-- 6) Disponibilite (pour l'application)
+CREATE TABLE Disponibilite (
+   ID_DISPONIBILITE INT AUTO_INCREMENT PRIMARY KEY,
+   CODE_EMPLOYE INT NOT NULL,
+   JOUR DATE NOT NULL,
+   HEURE TIME NOT NULL,
+   STATUT ENUM('DISPONIBLE','OCCUPÉ') NOT NULL DEFAULT 'DISPONIBLE',
+   NUM_RDV INT NULL,
+   FOREIGN KEY (CODE_EMPLOYE) REFERENCES Employe(CODE_EMPLOYE),
+   FOREIGN KEY (NUM_RDV) REFERENCES Rendezvous(NUM_RDV)
+);
+
+-- 7) RENDEZVOUS
 CREATE TABLE Rendezvous (
   NUM_RDV           INT AUTO_INCREMENT PRIMARY KEY,
   CODE_EMPLOYE      INT        NOT NULL,
@@ -60,45 +98,6 @@ CREATE TABLE Rendezvous (
   CONSTRAINT FK_RV_SVC FOREIGN KEY (ID_SERVICE)
     REFERENCES Service(ID_SERVICE)    ON DELETE RESTRICT
 );
-
--- 5) HORAIRE 
-CREATE TABLE Horaire (
-  ID_HORAIRE    INT AUTO_INCREMENT PRIMARY KEY,
-  CODE_EMPLOYE  INT               NOT NULL,
-  HEURE_DEBUT   TIME              NOT NULL,
-  HEURE_FIN     TIME              NOT NULL,
-  JOURS         VARCHAR(50)       NOT NULL,
-  CONSTRAINT FK_HORAIRE_EMP FOREIGN KEY (CODE_EMPLOYE)
-    REFERENCES Employe(CODE_EMPLOYE) ON DELETE CASCADE
-);
-
--- 6) EXCEPTION_HORAIRE
-CREATE TABLE Exception_horaire (
-  ID_EXC         INT AUTO_INCREMENT PRIMARY KEY,
-  CODE_EMPLOYE   INT                NOT NULL,
-  DATE_DEBUT     DATE              NOT NULL,
-  DATE_FIN       DATE              NOT NULL,
-  TYPE_EXCEPTION ENUM('VACANCES', 'ATTENTE') NOT NULL,
-  CONSTRAINT FK_EXC_EMP FOREIGN KEY (CODE_EMPLOYE)
-    REFERENCES Employe(CODE_EMPLOYE) ON DELETE CASCADE,
-  CONSTRAINT UQ_EXC_DATE_DEBUT UNIQUE (DATE_DEBUT),
-  CONSTRAINT UQ_EXC_DATE_FIN UNIQUE (DATE_FIN)
-);
-
-
-
--- 7) Disponibilite (pour l'application)
-CREATE TABLE Disponibilite (
-   ID_DISPONIBILITE INT AUTO_INCREMENT PRIMARY KEY,
-   CODE_EMPLOYE INT NOT NULL,
-   JOUR DATE NOT NULL,
-   HEURE TIME NOT NULL,
-   STATUT ENUM('DISPONIBLE','OCCUPÉ') NOT NULL DEFAULT 'DISPONIBLE',
-   NUM_RDV INT NULL,
-   FOREIGN KEY (CODE_EMPLOYE) REFERENCES Employe(CODE_EMPLOYE),
-   FOREIGN KEY (NUM_RDV) REFERENCES Rendezvous(NUM_RDV)
-);
-
 
 -- 8) ServiceEmploye
 CREATE TABLE ServiceEmploye(
@@ -172,29 +171,7 @@ INSERT INTO Patient (
   ('celine.durand@example.com','Céline','Durand', 'Cd5*Kp1JnV',4387788990, 19,'boulevard René-Lévesque','Québec','G1R2V3','RAMQ33442255','1989-07-23'),
   ('olivier.perreault@example.com','Olivier','Perreault','Or8@Vt2ZlQ',4508899001,57,'rue Notre-Dame', 'Longueuil', 'J4K5B2','RAMQ44553366','1981-01-30');
 
-INSERT INTO Rendezvous (CODE_EMPLOYE, COURRIEL, JOUR, HEURE, DUREE, ID_SERVICE, NOTE_CONSULT)
-VALUES
-(100, 'celine.durand@example.com', '2025-08-04', '08:00:00', 20, 1, ''),
-(200, 'marc@example.com', '2025-08-05', '13:10:00', 20, 6, ''),
-(101, 'yannick@example.com', '2025-08-06', '11:35:00', 20, 2, ''),
-(101, 'sophie.girard@example.com', '2025-08-06', '14:30:00', 20, 1, ''),
-(202, 'david@example.com', '2025-08-08', '13:40:00', 20, 7, ''),
-(200, 'pierre.fortin@example.com', '2025-08-11', '09:40:00', 20, 7, ''),
-(202, 'julie.bernard@example.com', '2025-08-12', '09:35:00', 20, 3, ''),
-(201, 'olivier.perreault@example.com', '2025-08-13', '13:45:00', 20, 4, ''),
-(102, 'claire@example.com', '2025-08-14', '12:25:00', 20, 3, ''),
-(200, 'paul.gagnon@example.com', '2025-08-18', '12:00:00', 20, 6, ''),
-(201, 'karine.blais@example.com', '2025-08-19', '09:40:00', 20, 5, ''),
-(201, 'leo@example.com', '2025-08-19', '12:35:00', 20, 2, ''),
-(200, 'eric@example.com', '2025-08-21', '10:15:00', 20, 6, ''),
-(102, 'sophie@example.com', '2025-08-21', '11:15:00', 20, 4, ''),
-(202, 'amanda.boudreau@example.com', '2025-08-27', '10:10:00', 20, 1, ''),
-(101, 'ana@example.com', '2025-08-27', '12:10:00', 20, 3, ''),
-(202, 'marie-claude.leblanc@example.com', '2025-08-27', '13:05:00', 20, 7, ''),
-(101, 'isabelle@example.com', '2025-08-27', '13:55:00', 20, 4, ''),
-(102, 'antoine.lavoie@example.com', '2025-08-28', '10:05:00', 20, 3, ''),
-(102, 'lucie.morel@example.com', '2025-08-28', '12:25:00', 20, 6, ''),
-(201, 'marie@example.com', '2025-08-29', '13:10:00', 20, 4, '');
+
 
 INSERT INTO Horaire (CODE_EMPLOYE, HEURE_DEBUT, HEURE_FIN, JOURS) 
 VALUES
@@ -907,6 +884,30 @@ VALUES
     INSERT INTO Disponibilite VALUES (NULL, 202, '2025-08-29', '16:00:00', NULL, 'DISPONIBLE');
     INSERT INTO Disponibilite VALUES (NULL, 202, '2025-08-29', '16:35:00', NULL, 'DISPONIBLE');
 
+
+INSERT INTO Rendezvous (CODE_EMPLOYE, COURRIEL, JOUR, HEURE, DUREE, ID_SERVICE, NOTE_CONSULT)
+VALUES
+(100, 'celine.durand@example.com', '2025-08-04', '08:00:00', 20, 1, ''),
+(200, 'marc@example.com', '2025-08-05', '13:10:00', 20, 6, ''),
+(101, 'yannick@example.com', '2025-08-06', '11:35:00', 20, 2, ''),
+(101, 'sophie.girard@example.com', '2025-08-06', '14:30:00', 20, 1, ''),
+(202, 'david@example.com', '2025-08-08', '13:40:00', 20, 7, ''),
+(200, 'pierre.fortin@example.com', '2025-08-11', '09:40:00', 20, 7, ''),
+(202, 'julie.bernard@example.com', '2025-08-12', '09:35:00', 20, 3, ''),
+(201, 'olivier.perreault@example.com', '2025-08-13', '13:45:00', 20, 4, ''),
+(102, 'claire@example.com', '2025-08-14', '12:25:00', 20, 3, ''),
+(200, 'paul.gagnon@example.com', '2025-08-18', '12:00:00', 20, 6, ''),
+(201, 'karine.blais@example.com', '2025-08-19', '09:40:00', 20, 5, ''),
+(201, 'leo@example.com', '2025-08-19', '12:35:00', 20, 2, ''),
+(200, 'eric@example.com', '2025-08-21', '10:15:00', 20, 6, ''),
+(102, 'sophie@example.com', '2025-08-21', '11:15:00', 20, 4, ''),
+(202, 'amanda.boudreau@example.com', '2025-08-27', '10:10:00', 20, 1, ''),
+(101, 'ana@example.com', '2025-08-27', '12:10:00', 20, 3, ''),
+(202, 'marie-claude.leblanc@example.com', '2025-08-27', '13:05:00', 20, 7, ''),
+(101, 'isabelle@example.com', '2025-08-27', '13:55:00', 20, 4, ''),
+(102, 'antoine.lavoie@example.com', '2025-08-28', '10:05:00', 20, 3, ''),
+(102, 'lucie.morel@example.com', '2025-08-28', '12:25:00', 20, 6, ''),
+(201, 'marie@example.com', '2025-08-29', '13:10:00', 20, 4, '');
 
 INSERT INTO ServiceEmploye (ID_SERVICE, CODE_EMPLOYE) 
 VALUES
