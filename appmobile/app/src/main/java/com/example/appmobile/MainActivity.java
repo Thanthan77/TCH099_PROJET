@@ -1,6 +1,7 @@
 package com.example.appmobile;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.*;
 
@@ -49,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     private void seConnecter(String courriel, String motDePasse) {
         LoginRequest request = new LoginRequest(courriel, motDePasse);
         apiService.login(request).enqueue(new Callback<LoginResponse>() {
@@ -63,10 +63,19 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtra("token", data.getToken());
                     intent.putExtra("courriel", data.getCourriel());
                     startActivity(intent);
+
+                    SharedPreferences prefs = getSharedPreferences("session", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("courriel", data.getCourriel());
+                    editor.putString("token", data.getToken());
+                    editor.apply();
+
                     finish();
                 } else {
                     Toast.makeText(MainActivity.this, "Identifiants invalides", Toast.LENGTH_SHORT).show();
                 }
+
+
             }
 
             @Override
