@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -187,11 +188,12 @@
                     android:id="@+id/btn_rdv2"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
+                    android:background="@drawable/button_rounded"
                     android:text="@string/prendre_rdv"
-                    android:textColor="#FFFFFF"
                     android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
                     android:textSize="12sp"
-                    android:background="@drawable/button_rounded" />
+                    tools:ignore="TouchTargetSizeCheck" />
             </LinearLayout>
 
             <LinearLayout
@@ -230,11 +232,12 @@
                     android:id="@+id/btn_rdv3"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
+                    android:background="@drawable/button_rounded"
                     android:text="@string/prendre_rdv"
-                    android:textColor="#FFFFFF"
                     android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
                     android:textSize="12sp"
-                    android:background="@drawable/button_rounded" />
+                    tools:ignore="TouchTargetSizeCheck" />
             </LinearLayout>
 
             <LinearLayout
@@ -273,11 +276,12 @@
                     android:id="@+id/btn_rdv4"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
+                    android:background="@drawable/button_rounded"
                     android:text="@string/prendre_rdv"
-                    android:textColor="#FFFFFF"
                     android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
                     android:textSize="12sp"
-                    android:background="@drawable/button_rounded" />
+                    tools:ignore="TouchTargetSizeCheck" />
             </LinearLayout>
 
             <LinearLayout

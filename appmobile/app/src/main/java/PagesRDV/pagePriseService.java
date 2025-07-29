@@ -31,7 +31,7 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
     private Button btnLiquideCorps;
     private Button btnUrgencePasOuf;
 
-    private String idService ;
+    private int idService ;
 
     private Map<String, Integer> serviceMap = new HashMap<>();
     private ApiService apiService;
@@ -87,13 +87,7 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
                             btnUrgencePasOuf.setTag(id);
 
                         }
-                        btnGenerale.setOnClickListener(pagePriseService.this);
-                        btnGrossesse.setOnClickListener(pagePriseService.this);
-                        btnMaladieChronique.setOnClickListener(pagePriseService.this);
-                        btnDepistage.setOnClickListener(pagePriseService.this);
-                        btnVaccin.setOnClickListener(pagePriseService.this);
-                        btnLiquideCorps.setOnClickListener(pagePriseService.this);
-                        btnUrgencePasOuf.setOnClickListener(pagePriseService.this);
+
 
                     }
 
@@ -101,6 +95,14 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
                 else {
                     Toast.makeText(pagePriseService.this, "Erreur chargement des services", Toast.LENGTH_SHORT).show();
                 }
+
+                btnGenerale.setOnClickListener(pagePriseService.this);
+                btnGrossesse.setOnClickListener(pagePriseService.this);
+                btnMaladieChronique.setOnClickListener(pagePriseService.this);
+                btnDepistage.setOnClickListener(pagePriseService.this);
+                btnVaccin.setOnClickListener(pagePriseService.this);
+                btnLiquideCorps.setOnClickListener(pagePriseService.this);
+                btnUrgencePasOuf.setOnClickListener(pagePriseService.this);
 
             }
             @Override
@@ -113,24 +115,24 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View view) {
-        idService = "null" ;
+        idService = -1 ;
         if (view == btnGenerale) {
-            idService = (String) btnGenerale.getTag() ;
+            idService = (int) btnGenerale.getTag() ;
         } else if (view == btnGrossesse) {
-            idService = (String) btnGrossesse.getTag() ;
+            idService = (int) btnGrossesse.getTag() ;
         } else if (view == btnMaladieChronique) {
-            idService = (String) btnMaladieChronique.getTag() ;
+            idService = (int) btnMaladieChronique.getTag() ;
         } else if (view == btnDepistage) {
-            idService = (String) btnDepistage.getTag() ;
+            idService = (int) btnDepistage.getTag() ;
         } else if (view == btnVaccin) {
-            idService = (String) btnVaccin.getTag() ;
+            idService = (int) btnVaccin.getTag() ;
         } else if (view == btnLiquideCorps) {
-            idService = (String) btnLiquideCorps.getTag() ;
+            idService = (int) btnLiquideCorps.getTag() ;
         } else if (view == btnUrgencePasOuf) {
-            idService = (String) btnUrgencePasOuf.getTag() ;
+            idService = (int) btnUrgencePasOuf.getTag() ;
 
         }
-        if (Objects.equals(idService, "null")) {
+        if (idService == -1) {
             Toast.makeText(this, "Service non chargé", Toast.LENGTH_SHORT).show();
 
         }

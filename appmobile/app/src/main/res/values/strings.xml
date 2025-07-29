@@ -58,4 +58,8 @@
     <string name="mes_prochains_rendez_vous">Mes prochains rendez-vous</string>
     <string name="lt"><![CDATA[<]]></string>
     <string name="mot_de_passe_oubli_modifier_le_mot_de_passe">Mot de passe oublié ? Modifier le mot de passe</string>
+    <string name="nom_du_service">Nom du service</string>
+    <string name="date_du_service">date du service</string>
+    <string name="date_du_rdv">date_du rdv</string>
+    <string name="heure_du_rdv">heure du rdv</string>
 </resources>
