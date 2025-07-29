@@ -2,7 +2,6 @@
 
 require_once(__DIR__.'/../../db/Database.php');
 
-ob_start();
 
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
@@ -11,20 +10,52 @@ header('Access-Control-Allow-Methods: POST');
 $data = json_decode(file_get_contents('php://input'), true);
 
 try {
+    $cnx = Database::getInstance();
     if ($data === null || json_last_error() !== JSON_ERROR_NONE) {
         http_response_code(400);
         echo json_encode(['error' => 'Format JSON invalide']);
         exit;
     }
 
+
+    // Recherche du Nom Employe via le codeEmploye
+    $sql = "SELECT CODE_EMPLOYE FROM Employe WHERE NOM_EMPLOYE = :nom LIMIT 1";
+    $pstmt = $cnx->prepare($sql);
+    $pstmt->bindValue(':nom', $data['NOM_EMPLOYE']);
+    $pstmt->execute();
+    $employe = $pstmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$employe) {
+        http_response_code(404);
+        echo json_encode(['error' => 'Employé non trouvé avec ce nom']);
+        exit;
+    }
+
+    $codeEmploye = $employe['CODE_EMPLOYE']?? null;
+
+
+    // Recherche du ID_SERVICE via NOM_SERVICE
+    $sqlService = "SELECT ID_SERVICE FROM Service WHERE NOM = :nom_service LIMIT 1";
+    $stmtService = $cnx->prepare($sqlService);
+    $stmtService->bindValue(':nom_service', $data['NOM_SERVICE']);
+    $stmtService->execute();
+    $service = $stmtService->fetch(PDO::FETCH_ASSOC);
+
+    if (!$service) {
+        http_response_code(404);
+        echo json_encode(['error' => 'Service non trouvé avec ce nom']);
+        exit;
+    }
+
+
+    $idService = $service['ID_SERVICE']??null;
     $courriel = $data['COURRIEL'] ?? null;
     $jour = $data['JOUR'] ?? null;
     $heure = $data['HEURE'] ?? null;
-    $duree = $data['DUREE'] ?? null;
-    $idService = $data['ID_SERVICE'] ?? null;
-    $codeEmploye = $data['CODE_EMPLOYE'] ?? null;
+    
+    
 
-    if (!$courriel || !$jour || !$heure || !$duree || !$idService || !$codeEmploye) {
+    if (!$courriel || !$jour || !$heure || !$idService || !$codeEmploye) {
         http_response_code(400);
         echo json_encode(['error' => 'Champs manquants ou invalides']);
         exit;
@@ -36,7 +67,7 @@ try {
         exit;
     }
 
-    $cnx = Database::getInstance();
+    
     $cnx->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     $sql = "INSERT INTO Rendezvous 
@@ -48,10 +79,10 @@ try {
     $pstmt->bindValue(':courriel', $courriel, PDO::PARAM_STR);
     $pstmt->bindValue(':jour', $jour, PDO::PARAM_STR);
     $pstmt->bindValue(':heure', $heure, PDO::PARAM_STR);
-    $pstmt->bindValue(':duree', (int)$duree, PDO::PARAM_INT);
+    $pstmt->bindValue(':duree', 30, PDO::PARAM_INT);
     $pstmt->bindValue(':id_service', (int)$idService, PDO::PARAM_INT);
     $pstmt->bindValue(':code_employe', (int)$codeEmploye, PDO::PARAM_INT);
-    $pstmt->bindValue(':statut', "ATTENTE", PDO::PARAM_STR);
+    $pstmt->bindValue(':statut', "CONFIRMÉ", PDO::PARAM_STR);
     $pstmt->bindValue(':note', " ");
 
 
@@ -61,7 +92,7 @@ try {
         http_response_code(200);
         echo json_encode([
             'status' => 'OK',
-            'message' => 'Rendez-vous en attente de confirmation',
+            'message' => 'Rendez-vous créé',
             'data' => $data
         ]);
     } else {
@@ -78,5 +109,4 @@ try {
     echo json_encode(['error' => $e->getMessage()]);
 } finally {
     $cnx = null;
-    ob_end_flush();
 }
