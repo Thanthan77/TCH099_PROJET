@@ -31,7 +31,7 @@ try {
         exit;
     }
 
-    // Recherche du CODE_EMPLOYE via NOM_EMPLOYE
+    // Recherche du Nom Employe via le codeEmploye
     $sqlEmploye = "SELECT CODE_EMPLOYE FROM Employe WHERE NOM_EMPLOYE = :nom LIMIT 1";
     $stmtEmploye = $cnx->prepare($sqlEmploye);
     $stmtEmploye->bindValue(':nom', $data['NOM_EMPLOYE']);
