@@ -1,0 +1,16 @@
+.page-container {
+  display: flex;
+  justify-content: center; 
+  align-items: center;    
+}
+
+.footer-clinique {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.footer-clinique p {
+  margin: 3px 0;
+}

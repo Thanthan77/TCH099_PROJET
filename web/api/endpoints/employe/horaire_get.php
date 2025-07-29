@@ -4,7 +4,7 @@ header('Content-Type: application/json');
 require_once(__DIR__.'/../../db/Database.php');
 
 try {
-    $pdo = Database::getInstance();
+    $cnx = Database::getInstance();
 
     $query = "
         SELECT h.JOURS, 
@@ -14,7 +14,7 @@ try {
         JOIN Employe e ON h.CODE_EMPLOYE = e.CODE_EMPLOYE
     ";
 
-    $stmt = $pdo->query($query);
+    $stmt = $cnx->prepare($query);
     $horaires = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     echo json_encode($horaires);
