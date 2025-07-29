@@ -122,9 +122,27 @@ function modifierRdv(numRdv) {
   document.getElementById("popupDate").value = rdv.DATE_RDV;
   document.getElementById("popupHeure").value = rdv.HEURE;
 
-  // Service : injecté directement
   const serviceSelect = document.getElementById("popupService");
-  serviceSelect.innerHTML = `<option selected value="${rdv.NOM_SERVICE}">${rdv.NOM_SERVICE}</option>`;
+  serviceSelect.innerHTML = "";
+
+  const servicesPossibles = [
+    "Consultation générale",
+    "Suivi de grossesse",
+    "Suivi de maladies chroniques",
+    "Dépistage ITSS",
+    "Vaccination",
+    "Prélèvement sanguin / test urinaire",
+    "Urgence mineure"
+  ];
+
+  servicesPossibles.forEach(service => {
+    const option = document.createElement("option");
+    option.value = service;
+    option.textContent = service;
+    if (service === rdv.NOM_SERVICE) option.selected = true;
+    serviceSelect.appendChild(option);
+  });
+
 
   // Professionnel : injecté directement
   const proNom = rdv.POSTE === "Médecin" ? `Dr. ${rdv.NOM_EMPLOYE}` : rdv.NOM_EMPLOYE;
@@ -268,4 +286,19 @@ function toggleFiltres() {
   const filtreSection = document.getElementById("filtreSection");
   if (!filtreSection) return;
   filtreSection.classList.toggle("hidden");
+}
+
+function ouvrirListeServices() {
+  document.getElementById("popupServiceDisplay").classList.add("hidden");
+  document.getElementById("popupService").classList.remove("hidden");
+}
+
+function changerServiceEtFermer() {
+  const selected = document.getElementById("popupService").value;
+  document.getElementById("popupServiceDisplay").textContent = selected;
+  document.getElementById("popupServiceDisplay").classList.remove("hidden");
+  document.getElementById("popupService").classList.add("hidden");
+
+  // Met à jour les professionnels selon le nouveau service
+  mettreAJourProfessionnelsPopup();
 }
