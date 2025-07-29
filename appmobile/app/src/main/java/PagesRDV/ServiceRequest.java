@@ -17,11 +17,11 @@ public class ServiceRequest {
         return idService;
     }
 
-    public String getNom() {
+    public String getNomService() {
         return nom;
     }
 
-    public String getDescription() {
+    public String getDescriptionService() {
         return description;
     }
 }

@@ -4,14 +4,16 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 
 public class PageMesRDV extends AppCompatActivity implements View.OnClickListener {
 
 
     private Button btneffacer;
-
+    private TextView textrdv;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,9 +24,12 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
         String courriel = prefs.getString("courriel", null);
 
         btneffacer = (Button) findViewById(R.id.btnannulerrdv);
+        textrdv=(TextView)findViewById(R.id.TextviewRendezvous);
         btneffacer.setOnClickListener(this);
 
     }
+
+
 
     @Override
     public void onClick(View view) {
