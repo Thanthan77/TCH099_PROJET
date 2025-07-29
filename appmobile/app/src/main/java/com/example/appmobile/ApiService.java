@@ -19,5 +19,4 @@ public interface ApiService {
    @GET ("api/disponibilité")
     Call<List<HoraireRequest>> getHoraire () ;
 
-
 }
