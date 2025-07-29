@@ -67,6 +67,8 @@ function showTab(id) {
   document.getElementById(id).classList.remove("hidden");
 }
 
+let professionnelsParService = {}; // 🆕 Déclaration globale (à mettre en haut du fichier JS)
+
 async function chargerRendezVous() {
   try {
     const response = await fetch(`${API_URL}rendezvous`);
@@ -74,6 +76,9 @@ async function chargerRendezVous() {
 
     const rendezvous = await response.json();
     rendezVousGlobaux = rendezvous;
+
+    // 🆕 Réinitialise le dictionnaire des professionnels
+    professionnelsParService = {};
 
     const tbody = document.querySelector("#rdv tbody");
     tbody.innerHTML = "";
@@ -84,6 +89,7 @@ async function chargerRendezVous() {
     }
 
     rendezvous.forEach(rdv => {
+      // Ajout au tableau
       const row = document.createElement("tr");
       const nomAffiche = rdv.POSTE === "Médecin" ? `Dr. ${rdv.NOM_EMPLOYE}` : rdv.NOM_EMPLOYE;
 
@@ -99,7 +105,15 @@ async function chargerRendezVous() {
         </td>
       `;
       tbody.appendChild(row);
+
+      // 🆕 Enregistrement du professionnel par service
+      const nomService = rdv.NOM_SERVICE;
+      if (!professionnelsParService[nomService]) {
+        professionnelsParService[nomService] = new Set();
+      }
+      professionnelsParService[nomService].add(nomAffiche);
     });
+
   } catch (err) {
     console.error("Erreur lors du chargement des RDV :", err);
   }
@@ -115,7 +129,6 @@ function modifierRdv(numRdv) {
     return;
   }
 
-  // Remplissage des champs du pop-up
   document.getElementById("popupNumRdv").value = rdv.NUM_RDV;
   document.getElementById("popupNomPatient").value = `${patient.PRENOM_PATIENT} ${patient.NOM_PATIENT}`;
   document.getElementById("popupAssurancePatient").value = patient.NO_ASSURANCE_MALADIE;
@@ -143,14 +156,26 @@ function modifierRdv(numRdv) {
     serviceSelect.appendChild(option);
   });
 
-
-  // Professionnel : injecté directement
+  // Récupérer le nom du professionnel actuel
   const proNom = rdv.POSTE === "Médecin" ? `Dr. ${rdv.NOM_EMPLOYE}` : rdv.NOM_EMPLOYE;
-  const proSelect = document.getElementById("popupProfessionnel");
-  proSelect.innerHTML = `<option selected value="${proNom}">${proNom}</option>`;
+
+  // Charger uniquement les professionnels du service (et ne pas forcer d'ajout)
+  mettreAJourProfessionnelsPopup(); // pas de paramètre
+
+  // Sélectionner le pro si présent
+  setTimeout(() => {
+    const proSelect = document.getElementById("popupProfessionnel");
+    for (let option of proSelect.options) {
+      if (option.value === proNom) {
+        option.selected = true;
+        break;
+      }
+    }
+  }, 50);
 
   document.getElementById("popupModification").classList.remove("hidden");
 }
+
 
 function fermerPopup() {
   document.getElementById("popupModification").classList.add("hidden");
@@ -301,4 +326,28 @@ function changerServiceEtFermer() {
 
   // Met à jour les professionnels selon le nouveau service
   mettreAJourProfessionnelsPopup();
+}
+
+function mettreAJourProfessionnelsPopup() {
+  const service = document.getElementById("popupService").value;
+  const select = document.getElementById("popupProfessionnel");
+
+  select.innerHTML = "";
+
+  const professionnels = professionnelsParService[service];
+
+  if (!professionnels || professionnels.size === 0) {
+    const option = document.createElement("option");
+    option.textContent = "Aucun professionnel disponible";
+    option.disabled = true;
+    select.appendChild(option);
+    return;
+  }
+
+  [...professionnels].forEach(nom => {
+    const option = document.createElement("option");
+    option.value = nom;
+    option.textContent = nom;
+    select.appendChild(option);
+  });
 }
