@@ -82,7 +82,6 @@ post($URL.'/inscription_patient', 'endpoints/patient/inscription_patient.php');
 // POST pour prendre un rendezvous en tant que pâtient
 post($URL.'/rendezvous/patient', 'endpoints/patient/rendezVous_post.php'); 
 
-
 // PUT modifie les informations des patients 
 put($URL. '/modifier_patient', 'endpoints/patient/patient_put.php');
 
@@ -95,7 +94,8 @@ get($URL.'/rendezvous/patient/$courriel','endpoints/patient/rendezVous_patient_g
 // GET pour avoir toutes les informations d'un patient 
 get($URL.'/patient/$courriel','endpoints/patient/patient_get');
 
-
+// GET pour avoir toutes les disponibilites
+get($URL.'disponibilites','endpoints/patient/disponibilites_get.php');
 
 
 // Route de secours pour les pages non trouvées
