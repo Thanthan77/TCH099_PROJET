@@ -17,6 +17,7 @@ if (codeInUrl && codeInUrl !== codeSession) {
 }
 
 let tousLesPatients = [];
+let rendezVousGlobaux = [];
 
 document.addEventListener("DOMContentLoaded", () => {
   chargerRendezVous();
@@ -24,68 +25,38 @@ document.addEventListener("DOMContentLoaded", () => {
   chargerPatientsPourListe();
   showTab("rdv");
 
-  // 🔄 Filtres dynamiques
   const champsFiltre = [
     document.getElementById('filtrePrenom'),
     document.getElementById('filtreNom'),
     document.getElementById('filtreDateNaissance'),
     document.getElementById('filtreAssurance')
   ];
-  champsFiltre.forEach(champ => {
-    champ.addEventListener("input", filtrerPatients);
+  champsFiltre.forEach(champ => champ.addEventListener("input", filtrerPatients));
+
+  document.querySelector(".filtre-icon")?.addEventListener("click", toggleFiltres);
+
+  document.getElementById("btn-logout")?.addEventListener("click", e => {
+    e.preventDefault();
+    sessionStorage.clear();
+    localStorage.clear();
+    window.location.href = "index.html";
   });
 
-  const filtreIcone = document.querySelector(".filtre-icon");
-  if (filtreIcone) {
-    filtreIcone.addEventListener("click", toggleFiltres);
-  }
-
-  // 🔓 Déconnexion
-  const logoutBtn = document.getElementById("btn-logout");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", function (e) {
-      e.preventDefault();
-      sessionStorage.clear();
-      localStorage.clear();
-      window.location.href = "index.html";
-    });
-  }
-
-  // 🔁 Service → Professionnel
-  const serviceSelect = document.getElementById("service");
-  if (serviceSelect) {
-    mettreAJourProfessionnels();
-    serviceSelect.addEventListener("change", mettreAJourProfessionnels);
-  }
-
-  const professionnelSelect = document.getElementById("professionnel");
-  if (professionnelSelect && (!serviceSelect || !serviceSelect.value)) {
-    professionnelSelect.disabled = true;
-    professionnelSelect.innerHTML = '<option value="">-- Sélectionnez un service d\'abord --</option>';
-  }
-
-  // 🔍 Recherche patient nom/assurance
-  const champNom = document.getElementById("nomPatient");
-  champNom?.addEventListener("input", () => {
-    const nomTape = champNom.value.trim();
-    if (nomTape.length > 0) {
-      afficherPatientsFiltres(nomTape);
-    } else {
-      document.getElementById("listeDeroulantePatients").classList.add("hidden");
-    }
+  document.getElementById("nomPatient")?.addEventListener("input", () => {
+    const nomTape = document.getElementById("nomPatient").value.trim();
+    afficherPatientsFiltres(nomTape);
   });
 
-  champNom?.addEventListener("focus", () => {
-    const nomTape = champNom.value.trim();
-    if (nomTape.length > 0) {
-      afficherPatientsFiltres(nomTape);
-    }
+  document.getElementById("nomPatient")?.addEventListener("focus", () => {
+    const nomTape = document.getElementById("nomPatient").value.trim();
+    afficherPatientsFiltres(nomTape);
   });
 
   document.getElementById("assurancePatient")?.addEventListener("input", rechercherPatientParAssurance);
 
   document.addEventListener("click", (e) => {
-    if (!champNom.contains(e.target) && !document.getElementById("listeDeroulantePatients").contains(e.target)) {
+    if (!document.getElementById("nomPatient").contains(e.target) &&
+        !document.getElementById("listeDeroulantePatients").contains(e.target)) {
       document.getElementById("listeDeroulantePatients").classList.add("hidden");
     }
   });
@@ -102,6 +73,8 @@ async function chargerRendezVous() {
     if (!response.ok) throw new Error("Échec du chargement des rendez-vous");
 
     const rendezvous = await response.json();
+    rendezVousGlobaux = rendezvous;
+
     const tbody = document.querySelector("#rdv tbody");
     tbody.innerHTML = "";
 
@@ -133,7 +106,36 @@ async function chargerRendezVous() {
 }
 
 function modifierRdv(numRdv) {
-  alert("Modifier le rendez-vous #" + numRdv);
+  const rdv = rendezVousGlobaux.find(r => r.NUM_RDV === numRdv);
+  if (!rdv) return;
+
+  const patient = tousLesPatients.find(p => p.COURRIEL === rdv.COURRIEL);
+  if (!patient) {
+    alert("Patient introuvable.");
+    return;
+  }
+
+  // Remplissage des champs du pop-up
+  document.getElementById("popupNumRdv").value = rdv.NUM_RDV;
+  document.getElementById("popupNomPatient").value = `${patient.PRENOM_PATIENT} ${patient.NOM_PATIENT}`;
+  document.getElementById("popupAssurancePatient").value = patient.NO_ASSURANCE_MALADIE;
+  document.getElementById("popupDate").value = rdv.DATE_RDV;
+  document.getElementById("popupHeure").value = rdv.HEURE;
+
+  // Service : injecté directement
+  const serviceSelect = document.getElementById("popupService");
+  serviceSelect.innerHTML = `<option selected value="${rdv.NOM_SERVICE}">${rdv.NOM_SERVICE}</option>`;
+
+  // Professionnel : injecté directement
+  const proNom = rdv.POSTE === "Médecin" ? `Dr. ${rdv.NOM_EMPLOYE}` : rdv.NOM_EMPLOYE;
+  const proSelect = document.getElementById("popupProfessionnel");
+  proSelect.innerHTML = `<option selected value="${proNom}">${proNom}</option>`;
+
+  document.getElementById("popupModification").classList.remove("hidden");
+}
+
+function fermerPopup() {
+  document.getElementById("popupModification").classList.add("hidden");
 }
 
 function annulerRdv(numRdv) {
@@ -146,9 +148,7 @@ function annulerRdv(numRdv) {
       .then(() => {
         chargerRendezVous();
       })
-      .catch(err => {
-        alert("Erreur : " + err.message);
-      });
+      .catch(err => alert("Erreur : " + err.message));
   }
 }
 
@@ -158,6 +158,8 @@ async function chargerPatients() {
     if (!response.ok) throw new Error("Échec du chargement des patients");
 
     const patients = await response.json();
+    tousLesPatients = patients;
+
     const tbody = document.querySelector("#table-patients");
     tbody.innerHTML = "";
 
@@ -181,80 +183,6 @@ async function chargerPatients() {
   } catch (err) {
     console.error("Erreur lors du chargement des patients :", err);
   }
-}
-
-function filtrerPatients() {
-  const prenom = document.getElementById('filtrePrenom').value.toLowerCase();
-  const nom = document.getElementById('filtreNom').value.toLowerCase();
-  const dateNaissance = document.getElementById('filtreDateNaissance').value;
-  const assurance = document.getElementById('filtreAssurance').value.toLowerCase();
-
-  const lignes = document.querySelectorAll('.ligne-patient');
-
-  lignes.forEach(ligne => {
-    const prenomCell = ligne.querySelector('.col-prenom')?.textContent.toLowerCase() || "";
-    const nomCell = ligne.querySelector('.col-nom')?.textContent.toLowerCase() || "";
-    const dateCell = ligne.querySelector('.col-date')?.textContent || "";
-    const assuranceCell = ligne.querySelector('.col-assurance')?.textContent.toLowerCase() || "";
-
-    const correspond =
-      prenomCell.includes(prenom) &&
-      nomCell.includes(nom) &&
-      dateCell.includes(dateNaissance) &&
-      assuranceCell.includes(assurance);
-
-    ligne.style.display = correspond ? '' : 'none';
-  });
-}
-
-function reinitialiserFiltres() {
-  document.getElementById('filtrePrenom').value = '';
-  document.getElementById('filtreNom').value = '';
-  document.getElementById('filtreDateNaissance').value = '';
-  document.getElementById('filtreAssurance').value = '';
-  filtrerPatients();
-}
-
-function toggleFiltres() {
-  const filtreSection = document.getElementById("filtreSection");
-  if (!filtreSection) return;
-  filtreSection.classList.toggle("hidden");
-}
-
-const professionnelsParService = {
-  "Consultation générale": ["Dr. Tremblay", "Infirmière Julie"],
-  "Suivi de grossesse": ["Dr. Tremblay"],
-  "Suivi de maladies chroniques": ["Dr. Tremblay"],
-  "Dépistage ITSS": ["Infirmière Julie"],
-  "Vaccination": ["Infirmière Julie"],
-  "Prélèvement sanguin / test urinaire": ["Infirmière Julie"],
-  "Urgence mineure": ["Dr. Tremblay", "Infirmière Julie"]
-};
-
-function mettreAJourProfessionnels() {
-  const serviceSelect = document.getElementById("service");
-  const professionnelSelect = document.getElementById("professionnel");
-  const serviceChoisi = serviceSelect.value;
-
-  professionnelSelect.innerHTML = "";
-
-  if (!serviceChoisi || !professionnelsParService[serviceChoisi]) {
-    professionnelSelect.disabled = true;
-    const opt = document.createElement("option");
-    opt.textContent = "-- Sélectionnez un service d'abord --";
-    opt.value = "";
-    professionnelSelect.appendChild(opt);
-    return;
-  }
-
-  professionnelSelect.disabled = false;
-
-  professionnelsParService[serviceChoisi].forEach(pro => {
-    const option = document.createElement("option");
-    option.value = pro;
-    option.textContent = pro;
-    professionnelSelect.appendChild(option);
-  });
 }
 
 async function chargerPatientsPourListe() {
@@ -302,4 +230,42 @@ function rechercherPatientParAssurance() {
   if (match) {
     document.getElementById("nomPatient").value = `${match.PRENOM_PATIENT} ${match.NOM_PATIENT}`;
   }
+}
+
+function filtrerPatients() {
+  const prenom = document.getElementById('filtrePrenom').value.toLowerCase();
+  const nom = document.getElementById('filtreNom').value.toLowerCase();
+  const dateNaissance = document.getElementById('filtreDateNaissance').value;
+  const assurance = document.getElementById('filtreAssurance').value.toLowerCase();
+
+  const lignes = document.querySelectorAll('.ligne-patient');
+
+  lignes.forEach(ligne => {
+    const prenomCell = ligne.querySelector('.col-prenom')?.textContent.toLowerCase() || "";
+    const nomCell = ligne.querySelector('.col-nom')?.textContent.toLowerCase() || "";
+    const dateCell = ligne.querySelector('.col-date')?.textContent || "";
+    const assuranceCell = ligne.querySelector('.col-assurance')?.textContent.toLowerCase() || "";
+
+    const correspond =
+      prenomCell.includes(prenom) &&
+      nomCell.includes(nom) &&
+      dateCell.includes(dateNaissance) &&
+      assuranceCell.includes(assurance);
+
+    ligne.style.display = correspond ? '' : 'none';
+  });
+}
+
+function reinitialiserFiltres() {
+  document.getElementById('filtrePrenom').value = '';
+  document.getElementById('filtreNom').value = '';
+  document.getElementById('filtreDateNaissance').value = '';
+  document.getElementById('filtreAssurance').value = '';
+  filtrerPatients();
+}
+
+function toggleFiltres() {
+  const filtreSection = document.getElementById("filtreSection");
+  if (!filtreSection) return;
+  filtreSection.classList.toggle("hidden");
 }
