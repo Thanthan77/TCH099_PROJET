@@ -17,7 +17,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText connexion_email, connexion_mdp;
     private Button btn_se_connecter;
     private TextView lienInscription;
-    private com.example.appmobile.ApiService apiService;
+
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         btn_se_connecter = findViewById(R.id.btn_se_connecter);
         lienInscription = findViewById(R.id.lien_inscription);
 
-        initRetrofit();
+        apiService = ApiClient.getApiService();
 
         lienInscription.setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, PageInscription.class))
@@ -47,14 +48,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void initRetrofit() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
 
-        apiService = retrofit.create(com.example.appmobile.ApiService.class);
-    }
 
     private void seConnecter(String courriel, String motDePasse) {
         LoginRequest request = new LoginRequest(courriel, motDePasse);
