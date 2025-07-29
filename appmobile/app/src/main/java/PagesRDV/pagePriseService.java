@@ -135,6 +135,7 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
         }
         Intent intent = new Intent(this, pagePriseMoment.class);
         intent.putExtra("id_service", idService);
+        intent.putExtra("nomService", nomService) ;
         startActivity(intent);
 
 

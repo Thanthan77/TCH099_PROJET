@@ -11,6 +11,7 @@ import com.example.appmobile.ApiClient;
 import com.example.appmobile.ApiService;
 import com.example.appmobile.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -22,7 +23,7 @@ public class pagePriseMoment extends AppCompatActivity {
     private ListView listView;
     private ApiService apiService;
     private int idService;
-    private String nomService ;
+    private String nomService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +35,10 @@ public class pagePriseMoment extends AppCompatActivity {
 
 
         idService = getIntent().getIntExtra("id_service", -1);
-        nomService= getIntent().getIntExtra("nom_service", nomService) ;
+        nomService = getIntent().getStringExtra("nom_service");
 
-        if (idService == -1) {
-            Toast.makeText(this, "ID de service invalide", Toast.LENGTH_SHORT).show();
+        if (idService == -1 || nomService == null) {
+            Toast.makeText(this, "Données du service manquantes", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -54,13 +55,17 @@ public class pagePriseMoment extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     List<HoraireRequest> horaires = response.body();
 
+                    List<HoraireRdv> rdvItems = new ArrayList<>();
+                    for (HoraireRequest h : horaires) {
+                        rdvItems.add(new HoraireRdv(nomService, h.getJourRdv(), h.getHeureRdv()));
+                    }
                     HoraireAdapter adapter = new HoraireAdapter(
                             pagePriseMoment.this,
-                            horaires,
-                            idService,
+                            rdvItems,
                             horaire -> {
+                                // Lors du clic sur "Prendre RDV"
                                 Intent intent = new Intent(pagePriseMoment.this, pagePriseConfirmation.class);
-                                intent.putExtra("nom_service", horaire.getNomService(idService));
+                                intent.putExtra("nom_service", horaire.getNomService());
                                 intent.putExtra("jour", horaire.getJourRdv());
                                 intent.putExtra("heure", horaire.getHeureRdv());
                                 startActivity(intent);
@@ -68,17 +73,15 @@ public class pagePriseMoment extends AppCompatActivity {
                     );
 
                     listView.setAdapter(adapter);
+
                 } else {
-                    Toast.makeText(pagePriseMoment.this, "Erreur chargement horaires", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(pagePriseMoment.this, "Erreur de chargement des horaires", Toast.LENGTH_SHORT).show();
                 }
             }
-
             @Override
             public void onFailure(Call<List<HoraireRequest>> call, Throwable t) {
                 Toast.makeText(pagePriseMoment.this, "Erreur réseau : " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
-
-
 }

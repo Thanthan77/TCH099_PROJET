@@ -10,8 +10,7 @@ public class ServiceRequest {
     @SerializedName("NOM")
     private String nom;
 
-    @SerializedName("DESCRIPTION")
-    private String description;
+
 
     public int getIdService() {
         return idService;
@@ -21,7 +20,5 @@ public class ServiceRequest {
         return nom;
     }
 
-    public String getDescriptionService() {
-        return description;
-    }
+
 }
