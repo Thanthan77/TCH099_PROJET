@@ -1,11 +1,6 @@
--- 1) SERVICE
-CREATE TABLE Service (
-  ID_SERVICE   INT(20)        PRIMARY KEY,
-  NOM          VARCHAR(30),
-  DESCRIPTION  VARCHAR(30)
-);
 
--- 2) EMPLOYE
+
+-- 1) EMPLOYE
 CREATE TABLE Employe (
   CODE_EMPLOYE   INT           PRIMARY KEY,
   PRENOM_EMPLOYE VARCHAR(30),
@@ -20,6 +15,19 @@ CREATE TABLE Employe (
   POSTE          VARCHAR(30)
 
 );
+
+
+-- 2) SERVICE
+CREATE TABLE Service (
+  ID_SERVICE   INT(20) PRIMARY KEY,
+  NOM          VARCHAR(30),
+  DESCRIPTION  VARCHAR(100),
+  CODE_EMPLOYE INT,
+  FOREIGN KEY (CODE_EMPLOYE) REFERENCES Employe(CODE_EMPLOYE)
+);
+
+
+
 
 -- 3) PATIENT
 CREATE TABLE Patient (
@@ -80,6 +88,7 @@ CREATE TABLE Exception_horaire (
 );
 
 
+
 -- 7) Disponibilite (pour l'application)
 CREATE TABLE Disponibilite (
    ID_DISPONIBILITE    INT AUTO_INCREMENT PRIMARY KEY,
@@ -95,16 +104,18 @@ CREATE TABLE Disponibilite (
  );
 
 
--- 8) INSERTIONS
+-- 8) ServiceEmploye
+CREATE TABLE ServiceEmploye(
+    ID_SERVICE INT,
+    CODE_EMPLOYE INT ,
+    PRIMARY KEY (ID_SERVICE, CODE_EMPLOYE),
+    FOREIGN KEY (ID_SERVICE) REFERENCES Service(ID_SERVICE),
+    FOREIGN KEY (CODE_EMPLOYE) REFERENCES Employe(CODE_EMPLOYE)
+);
 
-INSERT INTO Service (ID_SERVICE, NOM, DESCRIPTION) VALUES
-  (1, 'Consultation générale',          'Évaluation de santé pour tout problème courant'),
-  (2, 'Suivi de grossesse',             'Suivi médical de grossesse'),
-  (3, 'Suivi de maladies chroniques',    'Contrôle régulier (diabète, hypertension, etc.)'),
-  (4, 'Dépistage ITSS',                 'Tests pour infections transmissibles (ITSS)'),
-  (5, 'Vaccination',                    'Vaccin de routine, voyage ou saisonnier'),
-  (6, 'Prélèvement sanguin / test urine','Prise de sang ou test urinaire'),
-  (7, 'Urgence mineure',                'Blessures légères, infections, douleurs modérées');
+
+-- 9) INSERTIONS
+
 
 INSERT INTO Employe (
   CODE_EMPLOYE, PRENOM_EMPLOYE, NOM_EMPLOYE, ETAT_CIVIL, MOT_DE_PASSE,
@@ -119,6 +130,21 @@ INSERT INTO Employe (
   (300, 'Claire',   'Moreau',   'Marier',     'Cn9#Hj2MfW',  'claire.moreau@example.com',  5141234573, '135 rue Papineau',          '1980-07-25', 'F', 'Secrétaire'),
   (301, 'Xavier',   'Dubé',     'Celibataire' ,'Xb5$Qn3RpK',  'xavier.dube@example.com',    5141234574, '246 rue Sainte-Catherine',  '1995-04-12', 'M', 'Secrétaire'),
   (400, 'George',   'Smith',    'Marier'      ,'Gt8!Lz1WfR',  'george.smith@example.com',   5141234575, '369 rue Berri',             '1975-01-30', 'M', 'Administrateur');
+
+
+
+INSERT INTO Service (ID_SERVICE, NOM, DESCRIPTION, CODE_EMPLOYE) VALUES
+  (1, 'Consultation générale',            'Évaluation de santé pour tout problème courant',       100),
+  (2, 'Suivi de grossesse',               'Suivi médical de grossesse',                          100),
+  (3, 'Suivi de maladies chroniques',     'Contrôle régulier (diabète, hypertension, etc.)',     101),
+  (4, 'Dépistage ITSS',                   'Tests pour infections transmissibles (ITSS)',         102),
+  (5, 'Vaccination',                      'Vaccin de routine, voyage ou saisonnier',             201),
+  (6, 'Prélèvement sanguin / test urine', 'Prise de sang ou test urinaire',                      200),
+  (7, 'Urgence mineure',                  'Blessures légères, infections, douleurs modérées',    202);
+
+
+
+
 
 INSERT INTO Patient (
   COURRIEL, PRENOM_PATIENT, NOM_PATIENT, MOT_DE_PASSE,
@@ -214,5 +240,34 @@ INSERT INTO Exception_horaire (CODE_EMPLOYE, DATE_DEBUT, DATE_FIN, TYPE_EXCEPTIO
    (100, '2025-07-28 08:35:00','2025-07-28 08:55:00',    1, 'OCCUPÉ'),
    (101, '2025-07-28 09:00:00','2025-07-28 09:20:00', NULL, 'DISPONIBLE'),
    (101, '2025-07-28 09:35:00','2025-07-28 09:55:00',    5, 'OCCUPÉ');
+
+
+INSERT INTO ServiceEmploye (ID_SERVICE, CODE_EMPLOYE) VALUES
+  (1, 100),  -- Alice Durand : Consultation générale
+  (2, 100),  -- Alice Durand : Suivi de grossesse
+  (5, 100),  -- Alice Durand : Vaccination
+  (7, 100),  -- Alice Durand : Urgence mineure
+
+  (1, 101),  -- Jean Dupont : Consultation générale
+  (2, 101),  -- Jean Dupont : Suivi de grossesse
+  (3, 101),  -- Jean Dupont : Suivi maladies chroniques
+  (4, 101),  -- Jean Dupont : Dépistage ITSS
+
+  (3, 102),  -- Monique Jodoin : Suivi maladies chroniques
+  (4, 102),  -- Monique Jodoin : Dépistage ITSS
+  (6, 102),  -- Monique Jodoin : Prélèvement sanguin
+
+  (6, 200),  -- Bruno Martin : Prélèvement sanguin
+  (7, 200),  -- Bruno Martin : Urgences mineures
+
+  (2, 201),  -- Isabelle Langlois : Suivi de grossesse
+  (4, 201),  -- Isabelle Langlois : Dépistage ITSS
+  (5, 201),  -- Isabelle Langlois : Vaccination
+
+  (1, 202),  -- Dominic Dublois : Consultation générale
+  (3, 202),  -- Dominic Dublois : Suivi maladies chroniques
+  (4, 202),  -- Dominic Dublois : Dépistage ITSS
+  (7, 202);  -- Dominic Dublois : Urgences mineures
+
 
 
