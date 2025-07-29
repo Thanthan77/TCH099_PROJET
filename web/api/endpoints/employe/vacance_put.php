@@ -1,6 +1,5 @@
 <?php
 
-ob_start();
 
 require_once(__DIR__.'/../../db/Database.php');
 
@@ -65,4 +64,4 @@ try {
     }
 }
 
-ob_end_flush();
+
