@@ -15,7 +15,7 @@ import com.example.appmobile.R;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,8 +50,6 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
         btnLiquideCorps = findViewById(R.id.btn_rdv6);
         btnUrgencePasOuf = findViewById(R.id.btn_rdv7);
 
-
-
         apiService = ApiClient.getApiService();
 
         loadServices();
@@ -67,34 +65,41 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
             public void onResponse(Call<List<ServiceRequest>> call, Response<List<ServiceRequest>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     for (ServiceRequest service : response.body()) {
-                        serviceMap.put(service.getNom(), service.getIdService());
-                        String nom = service.getNom();
-                        int id = service.getIdService();
+                        serviceMap.put(service.getNomService(), service.getIdService());
+                        String nom = service.getNomService() ;
+                        int id = service.getIdService() ;
 
-                        if (nom.equals("Consultation générale")) {
-                            btnGenerale.setTag(id);
-                        } else if (nom.equals("Suivi de grossesse")) {
-                            btnGrossesse.setTag(id);
-                        } else if (nom.equals("Suivi de maladies chroniques")) {
-                            btnMaladieChronique.setTag(id);
-                        } else if (nom.equals("Dépistage ITSS")) {
-                            btnDepistage.setTag(id);
-                        } else if (nom.equals("Vaccination")) {
-                            btnVaccin.setTag(id);
-                        } else if (nom.equals("Prélèvement sanguin / test urine")) {
-                            btnLiquideCorps.setTag(id);
-                        } else if (nom.equals("Urgence mineure")) {
-                            btnUrgencePasOuf.setTag(id);
 
+                        serviceMap.put(nom, id);
+
+                        switch (service.getNomService()) {
+                            case "Consultation générale":
+                                btnGenerale.setTag(service.getNomService());
+                                break;
+                            case "Suivi de grossesse":
+                                btnGrossesse.setTag(service.getNomService());
+                                break;
+                            case "Suivi de maladies chroniques":
+                                btnMaladieChronique.setTag(service.getNomService());
+                                break;
+                            case "Dépistage ITSS":
+                                btnDepistage.setTag(service.getNomService());
+                                break;
+                            case "Vaccination":
+                                btnVaccin.setTag(service.getNomService());
+                                break;
+                            case "Prélèvement sanguin / test urine":
+                                btnLiquideCorps.setTag(service.getNomService());
+                                break;
+                            case "Urgence mineure":
+                                btnUrgencePasOuf.setTag(service.getNomService());
+                                break;
                         }
 
 
                     }
 
-                }
-                else {
-                    Toast.makeText(pagePriseService.this, "Erreur chargement des services", Toast.LENGTH_SHORT).show();
-                }
+
 
                 btnGenerale.setOnClickListener(pagePriseService.this);
                 btnGrossesse.setOnClickListener(pagePriseService.this);
@@ -103,7 +108,9 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
                 btnVaccin.setOnClickListener(pagePriseService.this);
                 btnLiquideCorps.setOnClickListener(pagePriseService.this);
                 btnUrgencePasOuf.setOnClickListener(pagePriseService.this);
-
+                } else {
+                    Toast.makeText(pagePriseService.this, "Erreur chargement des services", Toast.LENGTH_SHORT).show();
+                }
             }
             @Override
             public void onFailure(Call<List<ServiceRequest>> call, Throwable t) {
@@ -115,22 +122,12 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View view) {
-        idService = -1 ;
-        if (view == btnGenerale) {
-            idService = (int) btnGenerale.getTag() ;
-        } else if (view == btnGrossesse) {
-            idService = (int) btnGrossesse.getTag() ;
-        } else if (view == btnMaladieChronique) {
-            idService = (int) btnMaladieChronique.getTag() ;
-        } else if (view == btnDepistage) {
-            idService = (int) btnDepistage.getTag() ;
-        } else if (view == btnVaccin) {
-            idService = (int) btnVaccin.getTag() ;
-        } else if (view == btnLiquideCorps) {
-            idService = (int) btnLiquideCorps.getTag() ;
-        } else if (view == btnUrgencePasOuf) {
-            idService = (int) btnUrgencePasOuf.getTag() ;
+        String nomService = (String) view.getTag();
+        idService = serviceMap.getOrDefault(nomService, -1);
 
+        if (idService == -1) {
+            Toast.makeText(this, "Service non trouvé", Toast.LENGTH_SHORT).show();
+            return;
         }
         if (idService == -1) {
             Toast.makeText(this, "Service non chargé", Toast.LENGTH_SHORT).show();

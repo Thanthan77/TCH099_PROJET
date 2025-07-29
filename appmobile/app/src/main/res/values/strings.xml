@@ -62,4 +62,8 @@
     <string name="date_du_service">date du service</string>
     <string name="date_du_rdv">date_du rdv</string>
     <string name="heure_du_rdv">heure du rdv</string>
+    <string name="nom_du_docteur">Nom du Docteur</string>
+    <string name="date_du_rdv2">Date du rdv</string>
+    <string name="adresse_courriel_du_client">adresse courriel du client</string>
+    <string name="prendre_rdv2">Prendre Rdv</string>
 </resources>
