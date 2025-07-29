@@ -219,7 +219,8 @@ async function chargerPatients() {
         <td class="col-nom">${p.NOM_PATIENT}</td>
         <td class="col-date">${p.DATE_NAISSANCE}</td>
         <td class="col-assurance">${p.NO_ASSURANCE_MALADIE}</td>
-        <td>${p.NUM_TEL} / ${p.COURRIEL}</td>
+        <td class="col-no_tel">${p.NUM_TEL}</td>
+        <td class="col-courriel">${p.COURRIEL}</td>
       `;
       tbody.appendChild(row);
     });
@@ -276,28 +277,29 @@ function rechercherPatientParAssurance() {
 }
 
 function filtrerPatients() {
-  const prenom = document.getElementById('filtrePrenom').value.toLowerCase();
-  const nom = document.getElementById('filtreNom').value.toLowerCase();
-  const dateNaissance = document.getElementById('filtreDateNaissance').value;
-  const assurance = document.getElementById('filtreAssurance').value.toLowerCase();
+  const prenom = document.getElementById('filtrePrenom').value.toLowerCase().trim();
+  const nom = document.getElementById('filtreNom').value.toLowerCase().trim();
+  const dateNaissance = document.getElementById('filtreDateNaissance').value.trim();
+  const assurance = document.getElementById('filtreAssurance').value.toLowerCase().trim();
 
   const lignes = document.querySelectorAll('.ligne-patient');
 
   lignes.forEach(ligne => {
-    const prenomCell = ligne.querySelector('.col-prenom')?.textContent.toLowerCase() || "";
-    const nomCell = ligne.querySelector('.col-nom')?.textContent.toLowerCase() || "";
-    const dateCell = ligne.querySelector('.col-date')?.textContent || "";
-    const assuranceCell = ligne.querySelector('.col-assurance')?.textContent.toLowerCase() || "";
+    const prenomCell = ligne.querySelector('.col-prenom')?.textContent.toLowerCase().trim() || "";
+    const nomCell = ligne.querySelector('.col-nom')?.textContent.toLowerCase().trim() || "";
+    const dateCell = ligne.querySelector('.col-date')?.textContent.trim() || "";
+    const assuranceCell = ligne.querySelector('.col-assurance')?.textContent.toLowerCase().trim() || "";
 
     const correspond =
-      prenomCell.includes(prenom) &&
-      nomCell.includes(nom) &&
-      dateCell.includes(dateNaissance) &&
-      assuranceCell.includes(assurance);
+      (!prenom || prenomCell.startsWith(prenom)) &&
+      (!nom || nomCell.startsWith(nom)) &&
+      (!dateNaissance || dateCell.includes(dateNaissance)) &&
+      (!assurance || assuranceCell.startsWith(assurance));
 
     ligne.style.display = correspond ? '' : 'none';
   });
 }
+
 
 function reinitialiserFiltres() {
   document.getElementById('filtrePrenom').value = '';
