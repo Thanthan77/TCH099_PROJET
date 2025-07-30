@@ -353,3 +353,30 @@ function mettreAJourProfessionnelsPopup() {
     select.appendChild(option);
   });
 }
+
+function mettreAJourProfessionnelsSuivi() {
+  const service = document.getElementById("service").value;
+  const select = document.getElementById("professionnel");
+
+  select.innerHTML = "";
+
+  const professionnels = professionnelsParService[service];
+
+  if (!professionnels || professionnels.size === 0) {
+    const option = document.createElement("option");
+    option.textContent = "Aucun professionnel disponible";
+    option.disabled = true;
+    select.appendChild(option);
+    select.disabled = true;
+    return;
+  }
+
+  [...professionnels].forEach(nom => {
+    const option = document.createElement("option");
+    option.value = nom;
+    option.textContent = nom;
+    select.appendChild(option);
+  });
+
+  select.disabled = false;
+}
