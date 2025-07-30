@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
       };
 
       try {
-        const res = await fetch(`${API_URL}employe/employe_post.php`, {
+        const res = await fetch(`${API_URL}/employe`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data)
