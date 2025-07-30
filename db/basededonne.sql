@@ -19,9 +19,7 @@ CREATE TABLE Employe (
 CREATE TABLE Service (
   ID_SERVICE   INT(20) PRIMARY KEY,
   NOM          VARCHAR(30),
-  DESCRIPTION  VARCHAR(100),
-  CODE_EMPLOYE INT,
-  FOREIGN KEY (CODE_EMPLOYE) REFERENCES Employe(CODE_EMPLOYE)
+  DESCRIPTION  VARCHAR(100)
 );
 
 
@@ -128,14 +126,14 @@ INSERT INTO Employe (
 
 
 
-INSERT INTO Service (ID_SERVICE, NOM, DESCRIPTION, CODE_EMPLOYE) VALUES
-  (1, 'Consultation générale',            'Évaluation de santé pour tout problème courant',       100),
-  (2, 'Suivi de grossesse',               'Suivi médical de grossesse',                          100),
-  (3, 'Suivi de maladies chroniques',     'Contrôle régulier (diabète, hypertension, etc.)',     101),
-  (4, 'Dépistage ITSS',                   'Tests pour infections transmissibles (ITSS)',         102),
-  (5, 'Vaccination',                      'Vaccin de routine, voyage ou saisonnier',             201),
-  (6, 'Prélèvement sanguin / test urine', 'Prise de sang ou test urinaire',                      200),
-  (7, 'Urgence mineure',                  'Blessures légères, infections, douleurs modérées',    202);
+INSERT INTO Service (ID_SERVICE, NOM, DESCRIPTION) VALUES
+  (1, 'Consultation générale',            'Évaluation de santé pour tout problème courant'  ),
+  (2, 'Suivi de grossesse',               'Suivi médical de grossesse'                      ),
+  (3, 'Suivi de maladies chroniques',     'Contrôle régulier (diabète, hypertension, etc.)' ),
+  (4, 'Dépistage ITSS',                   'Tests pour infections transmissibles (ITSS)'     ),
+  (5, 'Vaccination',                      'Vaccin de routine, voyage ou saisonnier'         ),
+  (6, 'Prélèvement sanguin / test urinaire', 'Prise de sang ou test urinaire'               ),
+  (7, 'Urgence mineure',                  'Blessures légères, infections, douleurs modérées');
 
 
 
