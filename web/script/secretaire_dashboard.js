@@ -67,7 +67,7 @@ function showTab(id) {
   document.getElementById(id).classList.remove("hidden");
 }
 
-let professionnelsParService = {}; // 🆕 Déclaration globale (à mettre en haut du fichier JS)
+let professionnelsParService = {}; // Déclaration globale (à mettre en haut du fichier JS)
 
 async function chargerRendezVous() {
   try {
@@ -77,7 +77,7 @@ async function chargerRendezVous() {
     const rendezvous = await response.json();
     rendezVousGlobaux = rendezvous;
 
-    // 🆕 Réinitialise le dictionnaire des professionnels
+    // Réinitialise le dictionnaire des professionnels
     professionnelsParService = {};
 
     const tbody = document.querySelector("#rdv tbody");
@@ -106,7 +106,7 @@ async function chargerRendezVous() {
       `;
       tbody.appendChild(row);
 
-      // 🆕 Enregistrement du professionnel par service
+      // Enregistrement du professionnel par service
       const nomService = rdv.NOM_SERVICE;
       if (!professionnelsParService[nomService]) {
         professionnelsParService[nomService] = new Set();
@@ -183,7 +183,7 @@ function fermerPopup() {
 
 function annulerRdv(numRdv) {
   if (confirm("Voulez-vous vraiment annuler ce rendez-vous ?")) {
-    fetch(`${API_URL}rendezvous/${numRdv}`, { method: "DELETE" })
+    fetch(`${API_URL}rendezvous/${numRdv}`, { method: "PUT" })
       .then(res => {
         if (!res.ok) throw new Error("Échec de l'annulation");
         return res.json();
