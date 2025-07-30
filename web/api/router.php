@@ -1,5 +1,6 @@
 <?php
-
+	var_dump($_SERVER['REQUEST_URI']);
+	exit;
 function get($route, $path_to_include)
 {
 	if ($_SERVER['REQUEST_METHOD'] == 'GET') {
@@ -67,8 +68,8 @@ function route($route, $path_to_include)
 	}
 	$parameters = [];
 	for ($__i__ = 0; $__i__ < count($route_parts); $__i__++) {
-		$route_part = $route_parts[$__i__];
-		if (preg_match("/^[$]/", $route_part)) {
+    	$route_part = $route_parts[$__i__];
+   		if (preg_match('/^\$/', $route_part)) { 
 			$route_part = ltrim($route_part, '$');
 			array_push($parameters, $request_url_parts[$__i__]);
 			$$route_part = $request_url_parts[$__i__];

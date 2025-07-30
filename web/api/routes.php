@@ -95,7 +95,9 @@ get($URL.'/rendezvous/patient/$courriel','endpoints/patient/rendezVous_patient_g
 get($URL.'/patient/$courriel','endpoints/patient/patient_get');
 
 // GET pour avoir toutes les disponibilites
-get($URL.'disponibilites','endpoints/patient/disponibilites_get.php');
+get($URL . 'disponibilites/services/$id_service', 'endpoints/patient/disponibilites_services_get.php');
+
+
 
 
 // Route de secours pour les pages non trouvées
