@@ -105,16 +105,26 @@
       <form id="form-nouveau-compte">
         <label>Prénom : <input type="text" name="prenom" required></label>
         <label>Nom : <input type="text" name="nom" required></label>
-        <label>État civil : <input type="text" name="etat_civil" required></label>
+        <label>État civil :
+          <select name="etat_civil" required>
+            <option value="" disabled selected hidden>Choisir...</option>
+            <option value="Célibataire">Célibataire</option>
+            <option value="Marié(e)">Marié(e)</option>
+            <option value="Divorcé(e)">Divorcé(e)</option>
+            <option value="Veuf(ve)">Veuf(ve)</option>
+          </select>
+        </label>
         <label>Courriel : <input type="email" name="courriel" required></label>
         <label>Téléphone : <input type="tel" name="telephone" required></label>
         <label>Adresse : <input type="text" name="adresse" required></label>
         <label>Date de naissance : <input type="date" name="date_naissance" required></label>
         <label>Sexe :
           <select name="sexe" required>
-            <option value="H">Homme</option>
-            <option value="F">Femme</option>
+            <option value="" disabled selected hidden>Choisir...</option>
+            <option value="Homme">Homme</option>
+            <option value="Femme">Femme</option>
           </select>
+        </label>
         </label>
         <label>Poste :
           <select name="poste" required>
