@@ -103,8 +103,19 @@
       <span class="close-button" id="fermer-modal">&times;</span>
       <h2>Créer un nouveau compte</h2>
       <form id="form-nouveau-compte">
-        <label>Prénom : <input type="text" name="prenom" required></label><br><br>
-        <label>Nom : <input type="text" name="nom" required></label><br><br>
+        <label>Prénom : <input type="text" name="prenom" required></label>
+        <label>Nom : <input type="text" name="nom" required></label>
+        <label>État civil : <input type="text" name="etat_civil" required></label>
+        <label>Courriel : <input type="email" name="courriel" required></label>
+        <label>Téléphone : <input type="tel" name="telephone" required></label>
+        <label>Adresse : <input type="text" name="adresse" required></label>
+        <label>Date de naissance : <input type="date" name="date_naissance" required></label>
+        <label>Sexe :
+          <select name="sexe" required>
+            <option value="H">Homme</option>
+            <option value="F">Femme</option>
+          </select>
+        </label>
         <label>Poste :
           <select name="poste" required>
             <option value="Médecin">Médecin</option>
@@ -112,16 +123,18 @@
             <option value="Secrétaire">Secrétaire</option>
             <option value="Administrateur">Administrateur</option>
           </select>
-        </label><br><br>
+        </label>
         <button type="submit">Créer</button>
         <button type="button" id="annuler-modal">Annuler</button>
       </form>
     </div>
   </div>
-<footer class="footer-clinique">
-  <p>Clinique VITALIS</p>
-  <p>2424 rue de l’ÉTS, Montréal, 1A1 1A1</p>
-  <p>(514) 123-VITA (8482)</p>
-</footer>
+
+  <footer class="footer-clinique">
+    <p>Clinique VITALIS</p>
+    <p>2424 rue de l’ÉTS, Montréal, 1A1 1A1</p>
+    <p>(514) 123-VITA (8482)</p>
+  </footer>
+
 </body>
 </html>

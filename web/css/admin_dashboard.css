@@ -166,9 +166,10 @@ button.danger:hover {
 
 .modal-content {
   background-color: white;
-  padding: 20px;
+  padding: 25px;
   border-radius: 10px;
-  width: 400px;
+  width: 420px;
+  max-width: 90%;
   position: relative;
 }
 
@@ -178,6 +179,55 @@ button.danger:hover {
   right: 15px;
   font-size: 20px;
   cursor: pointer;
+}
+
+/* 📝 Formulaire dans le modal */
+.modal-content form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.modal-content form label {
+  flex: 1 1 calc(50% - 20px);
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+  color: #023e8a;
+}
+
+.modal-content form input,
+.modal-content form select {
+  margin-top: 5px;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.modal-content form button[type="submit"],
+.modal-content form button[type="button"] {
+  flex: 1 1 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: #0077b6;
+  color: white;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 800px; /* ✅ Forme horizontale */
+  max-width: 95%;
+  max-height: 95vh;
+  overflow-y: auto;
+  position: relative;
 }
 
 /* 📂 Filtres */
@@ -202,7 +252,7 @@ button.danger:hover {
 /* 🧑‍💼 Filtres employés */
 #filtreSection {
   display: flex;
-  align-items: center; /* ✅ Centre verticalement tous les éléments */
+  align-items: center;
   gap: 10px;
   margin-bottom: 20px;
   flex-wrap: wrap;
@@ -215,17 +265,26 @@ button.danger:hover {
 }
 
 #filtreSection button {
-  padding: 4px 12px;        /* réduit la hauteur */
-  height: 32px;             /* limite la hauteur maximale */
-  font-size: 13px;          /* taille de texte modérée */
+  padding: 4px 12px;
+  height: 32px;
+  font-size: 13px;
   border-radius: 4px;
   background-color: #0077b6;
   color: white;
   border: none;
   cursor: pointer;
-  line-height: 1;           /* évite un bouton trop haut à cause du texte */
+  line-height: 1;
 }
 
 #filtreSection button:hover {
   background-color: #005f99;
+}
+
+/* 📞 Pied de page */
+.footer-clinique {
+  background-color: #0077b6;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  margin-top: 40px;
 }

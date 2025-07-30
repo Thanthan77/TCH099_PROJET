@@ -53,22 +53,32 @@ document.addEventListener("DOMContentLoaded", () => {
   if (form) {
     form.addEventListener("submit", async function (e) {
       e.preventDefault();
+
+      const motDePasse = genererMotDePasse();
+
       const data = {
-        prenom: form.prenom.value,
-        nom: form.nom.value,
+        prenom: form.prenom.value.trim(),
+        nom: form.nom.value.trim(),
+        etat_civil: form.etat_civil.value.trim(),
+        courriel: form.courriel.value.trim(),
+        telephone: form.telephone.value.trim(),
+        adresse: form.adresse.value.trim(),
+        date_naissance: form.date_naissance.value,
+        sexe: form.sexe.value,
         poste: form.poste.value,
-        mot_de_passe: "123456"
+        mot_de_passe: motDePasse
       };
 
       try {
-        const res = await fetch(`${API_URL}/employe`, {
+        const res = await fetch(`${API_URL}employe`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data)
         });
         const result = await res.json();
+
         if (res.ok) {
-          alert("Compte créé avec succès !");
+          alert(`Compte créé avec succès !\nMot de passe généré : ${motDePasse}`);
           form.reset();
           modal.classList.add("hidden");
           chargerEmployes();
@@ -234,3 +244,37 @@ window.addEventListener("click", function (event) {
     menu.style.display = "none";
   }
 });
+
+function genererMotDePasse() {
+  const minuscules = "abcdefghijklmnopqrstuvwxyz";
+  const majuscules = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const chiffres = "0123456789";
+  const speciaux = "!@#$%^&*(),.?\":{}|<>";
+
+  const all = minuscules + majuscules + chiffres + speciaux;
+
+  let motDePasse = [
+    getRandomChar(minuscules),
+    getRandomChar(majuscules),
+    getRandomChar(chiffres),
+    getRandomChar(speciaux)
+  ];
+
+  while (motDePasse.length < 10) {
+    motDePasse.push(getRandomChar(all));
+  }
+
+  return shuffleArray(motDePasse).join('');
+}
+
+function getRandomChar(str) {
+  return str[Math.floor(Math.random() * str.length)];
+}
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
