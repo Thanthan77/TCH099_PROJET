@@ -27,12 +27,7 @@ try {
 
     $stmt = $cnx->prepare($query);
     $stmt->bindValue(':id_service', $id_service, PDO::PARAM_INT);
-
-    if (!$stmt->execute()) {
-        http_response_code(500);
-        echo json_encode(["error" => "Erreur lors de l'exécution SQL"]);
-        exit;
-    }
+    $stmt->execute();
 
     $resultats = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -42,11 +37,8 @@ try {
         exit;
     }
 
-    http_response_code(200);
     echo json_encode($resultats);
-
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(["error" => $e->getMessage()]);
-    exit;
 }
