@@ -3,7 +3,9 @@ header('Content-Type: application/json');
 require_once(__DIR__ . '/../../db/Database.php');
 
 try {
-    if (!isset($id_service) || !is_numeric($id_service)) {
+    $id_service = isset($_GET['id_service']) ? intval($_GET['id_service']) : null;
+
+    if (!$id_service || !is_numeric($id_service)) {
         http_response_code(400);
         echo json_encode(["error" => "Paramètre id_service invalide"]);
         exit;
