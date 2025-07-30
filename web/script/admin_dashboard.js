@@ -36,6 +36,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const filtreBtn = document.querySelector("#filtreSection button");
   if (filtreBtn) filtreBtn.addEventListener("click", filtrerEmployes);
 
+  // ✅ Ajout d'écouteurs pour filtrage dynamique sur tous les champs
+  ["filtrePrenom", "filtreNom", "filtreCode", "filtrePoste"].forEach(id => {
+    const champ = document.getElementById(id);
+    if (champ) champ.addEventListener("input", filtrerEmployes);
+  });
+
   // Gestion pop-up création compte
   const btnOuvrir = document.getElementById("btn-creer-compte");
   const modal = document.getElementById("modal-creer-compte");
@@ -91,6 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
 
 // Onglets
 function showTab(id) {
@@ -210,19 +217,30 @@ function toggleFiltres() {
 }
 
 function filtrerEmployes() {
+  const prenom = document.getElementById("filtrePrenom").value.toLowerCase();
   const nom = document.getElementById("filtreNom").value.toLowerCase();
   const code = document.getElementById("filtreCode").value.toLowerCase();
   const poste = document.getElementById("filtrePoste").value.toLowerCase();
   const lignes = document.querySelectorAll(".ligne-employe");
 
   lignes.forEach(ligne => {
-    const nomCell = ligne.querySelector(".col-nom")?.textContent.toLowerCase() || "";
+    const nomComplet = ligne.querySelector(".col-nom")?.textContent.toLowerCase() || "";
     const codeCell = ligne.querySelector(".col-code")?.textContent.toLowerCase() || "";
     const posteCell = ligne.querySelector(".col-poste")?.textContent.toLowerCase() || "";
-    const correspond = nomCell.includes(nom) && codeCell.includes(code) && (poste === "" || posteCell === poste);
+
+    const [prenomCell = "", nomCell = ""] = nomComplet.split(" ");
+
+    const correspond =
+      prenomCell.startsWith(prenom) &&
+      nomCell.startsWith(nom) &&
+      codeCell.includes(code) &&
+      (poste === "" || posteCell === poste);
+
     ligne.style.display = correspond ? "" : "none";
   });
 }
+
+
 
 function reinitialiserFiltres() {
   document.getElementById("filtreNom").value = "";
