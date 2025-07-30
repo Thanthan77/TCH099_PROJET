@@ -19,4 +19,6 @@ public interface ApiService {
    @GET ("api/disponibilité")
     Call<List<HoraireRequest>> getHoraire () ;
 
+    @GET ("api/rendezvous/patient/$courriel")
+    Call<List<RdvRequest>> getRDV () ;
 }

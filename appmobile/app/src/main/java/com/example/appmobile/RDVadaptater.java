@@ -9,7 +9,7 @@ public abstract class RDVadaptater implements ListAdapter {
 
     public RDVadaptater(PageMesRDV pageMesRDV, ListView listView) {
 
-        
+
 
     }
 }

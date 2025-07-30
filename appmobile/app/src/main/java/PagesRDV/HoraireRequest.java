@@ -14,6 +14,8 @@ public class HoraireRequest {
 
 
 
+
+
     public String getJourRdv() {
         return jourRdv ;
     }
@@ -21,4 +23,6 @@ public class HoraireRequest {
     public String getHeureRdv() {
         return heureRDV;
     }
+
+
 }
