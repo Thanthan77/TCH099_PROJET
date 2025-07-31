@@ -127,7 +127,7 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
             finish();
             return;
         } else if (view == lienProfil) {
-            // à completer
+
             startActivity(new Intent(this, PageProfil.class));
             finish();
             return;

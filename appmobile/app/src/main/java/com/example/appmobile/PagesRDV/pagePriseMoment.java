@@ -2,6 +2,7 @@ package com.example.appmobile.PagesRDV;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,13 +20,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class pagePriseMoment extends AppCompatActivity {
+public class pagePriseMoment extends AppCompatActivity  implements View.OnClickListener{
 
     private ListView listView;
     private ApiService apiService;
     private int idService;
     private String nomService;
     private TextView messagePrAcuneDispo ;
+    private TextView retour ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +35,12 @@ public class pagePriseMoment extends AppCompatActivity {
         setContentView(R.layout.activity_prise_moment);
 
         listView = findViewById(R.id.listeHoraire);
+        retour= findViewById(R.id.retourPageMoment);
+        messagePrAcuneDispo= findViewById(R.id.messageAucuneDispo) ;
+
         apiService = ApiClient.getApiService();
+
+        retour.setOnClickListener(this);
 
 
         idService = getIntent().getIntExtra("id_service", -1);
@@ -56,6 +63,14 @@ public class pagePriseMoment extends AppCompatActivity {
             public void onResponse(Call<List<HoraireRequest>> call, Response<List<HoraireRequest>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<HoraireRequest> horaires = response.body();
+
+                    if(horaires.isEmpty()) {
+                        messagePrAcuneDispo.setVisibility(View.VISIBLE);
+                        listView.setVisibility(View.GONE);
+                        return ;
+                    }
+                    messagePrAcuneDispo.setVisibility(View.GONE);
+                    listView.setVisibility(View.VISIBLE);
 
                     List<HoraireRdv> rdvItems = new ArrayList<>();
                     for (HoraireRequest h : horaires) {
@@ -85,5 +100,12 @@ public class pagePriseMoment extends AppCompatActivity {
                 Toast.makeText(pagePriseMoment.this, "Erreur réseau : " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v==retour) {
+            finish();
+        }
     }
 }

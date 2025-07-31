@@ -1,7 +1,9 @@
 package com.example.appmobile;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -10,12 +12,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.appmobile.R;
 
-public class pageConfirmation extends AppCompatActivity {
+public class pageConfirmation extends AppCompatActivity   {
 
     private TextView titreconfir;
     private EditText dateconf;
     private EditText timeconfirm;
     private EditText numberrdv;
+
 
 
     @SuppressLint("MissingInflatedId")

@@ -74,4 +74,8 @@
     <string name="todo">TODO</string>
     <string name="vaccin_de_routine_voyage_ou_saisonnier">Vaccin de routine, voyage ou saisonnier</string>
     <string name="aucune_disponibilit_pour_l_instant_r_essayez_une_prochaine_fois">Aucune disponibilité pour l\'instant, réessayez une prochaine fois.</string>
+    <string name="retour">Retour</string>
+    <string name="todo5">TODO</string>
+    <string name="confirmer_votre_choix_de_rendez_vous">Confirmer votre choix de rendez-vous</string>
+    <string name="annuler">Annuler</string>
 </resources>
