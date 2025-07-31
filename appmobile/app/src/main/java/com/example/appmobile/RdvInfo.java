@@ -2,16 +2,18 @@ package com.example.appmobile;
 
 public class RdvInfo {
 
-    public String jourRdv;
-    public String heureRdv;
+    private int idRdv;
+    private String jourRdv;
+    private String heureRdv;
 
-    public String typeRdv;
+    private int typeRdv;
 
-    public String courriel;
+    private String courriel;
 
 
-    public RdvInfo(String jourRdv, String heureRdv, String typeRdv) {
+    public RdvInfo(int idRdv,String jourRdv, String heureRdv, int typeRdv) {
 
+        this.idRdv = idRdv;
         this.jourRdv = jourRdv;
         this.heureRdv = heureRdv;
         this.typeRdv = typeRdv;
@@ -25,12 +27,18 @@ public class RdvInfo {
         return jourRdv;
     }
 
-    public String getTypeRdv() {
+    public int getTypeRdv() {
         return typeRdv;
     }
 
     public String getCourriel() {
         return courriel;
+    }
+    public int getIdRdv() {return idRdv;}
+
+
+    public void setCourriel(String courriel) {
+        this.courriel = courriel;
     }
 
 }

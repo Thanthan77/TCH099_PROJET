@@ -1,26 +1,35 @@
 package com.example.appmobile;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class PageMesRDV extends AppCompatActivity implements View.OnClickListener {
 
-
-    private Button btneffacer;
-
+    private TextView lienDeco ;
+    private TextView lienProfil ;
+    private TextView lienMesRdv ;
     private ListView listRdv ;
+    private ApiService apiService;
 
-    private List<RdvRequest> rdvList = new ArrayList<>();
+    private TextView messagePrAcunRdv;
 
-    private RDVadaptater adapter;
+    private String courrielPatient;
 
 
 
@@ -32,24 +41,98 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
 
 
         listRdv = findViewById(R.id.listRdv);
-        btneffacer = findViewById(R.id.btnannulerrdv);
-        btneffacer.setOnClickListener(this);
+        lienDeco= findViewById(R.id.lienDeconnexion) ;
+        lienProfil=findViewById(R.id.lienProfil) ;
+        lienMesRdv=findViewById(R.id.lienMesRdv) ;
+        messagePrAcunRdv=findViewById(R.id.messageAucunRdv) ;
 
 
-    }
+        lienMesRdv.setOnClickListener(this);
+        lienProfil.setOnClickListener(this);
+        lienDeco.setOnClickListener(this);
 
+        apiService = ApiClient.getApiService();
 
-    @Override
-    public void onClick(View view) {
+        courrielPatient = getIntent().getStringExtra("courriel");
 
-        if (view.getId() == R.id.btnannulerrdv) {
-
-
+        if (courrielPatient == null || courrielPatient.isEmpty()) {
+            Toast.makeText(this, "Erreur : courriel manquant", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
         }
 
+        chargerRdv();
+
+
+
 
     }
 
+    public void chargerRdv() {
+        Call<List<RdvRequest>> call = apiService.getRDV(courrielPatient);
+        call.enqueue(new Callback<List<RdvRequest>>() {
+            @Override
+            public void onResponse(Call<List<RdvRequest>> call, Response<List<RdvRequest>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<RdvRequest> rdvList = response.body();
+                    afficherRdv(rdvList);
+                } else {
+                    Toast.makeText(PageMesRDV.this, "Aucun rendez-vous trouvé", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<RdvRequest>> call, Throwable t) {
+                Log.e("API", "Erreur : " + t.getMessage());
+                Toast.makeText(PageMesRDV.this, "Erreur de connexion", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+    }
+
+    private void afficherRdv (List<RdvRequest> rdvRequests) {
+        if (rdvRequests == null || rdvRequests.isEmpty()) {
+            messagePrAcunRdv.setVisibility(View.VISIBLE);
+            listRdv.setVisibility(View.GONE);
+        }  else {
+            messagePrAcunRdv.setVisibility(View.GONE);
+            listRdv.setVisibility(View.VISIBLE);
+
+
+        List<RdvInfo> rdvInfos = new ArrayList<>();
+        for (RdvRequest request : rdvRequests){
+            RdvInfo rdv = new RdvInfo(0,request.getJourRdv(),  request.getHeureRdv(), request.getIdRdv());
+            rdv.setCourriel(request.getCourriel());
+            rdvInfos.add(rdv);
+        }
+        RDVadaptater adapter = new RDVadaptater(rdv -> {}, rdvInfos, this) {
+
+            public void onClick(RdvInfo rdv) {    }
+        };
+
+        listRdv.setAdapter(adapter);
+
+    }
+
+
+    }
+    @Override
+    public void onClick(View v) {
+        if (v == lienDeco) {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+
+        } else if (v == lienMesRdv) {
+            startActivity(new Intent(this, PageMesRDV.class));
+            finish();
+
+        } else if (v == lienProfil) {
+
+            startActivity(new Intent(this, PageProfil.class));
+            finish();
+    }
+}
 }
 
 

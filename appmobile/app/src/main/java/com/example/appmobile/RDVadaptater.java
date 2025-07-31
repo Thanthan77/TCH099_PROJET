@@ -16,14 +16,18 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public abstract class RDVadaptater extends ArrayAdapter<RdvInfo> {
+public class RDVadaptater extends ArrayAdapter<RdvInfo> {
 
 
-    TextView serviceRdv;
-    EditText daterdv;
-    EditText timeRdv;
-    EditText emailRdv;
-    Button annulerRdv;
+    private TextView serviceRdv;
+    private TextView daterdv;
+    private TextView timeRdv;
+    private TextView emailRdv;
+    private Button annulerRdv;
+
+    private int idService  ;
+
+
 
     public interface AnnulerRdvClickListener {
 
@@ -35,7 +39,7 @@ public abstract class RDVadaptater extends ArrayAdapter<RdvInfo> {
     private final AnnulerRdvClickListener listener;
 
     public RDVadaptater(AnnulerRdvClickListener listener, List<RdvInfo> rdvList, Context context) {
-        super(context, 0);
+        super(context, 0,rdvList);
         this.listener = listener;
 
     }
@@ -45,56 +49,93 @@ public abstract class RDVadaptater extends ArrayAdapter<RdvInfo> {
 
         RdvInfo rdv = getItem(position);
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.activity_texteadaptater, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.rdv_du_client, parent, false);
         }
 
 
-        serviceRdv = convertView.findViewById(R.id.textViewRdvService);
-        daterdv = convertView.findViewById(R.id.editTextDateRdv);
-        timeRdv = convertView.findViewById(R.id.editTextTimeRdv);
-        emailRdv = convertView.findViewById(R.id.editTextTextEmailAddressRdv);
-        annulerRdv = convertView.findViewById(R.id.buttonannulationduRdv);
 
-        serviceRdv.setText(rdv.getTypeRdv());
+
+        serviceRdv = convertView.findViewById(R.id.nomService2);
+        daterdv = convertView.findViewById(R.id.dateRdv2);
+        timeRdv = convertView.findViewById(R.id.heureRdv2);
+        emailRdv = convertView.findViewById(R.id.emailPatient);
+        annulerRdv = convertView.findViewById(R.id.btnAnnulerRdv2);
+
+
         daterdv.setText(rdv.getJourRdv());
         timeRdv.setText(rdv.getHeureRdv());
         emailRdv.setText(rdv.getCourriel());
 
+        idService = rdv.getTypeRdv() ;
+        nomService(idService) ;
 
-        annulerRdv.setOnClickListener(v -> {
-            annulerRdv();
-        });
+
+        annulerRdv.setOnClickListener(v -> annulerRdv(rdv));
+
 
         return convertView;
     }
 
-    private void annulerRdv() {
-
+    private void annulerRdv(RdvInfo rdv) {
         ApiService apiService = ApiClient.getApiService();
 
-        Call<List<RdvRequest>> call = apiService.putAnnulerRdv();
-        call.enqueue(new Callback<List<RdvInfo>>() {
+        int id = rdv.getIdRdv();
 
+        Call<Void> call = apiService.putAnnulerRdv(id);
+        call.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<List<RdvInfo>> call, Response<List<RdvInfo>> response) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    List<RdvInfo> rdvList = response.body();
+
+                    remove(rdv);
+                    notifyDataSetChanged();
+                    Log.d("API", "RDV annulé avec succès");
                 } else {
-                    Log.e("API", "Erreur dans la réponse : " + response.code());
+                    Log.e("API", "Erreur d'annulation : " + response.code());
                 }
             }
-
             @Override
-            public void onFailure(Call<List<RdvInfo>> call, Throwable t) {
-                Log.e("API", "Erreur : " + t.getMessage());
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("API", "Erreur réseau : " + t.getMessage());
             }
+        });
+    }
 
-
+    private void nomService (int idService) {
+        String serviceNom ;
+        switch (idService){
+            case 1:
+                serviceNom = "Consultation générale";
+                break;
+            case 2:
+                serviceNom = "Suivi de grossesse";
+                break;
+            case 3:
+                serviceNom = "Suivi de maladies chroniques";
+                break;
+            case 4:
+                serviceNom = "Dépistage ITSS";
+                break;
+            case 5:
+                serviceNom = "Vaccination";
+                break;
+            case 6:
+                serviceNom = "Prélèvement sanguin / test urinaire";
+                break;
+            case 7:
+                serviceNom = "Urgence mineure";
+                break;
+            default:
+                serviceNom = "Service inconnu";
+                break;
         }
+        serviceRdv.setText(serviceNom);
+
+    }
+}
 
 
-;}}
 
-// preparer la liste
-//va sur pageservice
-//
+
+
+

@@ -6,7 +6,6 @@
     android:orientation="vertical"
     android:background="#FFFFFF">
 
-    <!--Header-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,7 +15,7 @@
         android:background="#0077CB"
         android:gravity="center_vertical">
 
-        <!--Lien prise de rdv-->
+
         <TextView
             android:id="@+id/lienMesRdv"
             android:layout_width="0dp"
@@ -27,7 +26,7 @@
             android:textSize="14sp"
             android:gravity="start" />
 
-        <!--Lien profil-->
+
         <TextView
             android:id="@+id/lienProfil"
             android:layout_width="0dp"
@@ -38,7 +37,7 @@
             android:textSize="14sp"
             android:gravity="center" />
 
-        <!--Lien déconnexion-->
+
         <TextView
             android:id="@+id/lienDeconnexion"
             android:layout_width="0dp"
@@ -57,7 +56,7 @@
         android:gravity="center_horizontal"
         android:padding="16dp">
 
-        <!--Afficher logo et Mes prochain rendez-vous-->
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -83,9 +82,7 @@
     </LinearLayout>
 
 
-    <!--Liste mes rdv MODIFIER ICII!!!!-->
 
-    <!--Footer-->
 
     <ScrollView
         android:layout_width="match_parent"
@@ -105,14 +102,19 @@
                 android:id="@+id/listRdv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
+            <TextView
+                android:id="@+id/messageAucunRdv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/aucun_rendez_vous_pour_le_patient"
+                android:textSize="16sp"
+                android:textColor="#FF0000"
+                android:gravity="center"
+                android:visibility="gone"
+                android:padding="16dp" />
+
         </LinearLayout>
     </ScrollView>
-
-    <Button
-        android:id="@+id/btnannulerrdv"
-        android:layout_width="match_parent"
-        android:layout_height="61dp"
-        android:text="Annulation Rendez-Vous" />
 
     <TextView
         android:layout_width="match_parent"

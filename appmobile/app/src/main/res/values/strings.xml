@@ -78,4 +78,8 @@
     <string name="todo5">TODO</string>
     <string name="confirmer_votre_choix_de_rendez_vous">Confirmer votre choix de rendez-vous</string>
     <string name="annuler">Annuler</string>
+    <string name="service3">Service</string>
+    <string name="heure_du_rdv4">Heure du rdv</string>
+    <string name="annuler_le_rdv">Annuler le rdv</string>
+    <string name="aucun_rendez_vous_pour_le_patient">Aucun rendez-vous pour le patient</string>
 </resources>

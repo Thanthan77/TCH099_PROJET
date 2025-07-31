@@ -77,7 +77,7 @@ public class pagePriseConfirmation  extends AppCompatActivity implements View.On
 
         if (rdv != null) {
             String courriel = rdv.getCourriel();
-            adresseCourriel.setText("Adresse courriel : " + courriel);
+            adresseCourriel.setText(courriel);
         }
 
     }

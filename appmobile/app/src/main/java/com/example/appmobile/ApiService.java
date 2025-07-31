@@ -11,6 +11,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Path;
 
 public interface ApiService {
     @POST("api/login_patient")
@@ -22,14 +23,13 @@ public interface ApiService {
    @GET ("api/disponibilité")
     Call<List<HoraireRequest>> getHoraire () ;
 
-    @GET ("api/rendezvous/patient/$courriel")
-    Call<List<RdvRequest>> getRDV () ;
-
+    @GET("api/rendezvous/patient/{courriel}")
+    Call<List<RdvRequest>> getRDV(@Path("courriel") String courriel);
    @POST("api/rendez_vous")
    Call<List<RdvRequest>> postModifRdv();
 
-@PUT("api/rendezVous/id/patient/$numRdv")
-Call<List<RdvRequest>> putAnnulerRdv();
+    @PUT("api/rendezVous/id/patient/{numRdv}")
+Call<Void> putAnnulerRdv(@Path("numRdv") int idRdv);
 }
 
 
