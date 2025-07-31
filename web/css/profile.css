@@ -1,9 +1,11 @@
+/* 🌐 BASE */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
   background-color: #e0f2ff;
 }
 
+/* 🧭 ENTÊTE */
 header {
   background-color: #0077b6;
   padding: 20px 40px;
@@ -69,6 +71,7 @@ header h1 {
   background-color: #f1f1f1;
 }
 
+/* 📄 CONTENU */
 main {
   padding: 30px;
 }
@@ -79,7 +82,7 @@ main {
   background-color: #ffffff;
   padding: 30px;
   border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
@@ -94,29 +97,39 @@ label {
   color: #333;
 }
 
-input, textarea {
+/* 🧾 CHAMPS COMMUNS */
+input, textarea, select {
   width: 100%;
   padding: 10px;
   margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 6px;
   box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
 }
 
-input[readonly], textarea[readonly] {
+/* 🛑 CHAMPS EN LECTURE SEULE */
+input[readonly],
+textarea[readonly],
+select:disabled {
   background-color: #f0f0f0;
   color: #555;
   font-style: italic;
   cursor: not-allowed;
 }
 
-input.editable, textarea.editable {
+/* ✅ CHAMPS ÉDITABLES */
+input.editable,
+textarea.editable,
+select.editable {
   background-color: #ffffff;
   color: #000;
   font-style: normal;
   cursor: text;
 }
 
+/* 🔘 BOUTONS */
 button {
   margin-top: 25px;
   width: 100%;

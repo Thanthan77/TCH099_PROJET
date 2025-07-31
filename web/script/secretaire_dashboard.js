@@ -20,21 +20,35 @@ let tousLesPatients = [];
 let rendezVousGlobaux = [];
 
 document.addEventListener("DOMContentLoaded", () => {
+  // ⬇️ Chargement initial
   chargerRendezVous();
   chargerPatients();
   chargerPatientsPourListe();
   showTab("rdv");
 
-  const champsFiltre = [
-    document.getElementById('filtrePrenom'),
-    document.getElementById('filtreNom'),
-    document.getElementById('filtreDateNaissance'),
-    document.getElementById('filtreAssurance')
-  ];
-  champsFiltre.forEach(champ => champ.addEventListener("input", filtrerPatients));
+  // ✅ Filtres dynamiques patients
+  ["filtrePrenom", "filtreNom", "filtreDateNaissance", "filtreAssurance"].forEach(id => {
+    const champ = document.getElementById(id);
+    if (champ) champ.addEventListener("input", filtrerPatients);
+  });
 
-  document.querySelector(".filtre-icon")?.addEventListener("click", toggleFiltres);
+  // ✅ Filtres dynamiques rendez-vous
+  ["filtreDateRdv", "filtreNomPatientRdv", "filtreNomProRdv", "filtreServiceRdv"].forEach(id => {
+    const champ = document.getElementById(id);
+    if (champ) champ.addEventListener("input", filtrerRendezVous);
+  });
 
+  // ✅ Toggle affichage filtre patients
+  document.querySelector("#patients .filtre-icon")?.addEventListener("click", () => {
+    document.getElementById("filtreSection")?.classList.toggle("hidden");
+  });
+
+  // ✅ Toggle affichage filtre rendez-vous
+  document.querySelector("#rdv .filtre-icon")?.addEventListener("click", () => {
+    document.getElementById("filtreSectionRdv")?.classList.toggle("hidden");
+  });
+
+  // ✅ Déconnexion
   document.getElementById("btn-logout")?.addEventListener("click", e => {
     e.preventDefault();
     sessionStorage.clear();
@@ -42,22 +56,24 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.href = "index.html";
   });
 
-  document.getElementById("nomPatient")?.addEventListener("input", () => {
-    const nomTape = document.getElementById("nomPatient").value.trim();
-    afficherPatientsFiltres(nomTape);
+  // ✅ Liste déroulante du nom du patient (form création)
+  const champNomPatient = document.getElementById("nomPatient");
+  champNomPatient?.addEventListener("input", () => {
+    afficherPatientsFiltres(champNomPatient.value.trim());
+  });
+  champNomPatient?.addEventListener("focus", () => {
+    afficherPatientsFiltres(champNomPatient.value.trim());
   });
 
-  document.getElementById("nomPatient")?.addEventListener("focus", () => {
-    const nomTape = document.getElementById("nomPatient").value.trim();
-    afficherPatientsFiltres(nomTape);
-  });
-
+  // ✅ Remplir automatiquement nom si on tape l’assurance maladie
   document.getElementById("assurancePatient")?.addEventListener("input", rechercherPatientParAssurance);
 
+  // ✅ Fermer la liste déroulante si clic à l’extérieur
   document.addEventListener("click", (e) => {
-    if (!document.getElementById("nomPatient").contains(e.target) &&
-        !document.getElementById("listeDeroulantePatients").contains(e.target)) {
-      document.getElementById("listeDeroulantePatients").classList.add("hidden");
+    const champ = document.getElementById("nomPatient");
+    const liste = document.getElementById("listeDeroulantePatients");
+    if (!champ.contains(e.target) && !liste.contains(e.target)) {
+      liste.classList.add("hidden");
     }
   });
 });
@@ -77,9 +93,6 @@ async function chargerRendezVous() {
     const rendezvous = await response.json();
     rendezVousGlobaux = rendezvous;
 
-    // Réinitialise le dictionnaire des professionnels
-    professionnelsParService = {};
-
     const tbody = document.querySelector("#rdv tbody");
     tbody.innerHTML = "";
 
@@ -89,16 +102,22 @@ async function chargerRendezVous() {
     }
 
     rendezvous.forEach(rdv => {
-      // Ajout au tableau
       const row = document.createElement("tr");
+
+      // ✅ Afficher le nom complet du patient au lieu du courriel
+      const patient = tousLesPatients.find(p => p.COURRIEL === rdv.COURRIEL);
+      const nomPatient = patient
+        ? `${patient.PRENOM_PATIENT} ${patient.NOM_PATIENT}`
+        : rdv.COURRIEL; // fallback
+
       const nomAffiche = rdv.POSTE === "Médecin" ? `Dr. ${rdv.NOM_EMPLOYE}` : rdv.NOM_EMPLOYE;
 
       row.innerHTML = `
-        <td>${rdv.DATE_RDV}</td>
-        <td>${rdv.HEURE}</td>
-        <td>${rdv.COURRIEL}</td>
-        <td>${nomAffiche}</td>
-        <td>${rdv.NOM_SERVICE}</td>
+        <td class="col-date">${rdv.DATE_RDV}</td>
+        <td class="col-heure">${rdv.HEURE}</td>
+        <td class="col-patient">${nomPatient}</td>
+        <td class="col-pro">${nomAffiche}</td>
+        <td class="col-service">${rdv.NOM_SERVICE}</td>
         <td>
           <button onclick="modifierRdv(${rdv.NUM_RDV})">Modifier</button>
           <button class="danger" onclick="annulerRdv(${rdv.NUM_RDV})">Annuler</button>
@@ -106,7 +125,7 @@ async function chargerRendezVous() {
       `;
       tbody.appendChild(row);
 
-      // Enregistrement du professionnel par service
+      // 🧠 Mise à jour du dictionnaire des professionnels par service
       const nomService = rdv.NOM_SERVICE;
       if (!professionnelsParService[nomService]) {
         professionnelsParService[nomService] = new Set();
@@ -114,10 +133,13 @@ async function chargerRendezVous() {
       professionnelsParService[nomService].add(nomAffiche);
     });
 
+    filtrerRendezVous(); // 🟢 Appliquer le filtre actif après chargement
   } catch (err) {
     console.error("Erreur lors du chargement des RDV :", err);
   }
 }
+
+
 
 function modifierRdv(numRdv) {
   const rdv = rendezVousGlobaux.find(r => r.NUM_RDV === numRdv);
@@ -379,4 +401,40 @@ function mettreAJourProfessionnelsSuivi() {
   });
 
   select.disabled = false;
+}
+
+function filtrerRendezVous() {
+  const dateFiltre = document.getElementById("filtreDateRdv").value.trim();
+  const nomPatientFiltre = document.getElementById("filtreNomPatientRdv").value.toLowerCase().trim();
+  const nomProFiltre = document.getElementById("filtreNomProRdv").value.toLowerCase().trim();
+  const serviceFiltre = document.getElementById("filtreServiceRdv").value.toLowerCase().trim();
+
+  const lignes = document.querySelectorAll("#rdv tbody tr");
+
+  lignes.forEach(ligne => {
+    const dateCell = ligne.querySelector(".col-date")?.textContent.trim().toLowerCase() || "";
+    const patientCell = ligne.querySelector(".col-patient")?.textContent.toLowerCase().trim() || "";
+    const proCell = ligne.querySelector(".col-pro")?.textContent.toLowerCase().trim() || "";
+    const serviceCell = ligne.querySelector(".col-service")?.textContent.toLowerCase().trim() || "";
+
+    const [prenom = "", nom = ""] = patientCell.split(" ");
+
+    const correspond =
+      (!dateFiltre || dateCell.includes(dateFiltre)) &&
+      (!nomPatientFiltre || prenom.startsWith(nomPatientFiltre) || nom.startsWith(nomPatientFiltre)) &&
+      (!nomProFiltre || proCell.startsWith(nomProFiltre)) &&
+      (!serviceFiltre || serviceCell.startsWith(serviceFiltre));
+
+    ligne.style.display = correspond ? '' : 'none';
+  });
+}
+
+
+
+function reinitialiserFiltreRdv() {
+  document.getElementById("filtreDateRdv").value = '';
+  document.getElementById("filtreNomPatientRdv").value = '';
+  document.getElementById("filtreNomProRdv").value = '';
+  document.getElementById("filtreServiceRdv").value = '';
+  filtrerRendezVous();
 }

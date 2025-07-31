@@ -714,3 +714,22 @@ td .action-buttons button {
   white-space: nowrap;
 }
 
+.horaire-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+#btn-charger-disponibilites {
+  padding: 10px 15px;
+  background-color: #0077b6;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#btn-charger-disponibilites:hover {
+  background-color: #005f8a;
+}

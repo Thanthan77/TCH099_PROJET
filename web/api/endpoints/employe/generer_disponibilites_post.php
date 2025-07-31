@@ -1,37 +1,38 @@
 <?php
 header('Content-Type: application/json');
-require_once(__DIR__ . '/../api/db/Database.php');
+require_once(__DIR__ . '/../../db/Database.php');
 
 try {
     $cnx = Database::getInstance();
 
-    // Supprimer les disponibilités sans rendez-vous
+    $raw = file_get_contents("php://input");
+    $input = json_decode($raw, true);
+
+    if (
+        !isset($input['dateDebut'], $input['dateFin'], $input['horaires'], $input['vacances'])
+        || !is_array($input['horaires']) || !is_array($input['vacances'])
+    ) {
+        http_response_code(400);
+        echo json_encode(["error" => "Champs manquants ou format invalide"]);
+        exit;
+    }
+
+    $dateDebut = new DateTime($input['dateDebut']);
+    $dateFin = new DateTime($input['dateFin']);
+    $horaires = $input['horaires'];
+    $vacances = $input['vacances'];
+
+    if ($dateDebut >= $dateFin) {
+        http_response_code(400);
+        echo json_encode(["error" => "La date de fin doit être postérieure à la date de début"]);
+        exit;
+    }
+
+    // Nettoyage des anciennes disponibilités non attribuées
     $cnx->exec("DELETE FROM Disponibilite WHERE NUM_RDV IS NULL");
     $cnx->exec("ALTER TABLE Disponibilite AUTO_INCREMENT = 1");
 
-    // Définir la période complète
-    $dateDebut = new DateTime('2025-08-01');
-    $dateFin = new DateTime('2026-01-01'); // exclusif
-
-    // Charger les horaires et jours de travail
-    $pstmt = $cnx->prepare("
-        SELECT h.CODE_EMPLOYE, h.HEURE_DEBUT, h.HEURE_FIN, jt.JOUR_SEMAINE
-        FROM Horaire h
-        JOIN JourTravail jt ON h.CODE_EMPLOYE = jt.CODE_EMPLOYE
-    ");
-    $pstmt->execute();
-    $horaires = $pstmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Charger les périodes de vacances
-    $vacancesStmt = $cnx->prepare("
-        SELECT CODE_EMPLOYE, DATE_DEBUT, DATE_FIN
-        FROM Exception_horaire
-        WHERE TYPE_EXCEPTION = 'VACANCES'
-    ");
-    $vacancesStmt->execute();
-    $vacances = $vacancesStmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Préparer l'insertion
+    // Préparer l’insertion
     $insertStmt = $cnx->prepare("
         INSERT INTO Disponibilite (CODE_EMPLOYE, JOUR, HEURE, STATUT)
         VALUES (:code, :jour, :heure, :statut)
@@ -48,9 +49,8 @@ try {
         $jourCible = (int)$h['JOUR_SEMAINE'];
 
         $shiftDuration = ($heureFin->getTimestamp() - $heureDebut->getTimestamp()) / 3600;
-
-        // Pauses
         $pauses = [];
+
         if ($shiftDuration >= 9) {
             $pauses[] = ['12:00:00', '13:00:00'];
         } elseif ($shiftDuration >= 7) {
@@ -61,13 +61,13 @@ try {
         foreach ($period as $date) {
             if ((int)$date->format('N') !== $jourCible) continue;
 
-            // Vérification des vacances
             $enVacances = false;
             foreach ($vacances as $v) {
                 if (
                     $v['CODE_EMPLOYE'] == $code &&
                     $date >= new DateTime($v['DATE_DEBUT']) &&
-                    $date <= new DateTime($v['DATE_FIN'])
+                    $date <= new DateTime($v['DATE_FIN']) &&
+                    isset($v['STATUS']) && $v['STATUS'] === 'APPROUVÉ'
                 ) {
                     $enVacances = true;
                     break;

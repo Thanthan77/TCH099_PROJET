@@ -22,7 +22,6 @@ if (estAdmin) {
   if (codeInUrl && codeInUrl !== codeSession) {
     alert("Accès interdit : vous ne pouvez consulter que votre propre profil.");
     codeEmploye = codeSession;
-
     const url = new URL(window.location.href);
     url.searchParams.set("codeEmploye", codeSession);
     window.history.replaceState({}, '', url);
@@ -34,6 +33,11 @@ if (estAdmin) {
 const modifiables = estAdmin
   ? ["prenom", "nom", "date_naissance", "sexe", "etat_civil", "poste", "email", "telephone", "adresse"]
   : ["email", "telephone", "adresse"];
+
+function capitalize(str) {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
   if (!codeEmploye) {
@@ -47,23 +51,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const employes = await res.json();
     const employe = employes.find(e => String(e.CODE_EMPLOYE) === String(codeEmploye));
-
-    if (!employe) {
-      throw new Error("Employé introuvable.");
-    }
+    if (!employe) throw new Error("Employé introuvable.");
 
     document.getElementById("numero").value         = employe.CODE_EMPLOYE || "";
     document.getElementById("prenom").value         = employe.PRENOM_EMPLOYE || "";
     document.getElementById("nom").value            = employe.NOM_EMPLOYE || "";
     document.getElementById("date_naissance").value = employe.DATE_NAISSANCE || "";
-    document.getElementById("sexe").value           = employe.SEXE || "";
-    document.getElementById("etat_civil").value     = employe.ETAT_CIVIL || "";
-    document.getElementById("poste").value          = employe.POSTE || "";
+    document.getElementById("sexe").value           = capitalize(employe.SEXE);
+    document.getElementById("etat_civil").value     = capitalize(employe.ETAT_CIVIL);
+    document.getElementById("poste").value          = capitalize(employe.POSTE);
     document.getElementById("email").value          = employe.COURRIEL || "";
     document.getElementById("telephone").value      = employe.TELEPHONE || "";
     document.getElementById("adresse").value        = employe.ADRESSE || "";
-
-    // Enregistrer le mot de passe tel quel dans un champ caché
     document.getElementById("motDePasse").value     = employe.MOT_DE_PASSE || "";
 
   } catch (err) {
@@ -71,7 +70,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     alert("Erreur lors du chargement du profil.");
   }
 
-  // Activation de l'édition
   const editBtn = document.getElementById("editBtn");
   const saveBtn = document.getElementById("saveBtn");
 
@@ -80,7 +78,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       modifiables.forEach(id => {
         const field = document.getElementById(id);
         if (field) {
-          field.removeAttribute("readonly");
+          if (field.tagName === "SELECT") {
+            field.disabled = false;
+          } else {
+            field.removeAttribute("readonly");
+          }
           field.classList.add("editable");
         }
       });
@@ -103,7 +105,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         COURRIEL: document.getElementById("email").value,
         TELEPHONE: document.getElementById("telephone").value,
         ADRESSE: document.getElementById("adresse").value,
-        MOT_DE_PASSE: document.getElementById("motDePasse").value  // ➕ Inclus, inchangé
+        MOT_DE_PASSE: document.getElementById("motDePasse").value
       };
 
       try {
@@ -128,7 +130,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         modifiables.forEach(id => {
           const field = document.getElementById(id);
           if (field) {
-            field.setAttribute("readonly", true);
+            if (field.tagName === "SELECT") {
+              field.disabled = true;
+            } else {
+              field.setAttribute("readonly", true);
+            }
             field.classList.remove("editable");
           }
         });
@@ -139,7 +145,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Déconnexion
   const logoutBtn = document.getElementById("btn-logout");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", function (e) {
@@ -151,7 +156,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-// Retour au Dashboard
 const dashboardBtn = document.getElementById("btn-dashboard");
 if (dashboardBtn) {
   dashboardBtn.addEventListener("click", function (e) {
@@ -166,20 +170,11 @@ if (dashboardBtn) {
     let dashboardUrl = "";
 
     switch (role) {
-      case '1':
-        dashboardUrl = "medecin_dashboard.html";
-        break;
-      case '2':
-        dashboardUrl = "infirmiere_dashboard.html";
-        break;
-      case '3':
-        dashboardUrl = "secretaire_dashboard.html";
-        break;
-      case '4':
-        dashboardUrl = "admin_dashboard.html";
-        break;
-      default:
-        dashboardUrl = "index.html";
+      case '1': dashboardUrl = "medecin_dashboard.html"; break;
+      case '2': dashboardUrl = "infirmiere_dashboard.html"; break;
+      case '3': dashboardUrl = "secretaire_dashboard.html"; break;
+      case '4': dashboardUrl = "admin_dashboard.html"; break;
+      default: dashboardUrl = "index.html";
     }
 
     dashboardUrl += `?codeEmploye=${encodeURIComponent(code)}`;
@@ -187,8 +182,6 @@ if (dashboardBtn) {
   });
 }
 
-
-// Menu utilisateur
 function toggleUserMenu() {
   const menu = document.getElementById("userDropdown");
   if (menu) {
