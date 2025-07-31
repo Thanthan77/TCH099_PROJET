@@ -29,8 +29,8 @@
 
   <nav class="tabs">
     <button onclick="showTab('comptes')">Comptes utilisateurs</button>
-    <button onclick="showTab('vacances')">Demandes de vacances</button>
-    <button onclick="showTab('infirmiers')">Assignation infirmiers</button>
+    <button onclick="showTab('vacances')">Demandes de congées</button>
+    <button onclick="showTab('assignation-services')">Assignation des services</button>
   </nav>
 
   <main>
@@ -80,21 +80,22 @@
       </table>
     </section>
 
-    <section id="infirmiers" class="tab-content hidden">
-      <h2>Assignation des infirmiers/infirmières</h2>
-      <table>
+    <section id="assignation-services" class="tab-content hidden">
+      <h2>Assignation des services</h2>
+      <table class="assignation-table">
         <thead>
           <tr>
-            <th>Médecin</th><th>Infirmière assignée</th><th>Action</th>
+            <th>Nom</th>
+            <th>Poste</th>
+            <th>Services assurés</th>
+            <th>Action</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>Dr. Tremblay</td><td>Julie Roy</td><td><button>Modifier</button></td>
-          </tr>
+        <tbody id="service-assignation-body">
         </tbody>
       </table>
     </section>
+
   </main>
 
   <!-- Modal Création Compte -->
@@ -139,6 +140,37 @@
       </form>
     </div>
   </div>
+
+  <div class="modal hidden" id="popupModifierAssignation">
+    <div class="modal-content">
+      <span class="close-button" onclick="fermerPopup()">✖</span>
+      <h2 class="popup-title">Modifier l'assignation</h2>
+      <p>
+        <span class="valeur-nom">Nom</span> :
+        <span class="valeur-nom" id="popup-nom-employe">Alice Durand</span>
+      </p>
+      <p>
+        <span class="valeur-poste">Poste</span> :
+        <span class="valeur-poste" id="popup-poste-employe">Médecin</span>
+      </p>
+
+      <form id="form-modifier-assignation">
+        <input type="hidden" id="popup-code-employe" name="codeEmploye" />
+
+        <div id="liste-services-checkboxes">
+          <!-- Cases à cocher injectées dynamiquement -->
+        </div>
+
+        <div class="btn-group">
+          <button type="submit" class="btn-submit">Enregistrer</button>
+          <button type="button" class="btn-cancel" onclick="fermerPopup()">Annuler</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+
 
   <footer class="footer-clinique">
     <p>Clinique VITALIS</p>

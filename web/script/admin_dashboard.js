@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   showTab("comptes");
   chargerEmployes();
   chargerDemandesVacances();
+  chargerAssignationsServices();
 
   const filtreIcone = document.querySelector(".filtre-icon");
   if (filtreIcone) filtreIcone.addEventListener("click", toggleFiltres);
@@ -296,3 +297,154 @@ function shuffleArray(arr) {
   }
   return arr;
 }
+
+async function chargerAssignationsServices() {
+  try {
+    const response = await fetch(`${API_URL}service_employe`);
+    if (!response.ok) throw new Error("Réponse réseau invalide");
+
+    const assignations = await response.json();
+    const tbody = document.getElementById("service-assignation-body");
+    tbody.innerHTML = "";
+
+    if (!Array.isArray(assignations) || assignations.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4">Aucune assignation trouvée</td></tr>`;
+      return;
+    }
+
+    assignations.forEach(emp => {
+      const tr = document.createElement("tr");
+
+      const tdNom = document.createElement("td");
+      tdNom.textContent = `${emp.PRENOM_EMPLOYE} ${emp.NOM_EMPLOYE}`;
+
+      const tdPoste = document.createElement("td");
+      if (emp.POSTE.toLowerCase() === "infirmier" && emp.SEXE === "Femme") {
+        tdPoste.textContent = "Infirmière";
+      } else {
+        tdPoste.textContent = emp.POSTE;
+      }
+
+      const tdServices = document.createElement("td");
+      const ul = document.createElement("ul");
+
+      if (Array.isArray(emp.SERVICES) && emp.SERVICES.length > 0) {
+        emp.SERVICES.forEach(service => {
+          const li = document.createElement("li");
+          li.textContent = service;
+          ul.appendChild(li);
+        });
+      } else {
+        const li = document.createElement("li");
+        li.textContent = "Aucun service";
+        ul.appendChild(li);
+      }
+
+      tdServices.appendChild(ul);
+
+      const tdAction = document.createElement("td");
+      const btn = document.createElement("button");
+      btn.textContent = "Modifier";
+      btn.onclick = () => modifierAssignation(emp.CODE_EMPLOYE);
+      tdAction.appendChild(btn);
+
+      tr.appendChild(tdNom);
+      tr.appendChild(tdPoste);
+      tr.appendChild(tdServices);
+      tr.appendChild(tdAction);
+      tbody.appendChild(tr);
+    });
+
+
+  } catch (err) {
+    console.error("Erreur lors du chargement des assignations de services :", err);
+    const tbody = document.getElementById("service-assignation-body");
+    tbody.innerHTML = `<tr><td colspan="4">Erreur de chargement</td></tr>`;
+  }
+}
+
+async function modifierAssignation(codeEmploye) {
+  try {
+    const response = await fetch(`${API_URL}service_employe`);
+    const assignations = await response.json();
+    const employe = assignations.find(e => e.CODE_EMPLOYE === codeEmploye);
+
+    if (!employe) return alert("Employé non trouvé.");
+
+    document.getElementById("popup-nom-employe").textContent = `${employe.PRENOM_EMPLOYE} ${employe.NOM_EMPLOYE}`;
+    document.getElementById("popup-poste-employe").textContent = employe.SEXE === "Femme" && employe.POSTE === "Infirmier" ? "Infirmière" : employe.POSTE;
+    document.getElementById("popup-code-employe").value = codeEmploye;
+
+    const serviceCheckboxes = document.getElementById("liste-services-checkboxes");
+    serviceCheckboxes.innerHTML = "";
+
+    // Charger tous les services disponibles
+    const allServices = await fetch(`${API_URL}services`);
+    const servicesList = await allServices.json();
+
+    servicesList.forEach(service => {
+      const card = document.createElement("label");
+      card.classList.add("service-card");
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.name = "services[]";
+      checkbox.value = service.NOM;
+      checkbox.id = `srv-${service.ID_SERVICE}`;
+      checkbox.checked = employe.SERVICES.includes(service.NOM);
+
+      const span = document.createElement("span");
+      span.textContent = service.NOM;
+
+      card.appendChild(checkbox);
+      card.appendChild(span);
+      serviceCheckboxes.appendChild(card);
+    });
+
+    document.getElementById("popupModifierAssignation").classList.remove("hidden");
+
+  } catch (e) {
+    console.error("Erreur lors de la modification d’assignation :", e);
+    alert("Impossible de charger les données.");
+  }
+}
+
+function fermerPopup() {
+  document.getElementById('popupModifierAssignation').classList.add('hidden');
+}
+
+document.getElementById("form-modifier-assignation").addEventListener("submit", async function (e) {
+  e.preventDefault();
+
+  const codeEmploye = document.getElementById("popup-code-employe").value;
+  const checkboxes = document.querySelectorAll("#liste-services-checkboxes input[type='checkbox']");
+  const services = [];
+
+  checkboxes.forEach(cb => {
+    if (cb.checked) services.push(cb.value);
+  });
+
+  try {
+    const res = await fetch(`${API_URL}service_employe`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        codeEmploye,
+        services
+      })
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      alert("Assignations mises à jour avec succès !");
+      fermerPopup();
+      chargerAssignationsServices();
+    } else {
+      alert("Erreur : " + result.error);
+    }
+  } catch (err) {
+    console.error("Erreur lors de l'enregistrement des assignations :", err);
+    alert("Erreur réseau.");
+  }
+});
