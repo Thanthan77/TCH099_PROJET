@@ -37,6 +37,9 @@ get($URL.'/vacances','endpoints/employe/vacances_get.php');
 //GET pour avoir tous les professionels
 get($URL.'/professionnels','endpoints/employe/professionels_get.php');
 
+// GET pour récupérer les services d’un employé
+get($URL.'/service_employe', 'endpoints/employe/service_employe_get.php');
+
 
 //POST--
 
@@ -53,6 +56,9 @@ post($URL.'/rendezvous/secretaire','endpoints/employe/rendezVous_post.php');
 //POST pour créer un nouvel employe
 post($URL.'/employe','endpoints/employe/employe_post.php');
 
+// POST pour ajouter une assignation (ou plusieurs) pour un employé
+post($URL.'/service_employe', 'endpoints/employe/service_employe_post.php');
+
 
 //PUT--
 
@@ -65,10 +71,11 @@ put($URL.'/employe/user/$codeEmploye','endpoints/employe/employe_put.php');
 //PUT pour deplacer un rendez vous
 put($URL.'/rendezvous/id/$numRdv','endpoints/employe/rendezvous_put.php');
 
-
-
 // PUT pour avoir ajouter une note de consultation à un dossier
 put($URL. '/note/$numRdv', 'endpoints/employe/note_put.php');
+
+// PUT pour mettre à jour complètement les services d’un employé (écrasement + ajout)
+put($URL.'/service_employe', 'endpoints/employe/service_employe_put.php');
 
 
 // Section Patients
