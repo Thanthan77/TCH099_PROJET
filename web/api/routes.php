@@ -40,6 +40,9 @@ get($URL.'/professionnels','endpoints/employe/professionels_get.php');
 // GET pour récupérer les services d’un employé
 get($URL.'/service_employe', 'endpoints/employe/service_employe_get.php');
 
+// GET pour récupérer horaires + jours travaillés + vacances (nécessaires à la génération)
+get($URL.'/disponibilites/generation', 'endpoints/employe/generer_disponibilites_get.php');
+
 
 //POST--
 
@@ -58,6 +61,9 @@ post($URL.'/employe','endpoints/employe/employe_post.php');
 
 // POST pour ajouter une assignation (ou plusieurs) pour un employé
 post($URL.'/service_employe', 'endpoints/employe/service_employe_post.php');
+
+// POST pour générer et insérer les disponibilités en base
+post($URL.'/disponibilites/generation', 'endpoints/employe/generer_disponibilites_post.php');
 
 
 //PUT--

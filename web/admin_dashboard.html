@@ -29,6 +29,7 @@
 
   <nav class="tabs">
     <button onclick="showTab('comptes')">Comptes utilisateurs</button>
+    <button onclick="showTab('horaire')">Horaires</button>
     <button onclick="showTab('vacances')">Demandes de congées</button>
     <button onclick="showTab('assignation-services')">Assignation des services</button>
   </nav>
@@ -67,6 +68,43 @@
         <tbody id="employe-table-body"></tbody>
       </table>
     </section>
+
+    
+    <section id="horaire" class="tab-content hidden">
+      <div class="horaire-header">
+        <h2>Horaire</h2>
+        <button id="btn-charger-disponibilites">Charger Disponibilités</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Jours</th>
+            <th>Heure</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+    <div class="modal hidden" id="popup-disponibilites">
+      <div class="modal-content">
+        <span class="close-button" onclick="fermerPopupDisponibilites()">✖</span>
+        <h2>Charger les disponibilités</h2>
+        <form id="form-disponibilites">
+          <label>Date de début :
+            <input type="date" id="dateDebutDispo" required>
+          </label>
+          <label>Date de fin :
+            <input type="date" id="dateFinDispo" required>
+          </label>
+          <div class="btn-group">
+            <button type="submit">Confirmer</button>
+            <button type="button" onclick="fermerPopupDisponibilites()">Annuler</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
 
     <section id="vacances" class="tab-content hidden">
       <h2>Demandes de congées</h2>

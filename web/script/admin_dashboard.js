@@ -18,12 +18,11 @@ if (codeInUrl && codeInUrl !== codeSession) {
 document.addEventListener("DOMContentLoaded", () => {
   showTab("comptes");
   chargerEmployes();
+  chargerAfficherHoraires();
   chargerDemandesVacances();
   chargerAssignationsServices();
 
-  const filtreIcone = document.querySelector(".filtre-icon");
-  if (filtreIcone) filtreIcone.addEventListener("click", toggleFiltres);
-
+  // 🔐 Déconnexion
   const logoutBtn = document.getElementById("btn-logout");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", (e) => {
@@ -34,16 +33,19 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // 🔍 Filtres dynamiques
+  const filtreIcone = document.querySelector(".filtre-icon");
+  if (filtreIcone) filtreIcone.addEventListener("click", toggleFiltres);
+
   const filtreBtn = document.querySelector("#filtreSection button");
   if (filtreBtn) filtreBtn.addEventListener("click", filtrerEmployes);
 
-  // ✅ Ajout d'écouteurs pour filtrage dynamique sur tous les champs
   ["filtrePrenom", "filtreNom", "filtreCode", "filtrePoste"].forEach(id => {
     const champ = document.getElementById(id);
     if (champ) champ.addEventListener("input", filtrerEmployes);
   });
 
-  // Gestion pop-up création compte
+  // 👤 Création de compte
   const btnOuvrir = document.getElementById("btn-creer-compte");
   const modal = document.getElementById("modal-creer-compte");
   const modalContent = document.querySelector(".modal-content");
@@ -97,7 +99,67 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  // 📅 Génération des disponibilités
+  const btnCharger = document.getElementById("btn-charger-disponibilites");
+  const popupDispo = document.getElementById("popup-disponibilites");
+  const formDispo = document.getElementById("form-disponibilites");
+
+  if (btnCharger && popupDispo && formDispo) {
+    btnCharger.addEventListener("click", () => {
+      popupDispo.classList.remove("hidden");
+    });
+
+    formDispo.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const debut = document.getElementById("dateDebutDispo").value;
+      const fin = document.getElementById("dateFinDispo").value;
+
+      if (!debut || !fin || debut >= fin) {
+        alert("Veuillez entrer une période valide.");
+        return;
+      }
+
+      try {
+        // 1️⃣ GET des horaires et vacances
+        const resInfos = await fetch(`${API_URL}disponibilites/generation`);
+        const infos = await resInfos.json();
+
+        if (!resInfos.ok) throw new Error(infos.error || "Erreur lors du chargement des données");
+
+        // 2️⃣ POST pour générer les disponibilités
+        const resGen = await fetch(`${API_URL}disponibilites/generation`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            dateDebut: debut,
+            dateFin: fin,
+            horaires: infos.horaires,
+            vacances: infos.vacances
+          })
+        });
+
+        const result = await resGen.json();
+        if (resGen.ok) {
+          alert(`✅ ${result.message}\nTotal créés : ${result.total_insertions}`);
+          fermerPopupDisponibilites();
+        } else {
+          throw new Error(result.error || "Erreur inconnue");
+        }
+      } catch (err) {
+        alert("❌ Erreur : " + err.message);
+      }
+    });
+  }
 });
+
+// 🔚 Fermer le popup
+function fermerPopupDisponibilites() {
+  const popup = document.getElementById("popup-disponibilites");
+  if (popup) popup.classList.add("hidden");
+}
+
+
 
 
 // Onglets
@@ -456,3 +518,38 @@ document.getElementById("form-modifier-assignation").addEventListener("submit", 
     alert("Erreur réseau.");
   }
 });
+
+function escapeHtml(str) {
+  return (str ?? '').toString()
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+async function chargerAfficherHoraires() {
+  try {
+    const res = await fetch(`${API_URL}horaires`);
+    const data = await res.json();
+
+    const tbody = document.querySelector('#horaire table tbody');
+
+    if (!Array.isArray(data) || !data.length) {
+      tbody.innerHTML = '<tr><td colspan="3">Aucun horaire disponible</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.map(h => `
+      <tr>
+        <td>${escapeHtml(h.NOM_EMPLOYE)}</td>
+        <td>${escapeHtml(h.JOURS)}</td>
+        <td>${escapeHtml(h.HEURE)}</td>
+      </tr>
+    `).join('');
+  } catch (error) {
+    console.error("Erreur lors du chargement des horaires :", error);
+    const tbody = document.querySelector('#horaire table tbody');
+    tbody.innerHTML = '<tr><td colspan="3">Erreur de chargement des horaires</td></tr>';
+  }
+}
