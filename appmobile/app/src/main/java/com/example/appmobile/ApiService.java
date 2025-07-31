@@ -1,9 +1,11 @@
 package com.example.appmobile;
 
+import android.widget.TextView;
+
 import java.util.List;
 
-import PagesRDV.HoraireRequest;
-import PagesRDV.ServiceRequest;
+import com.example.appmobile.PagesRDV.HoraireRequest;
+import com.example.appmobile.PagesRDV.ServiceRequest;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -22,3 +24,6 @@ public interface ApiService {
     @GET ("api/rendezvous/patient/$courriel")
     Call<List<RdvRequest>> getRDV () ;
 }
+
+
+

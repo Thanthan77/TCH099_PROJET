@@ -1,4 +1,4 @@
-package PagesRDV;
+package com.example.appmobile.PagesRDV;
 
 import com.google.gson.annotations.SerializedName;
 

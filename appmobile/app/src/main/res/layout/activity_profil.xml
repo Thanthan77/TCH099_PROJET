@@ -27,7 +27,7 @@
 
         <!--Lien mes rdv-->
         <TextView
-            android:id="@+id/lien_mes_rdv"
+            android:id="@+id/lienMesRdv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -38,7 +38,7 @@
 
         <!--Lien déconnexion-->
         <TextView
-            android:id="@+id/lien_deconnexion"
+            android:id="@+id/lienDeconnexion"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

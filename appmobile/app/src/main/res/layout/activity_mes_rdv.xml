@@ -18,7 +18,7 @@
 
         <!--Lien prise de rdv-->
         <TextView
-            android:id="@+id/lien_mes_rdv"
+            android:id="@+id/lienMesRdv"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
 
         <!--Lien profil-->
         <TextView
-            android:id="@+id/lien_profil"
+            android:id="@+id/lienProfil"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
 
         <!--Lien déconnexion-->
         <TextView
-            android:id="@+id/lien_deconnexion"
+            android:id="@+id/lienDeconnexion"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
