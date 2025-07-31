@@ -66,4 +66,12 @@
     <string name="date_du_rdv2">Date du rdv</string>
     <string name="adresse_courriel_du_client">adresse courriel du client</string>
     <string name="prendre_rdv2">Prendre Rdv</string>
+    <string name="prendre_rdv6">Prendre RDV</string>
+    <string name="service5">Service</string>
+    <string name="date_rdv">Date RDV</string>
+    <string name="heure_rdv">Heure RDV</string>
+    <string name="_5_vaccination">5. Vaccination</string>
+    <string name="todo">TODO</string>
+    <string name="vaccin_de_routine_voyage_ou_saisonnier">Vaccin de routine, voyage ou saisonnier</string>
+    <string name="aucune_disponibilit_pour_l_instant_r_essayez_une_prochaine_fois">Aucune disponibilité pour l\'instant, réessayez une prochaine fois.</string>
 </resources>

@@ -1,4 +1,4 @@
-package PagesRDV;
+package com.example.appmobile.PagesRDV;
 
 public class HoraireRdv {
     public String nomService ;

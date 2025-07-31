@@ -1,4 +1,4 @@
-package PagesRDV;
+package com.example.appmobile.PagesRDV;
 
 import android.content.Context;
 import android.view.LayoutInflater;

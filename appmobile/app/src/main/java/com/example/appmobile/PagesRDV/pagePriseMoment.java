@@ -1,8 +1,9 @@
-package PagesRDV;
+package com.example.appmobile.PagesRDV;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +25,7 @@ public class pagePriseMoment extends AppCompatActivity {
     private ApiService apiService;
     private int idService;
     private String nomService;
+    private TextView messagePrAcuneDispo ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +65,7 @@ public class pagePriseMoment extends AppCompatActivity {
                             pagePriseMoment.this,
                             rdvItems,
                             horaire -> {
-                                // Lors du clic sur "Prendre RDV"
+
                                 Intent intent = new Intent(pagePriseMoment.this, pagePriseConfirmation.class);
                                 intent.putExtra("nom_service", horaire.getNomService());
                                 intent.putExtra("jour", horaire.getJourRdv());
