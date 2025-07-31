@@ -14,7 +14,11 @@ import java.util.List;
 
 public class HoraireAdapter extends ArrayAdapter<HoraireRdv> {
 
+    private TextView nomService ;
+    private TextView dateRdv ;
 
+    private TextView heureRdv ;
+    private Button btnPrendreRdv ;
 
     public interface OnPrendreRdvClickListener {
         void onClick(HoraireRdv horaire);
@@ -35,10 +39,10 @@ public class HoraireAdapter extends ArrayAdapter<HoraireRdv> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.horaire_rdv, parent, false);
         }
 
-        TextView nomService = convertView.findViewById(R.id.nomService);
-        TextView dateRdv = convertView.findViewById(R.id.dateRdv);
-        TextView heureRdv = convertView.findViewById(R.id.heureRdv);
-        Button btnPrendreRdv = convertView.findViewById(R.id.btnRdv);
+        nomService = convertView.findViewById(R.id.nomService);
+         dateRdv = convertView.findViewById(R.id.dateRdv);
+        heureRdv = convertView.findViewById(R.id.heureRdv);
+       btnPrendreRdv = convertView.findViewById(R.id.btnRdv);
 
 
         nomService.setText(horaire.getNomService());
