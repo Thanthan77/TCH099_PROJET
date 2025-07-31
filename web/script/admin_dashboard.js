@@ -165,7 +165,7 @@ function supprimerEmploye(code) {
 // Vacances
 async function chargerDemandesVacances() {
   try {
-    const response = await fetch(`${API_URL}vacances`);
+    const response = await fetch(`${API_URL}conge`);
     const demandes = await response.json();
     const tbody = document.querySelector('#vacances table tbody');
     tbody.innerHTML = '';
@@ -173,14 +173,17 @@ async function chargerDemandesVacances() {
     demandes.forEach((demande) => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${demande.NOM || 'N/A'}</td>
+        <td>${(demande.PRENOM || '') + ' ' + (demande.NOM || '')}</td>
         <td>${demande.ROLE || 'N/A'}</td>
         <td>${demande.DATE_DEBUT}</td>
         <td>${demande.DATE_FIN}</td>
-        <td>En attente</td>
+        <td>En Attente</td>
         <td>
-          <button onclick="traiterExceptionVacances(${demande.ID_EXC}, 'accept')">Accepter</button>
-          <button class="danger" onclick="traiterExceptionVacances(${demande.ID_EXC}, 'reject')">Refuser</button>
+          <div class="action-buttons">
+            <button onclick="traiterExceptionVacances(${demande.ID_EXC}, 'accepter')">Accepter</button>
+            <button class="danger" onclick="traiterExceptionVacances(${demande.ID_EXC}, 'refuser')">Refuser</button>
+
+          </div>
         </td>
       `;
       tbody.appendChild(tr);
@@ -193,11 +196,15 @@ async function chargerDemandesVacances() {
 
 async function traiterExceptionVacances(idException, action) {
   try {
-    const res = await fetch(`${API_URL}vacance/${idException}`, {
+    const res = await fetch(`${API_URL}conge/${idException}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action })
+      body: JSON.stringify({
+        action: action,
+        id_exc: idException
+      })
     });
+
     const data = await res.json();
     if (res.ok) {
       alert(data.message);
@@ -210,6 +217,7 @@ async function traiterExceptionVacances(idException, action) {
     console.error(e);
   }
 }
+
 
 // Filtres
 function toggleFiltres() {
