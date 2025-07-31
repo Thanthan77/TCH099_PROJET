@@ -57,7 +57,14 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnFermer) btnFermer.addEventListener("click", () => modal.classList.add("hidden"));
   if (btnAnnuler) btnAnnuler.addEventListener("click", () => modal.classList.add("hidden"));
   if (modalContent) modalContent.addEventListener("click", (e) => e.stopPropagation());
-  if (modal) modal.addEventListener("click", () => modal.classList.add("hidden"));
+  if (modal) {
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.add("hidden");
+    }
+  });
+}
+
 
   if (form) {
     form.addEventListener("submit", async function (e) {
