@@ -10,6 +10,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 
 public interface ApiService {
     @POST("api/login_patient")
@@ -27,8 +28,8 @@ public interface ApiService {
    @POST("api/rendez_vous")
    Call<List<RdvRequest>> postModifRdv();
 
-
-
+@PUT("api/rendezVous/id/patient/$numRdv")
+Call<List<RdvRequest>> putAnnulerRdv();
 }
 
 
