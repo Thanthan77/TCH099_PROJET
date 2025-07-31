@@ -1,7 +1,6 @@
 <?php
 
 require_once(__DIR__.'/../../db/Database.php');
-
 header('Content-Type: application/json');
 
 try {
@@ -10,18 +9,19 @@ try {
     $sql = "
         SELECT 
             eh.ID_EXC,
+            e.PRENOM_EMPLOYE AS PRENOM,
             e.NOM_EMPLOYE AS NOM,
             e.POSTE AS ROLE,
             eh.DATE_DEBUT,
             eh.DATE_FIN
         FROM Exception_horaire eh
         JOIN Employe e ON eh.CODE_EMPLOYE = e.CODE_EMPLOYE
-        WHERE eh.TYPE_EXCEPTION = :type
+        WHERE eh.TYPE_CONGE = 'CONGÉ' AND eh.`STATUS` = :status
         ORDER BY eh.DATE_DEBUT ASC
     ";
 
     $pstmt = $cnx->prepare($sql);
-    $pstmt->bindValue(':type', 'ATTENTE', PDO::PARAM_STR);
+    $pstmt->bindValue(':status', 'EN ATTENTE', PDO::PARAM_STR);
     $pstmt->setFetchMode(PDO::FETCH_ASSOC);
     $pstmt->execute();
 

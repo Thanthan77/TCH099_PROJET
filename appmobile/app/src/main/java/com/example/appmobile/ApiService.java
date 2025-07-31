@@ -23,6 +23,13 @@ public interface ApiService {
 
     @GET ("api/rendezvous/patient/$courriel")
     Call<List<RdvRequest>> getRDV () ;
+
+   @POST("api/rendez_vous")
+   Call<List<RdvRequest>> getModifRdv();
+
+    @GET("api/disponibilite")
+    Call<List<HoraireRequest>> getHoraire;
+
 }
 
 

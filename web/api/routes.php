@@ -32,7 +32,7 @@ get($URL.'/employes', 'endpoints/employe/employees_get.php');
 get($URL.'/horaires','endpoints/employe/horaire_get.php');
 
 // GET pour avoir la liste des demandes de vacances
-get($URL.'/vacances','endpoints/employe/vacances_get.php');
+get($URL.'/conge','endpoints/employe/conge_get.php');
 
 //GET pour avoir tous les professionels
 get($URL.'/professionnels','endpoints/employe/professionels_get.php');
@@ -48,7 +48,7 @@ post($URL.'/login', 'endpoints/employe/login.php');
 
 
 //POST pour une demande de vacance d'un medecin ou infirmier
-post($URL.'/vacance/employe/$codeEmploye','endpoints/employe/vacance_post.php');
+post($URL.'/conge/employe/$codeEmploye','endpoints/employe/conge_post.php');
 
 //POST pour un suivi de rendez vous
 post($URL.'/rendezvous/secretaire','endpoints/employe/rendezVous_post.php');
@@ -63,7 +63,7 @@ post($URL.'/service_employe', 'endpoints/employe/service_employe_post.php');
 //PUT--
 
 // PUT pour accepter ou refuser une demande de vacance
-put($URL.'/vacance/$idException','endpoints/employe/vacance_put.php');
+put($URL.'/conge/$idException','endpoints/employe/conge_put.php');
 
 //PUT pour mettre a jour les profiles des employés
 put($URL.'/employe/user/$codeEmploye','endpoints/employe/employe_put.php');
