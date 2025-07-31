@@ -2,6 +2,7 @@ package com.example.appmobile.PagesRDV;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -9,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.appmobile.ApiClient;
+import com.example.appmobile.ApiService;
 import com.example.appmobile.MainActivity;
 import com.example.appmobile.PageMesRDV;
 import com.example.appmobile.PageProfil;
@@ -16,6 +19,12 @@ import com.example.appmobile.R;
 import com.example.appmobile.RdvRequest;
 
 import org.w3c.dom.Text;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class pagePriseConfirmation  extends AppCompatActivity implements View.OnClickListener {
     private TextView nomService;
@@ -29,6 +38,7 @@ public class pagePriseConfirmation  extends AppCompatActivity implements View.On
     private TextView lienDeco ;
     private TextView lienProfil ;
     private TextView lienMesRdv ;
+
 
 
 
@@ -88,19 +98,33 @@ public class pagePriseConfirmation  extends AppCompatActivity implements View.On
             finish();
 
         } else if (v==btnConfirme) {
-            Intent intent = new Intent(this, PageMesRDV.class);
-            startActivity(intent);
-            finish();
-            // rajouter le POST
+            confirmeRDV() ;
         } else if (v==btnAnnuler) {
             finish();
         }
 
     }
 
-
-
-
-
-
+    private void confirmeRDV() {
+        ApiService apiService = ApiClient.getApiService();
+        Call<List<RdvRequest>> call = apiService.postModifRdv();
+        call.enqueue(new Callback<List<RdvRequest>>() {
+            @Override
+            public void onResponse(Call<List<RdvRequest>> call, Response<List<RdvRequest>> response) {
+                if (response.isSuccessful()) {
+                    List<RdvRequest> rdvList = response.body();
+                    Log.d("API", "Succès : " + rdvList.size() + " rendez-vous reçus.");
+                    Intent intent = new Intent(getApplicationContext(), PageMesRDV.class);
+                    startActivity(intent);
+                    finish();
+            }else {
+                    Log.e("API", "Erreur dans la réponse : " + response.code());
+                }
+            }
+            @Override
+            public void onFailure(Call<List<RdvRequest>> call, Throwable t) {
+                        Log.e("API", "Erreur : " + t.getMessage());
+            }
+        });
+    }
 }

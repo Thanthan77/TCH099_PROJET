@@ -25,10 +25,9 @@ public interface ApiService {
     Call<List<RdvRequest>> getRDV () ;
 
    @POST("api/rendez_vous")
-   Call<List<RdvRequest>> getModifRdv();
+   Call<List<RdvRequest>> postModifRdv();
 
-    @GET("api/disponibilite")
-    Call<List<HoraireRequest>> getHoraire;
+
 
 }
 
