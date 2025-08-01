@@ -420,6 +420,10 @@ function filtrerPatients() {
   });
 }
 
+window.toggleUserMenu = function () {
+  const menu = document.getElementById("userDropdown");
+  menu.style.display = (menu.style.display === "block") ? "none" : "block";
+};
 
 function reinitialiserFiltres() {
   document.getElementById('filtrePrenom').value = '';
