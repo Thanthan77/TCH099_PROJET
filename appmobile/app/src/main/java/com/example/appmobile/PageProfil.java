@@ -6,8 +6,8 @@ import android.widget.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.appmobile.ModificationInfo;
-import com.example.appmobile.ModificationMotDePasse;
+//import com.example.appmobile.ModificationInfo;
+//import com.example.appmobile.ModificationMotDePasse;
 import com.example.appmobile.PagesRDV.pagePriseService;
 
 import retrofit2.Call;
