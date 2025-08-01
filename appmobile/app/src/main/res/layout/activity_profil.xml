@@ -156,7 +156,7 @@
 
             <TextView
                 style="@style/TitreChampProfil"
-                android:text="email" />
+                android:text="E-mail" />
 
             <EditText
                 android:id="@+id/profil_email"
@@ -164,7 +164,7 @@
 
             <TextView
                 style="@style/TitreChampProfil"
-                android:text="numero telephone" />
+                android:text="Numéro de téléphone" />
 
             <EditText
                 android:id="@+id/profil_tel"

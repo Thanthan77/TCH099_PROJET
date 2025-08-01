@@ -1,149 +1,135 @@
 package com.example.appmobile;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.text.TextUtils;
+import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.gson.annotations.SerializedName;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.Body;
-import retrofit2.http.Headers;
-import retrofit2.http.POST;
 
-public class PageInscription extends AppCompatActivity implements View.OnClickListener {
+public class PageInscription extends AppCompatActivity {
 
-    private TextView messageInfo;
-    private EditText nom, prenom, courriel, telephone, assurancemaladie, naissance;
-    private EditText motPasse, confirmationPasse, adresse;
-    private Button soumis;
+    private EditText prenom, nom, nam, naissance, civique, rue, ville, postal, tel, email, emailConf, mdp, mdpConf;
 
-    private static final String BASE_URL = "http://localhost/api"; // 🔁 Remplace ça
+    private Button btnCreerCompte;
+    private TextView lienConnexion;
+
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inscription);
 
-        messageInfo = findViewById(R.id.inscription);
-        nom = findViewById(R.id.inscription_nom);
+        // Initialiser les champs
         prenom = findViewById(R.id.inscription_prenom);
-        courriel = findViewById(R.id.inscription_email);
-        telephone = findViewById(R.id.inscription_tel);
-        assurancemaladie = findViewById(R.id.inscription_nam);
+        nom = findViewById(R.id.inscription_nom);
+        nam = findViewById(R.id.inscription_nam);
         naissance = findViewById(R.id.inscription_naissance);
-        motPasse = findViewById(R.id.inscription_mdp);
-        confirmationPasse = findViewById(R.id.inscription_mdp_confirmation);
-        adresse = findViewById(R.id.inscription_adresse_autocomplete);
-        soumis = findViewById(R.id.btn_creer_compte);
-        soumis.setOnClickListener(this);
-    }
+        civique = findViewById(R.id.inscription_civique);
+        rue = findViewById(R.id.inscription_rue);
+        ville = findViewById(R.id.inscription_ville);
+        postal = findViewById(R.id.inscription_postal);
+        tel = findViewById(R.id.inscription_tel);
+        email = findViewById(R.id.inscription_email);
+        emailConf = findViewById(R.id.inscription_email_confirmation);
+        mdp = findViewById(R.id.inscription_mdp);
+        mdpConf = findViewById(R.id.inscription_mdp_confirmation);
 
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.btn_creer_compte) {
-            if (!motPasse.getText().toString().equals(confirmationPasse.getText().toString())) {
-                Toast.makeText(this, "Les mots de passe ne correspondent pas", Toast.LENGTH_SHORT).show();
-                return;
-            }
+        btnCreerCompte = findViewById(R.id.btn_creer_compte);
+        lienConnexion = findViewById(R.id.lien_connexion);
 
-            RegisterRequest request = new RegisterRequest(
-                    courriel.getText().toString(),
-                    motPasse.getText().toString(),
-                    prenom.getText().toString(),
-                    nom.getText().toString(),
-                    telephone.getText().toString(),
-                    "123",                              // NUM_CIVIQUE fictif — tu peux l'ajouter dans l’UI
-                    adresse.getText().toString(),       // RUE complète ici
-                    "Terrebonne",                       // VILLE par défaut — à rendre dynamique
-                    "J6X3X4",                           // CODE_POSTAL fictif — pareil
-                    assurancemaladie.getText().toString(),
-                    naissance.getText().toString()
-            );
+        apiService = ApiClient.getApiService();
 
-            creerCompte(request);
-        }
-    }
+        lienConnexion.setOnClickListener(v ->
+                startActivity(new Intent(PageInscription.this, MainActivity.class))
+        );
 
-    private void creerCompte(RegisterRequest request) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL) // ex. "https://ton-serveur.com/api/"
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        APIService apiService = retrofit.create(APIService.class);
-
-        Call<RegisterResponse> call = apiService.creerPatient(request);
-        call.enqueue(new Callback<RegisterResponse>() {
-            @Override
-            public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(PageInscription.this, "✔ " + response.body().message, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(PageInscription.this, "⛔ Erreur: " + response.code(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<RegisterResponse> call, Throwable t) {
-                Toast.makeText(PageInscription.this, "⚠ Connexion impossible: " + t.getMessage(), Toast.LENGTH_LONG).show();
+        btnCreerCompte.setOnClickListener(v -> {
+            if (validerChamps()) {
+                envoyerInscription();
             }
         });
     }
 
-    // 🧾 Requête envoyée au serveur
-    public static class RegisterRequest {
-        @SerializedName("COURRIEL") public String courriel;
-        @SerializedName("MOT_DE_PASSE") public String motDePasse;
-        @SerializedName("PRENOM_PATIENT") public String prenom;
-        @SerializedName("NOM_PATIENT") public String nom;
-        @SerializedName("NUM_TEL") public String tel;
-        @SerializedName("NUM_CIVIQUE") public String civique;
-        @SerializedName("RUE") public String rue;
-        @SerializedName("VILLE") public String ville;
-        @SerializedName("CODE_POSTAL") public String codePostal;
-        @SerializedName("NO_ASSURANCE_MALADIE") public String assurance;
-        @SerializedName("DATE_NAISSANCE") public String naissance;
-
-        public RegisterRequest(String courriel, String motDePasse, String prenom, String nom,
-                               String tel, String civique, String rue, String ville,
-                               String codePostal, String assurance, String naissance) {
-            this.courriel = courriel;
-            this.motDePasse = motDePasse;
-            this.prenom = prenom;
-            this.nom = nom;
-            this.tel = tel;
-            this.civique = civique;
-            this.rue = rue;
-            this.ville = ville;
-            this.codePostal = codePostal;
-            this.assurance = assurance;
-            this.naissance = naissance;
+    private boolean validerChamps() {
+        if (TextUtils.isEmpty(prenom.getText()) || TextUtils.isEmpty(nom.getText())
+                || TextUtils.isEmpty(nam.getText()) || TextUtils.isEmpty(naissance.getText())
+                || TextUtils.isEmpty(civique.getText()) || TextUtils.isEmpty(rue.getText())
+                || TextUtils.isEmpty(ville.getText()) || TextUtils.isEmpty(postal.getText())
+                || TextUtils.isEmpty(tel.getText()) || TextUtils.isEmpty(email.getText())
+                || TextUtils.isEmpty(emailConf.getText()) || TextUtils.isEmpty(mdp.getText())
+                || TextUtils.isEmpty(mdpConf.getText())) {
+            Toast.makeText(this, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show();
+            return false;
         }
+
+        if (!email.getText().toString().equals(emailConf.getText().toString())) {
+            Toast.makeText(this, "Les courriels ne correspondent pas", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (!mdp.getText().toString().equals(mdpConf.getText().toString())) {
+            Toast.makeText(this, "Les mots de passe ne correspondent pas", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
     }
 
-    // 📥 Réponse du serveur
-    public static class RegisterResponse {
-        public String message;
-        public String error;
-    }
+    private void envoyerInscription() {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("COURRIEL", email.getText().toString());
+            json.put("MOT_DE_PASSE", mdp.getText().toString());
+            json.put("PRENOM_PATIENT", prenom.getText().toString());
+            json.put("NOM_PATIENT", nom.getText().toString());
+            json.put("NO_ASSURANCE_MALADIE", nam.getText().toString());
+            json.put("DATE_NAISSANCE", naissance.getText().toString());
+            json.put("NUM_CIVIQUE", Integer.parseInt(civique.getText().toString()));
+            json.put("RUE", rue.getText().toString());
+            json.put("VILLE", ville.getText().toString());
+            json.put("CODE_POSTAL", postal.getText().toString());
+            json.put("NUM_TEL", Long.parseLong(tel.getText().toString()));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Erreur de format JSON", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-    // 🔗 Interface API
-    public interface APIService {
-        @Headers("Content-Type: application/json")
-        @POST("inscription_patient.php") // Ton fichier côté serveur
-        Call<RegisterResponse> creerPatient(@Body RegisterRequest request);
+        RequestBody body = RequestBody.create(
+                MediaType.parse("application/json"),
+                json.toString()
+        );
+
+        Call<ResponseBody> call = apiService.inscrirePatient(body);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(PageInscription.this, "Compte créé avec succès", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(PageInscription.this, MainActivity.class));
+                    finish();
+                } else if (response.code() == 409) {
+                    Toast.makeText(PageInscription.this, "Ce courriel est déjà utilisé", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PageInscription.this, "Erreur lors de l'inscription", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(PageInscription.this, "Erreur réseau : " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

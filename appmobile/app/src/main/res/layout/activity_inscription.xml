@@ -73,15 +73,6 @@
                 android:hint="@string/date_de_naissance" />
 
             <EditText
-                android:id="@+id/inscription_adresse_autocomplete"
-                style="@style/ChampFormulaire"
-                android:layout_height="48dp"
-                android:clickable="true"
-                android:focusable="false"
-                android:hint="@string/entrez_votre_adresse" />
-
-            <!-- Suite des champs d’adresse -->
-            <EditText
                 android:id="@+id/inscription_civique"
                 style="@style/ChampFormulaire"
                 android:layout_height="48dp"

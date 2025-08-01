@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".PageInscription" />
-        <activity android:name=".modificationMotPasse" />
+        <activity android:name=".ModificationMotDePasse" />
 
     </application>
 
