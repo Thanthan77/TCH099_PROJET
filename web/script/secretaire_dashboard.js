@@ -18,12 +18,16 @@ if (codeInUrl && codeInUrl !== codeSession) {
 
 let tousLesPatients = [];
 let rendezVousGlobaux = [];
+let optionHeure = [];
+let heureSelect;
 
 document.addEventListener("DOMContentLoaded", () => {
   // ⬇️ Chargement initial
   chargerRendezVous();
   chargerPatients();
   chargerPatientsPourListe();
+  chargerServicesPourCreation();
+  mettreAJourProfessionnelsSuivi();
   showTab("rdv");
 
   // ✅ Filtres dynamiques patients
@@ -76,7 +80,66 @@ document.addEventListener("DOMContentLoaded", () => {
       liste.classList.add("hidden");
     }
   });
+
+  // ✅ Mettre à jour les heures disponibles quand le service, le pro ou la date change (popup modification)
+  ["popupService", "popupProfessionnel", "popupDate"].forEach(id => {
+    const champ = document.getElementById(id);
+    if (champ) champ.addEventListener("change", mettreAJourHeuresDisponibles);
+  });
+
+  async function chargerServicesPourCreation() {
+    const selectService = document.getElementById("service");
+    selectService.innerHTML = `<option value="">-- Sélectionnez un service --</option>`; // Remet l'option par défaut
+
+    try {
+      const response = await fetch(`${API_URL}services`);
+      if (!response.ok) throw new Error("Erreur lors du chargement des services");
+      const services = await response.json();
+
+      services.forEach(service => {
+        const option = document.createElement("option");
+        option.value = service.NOM;
+        option.textContent = service.NOM;
+        selectService.appendChild(option);
+      });
+    } catch (error) {
+      console.error("Erreur lors du chargement des services :", error);
+    }
+  }
+
+  async function mettreAJourProfessionnelsSuivi() {
+    const serviceNom = document.getElementById("service").value;
+    const selectPro = document.getElementById("professionnel");
+    selectPro.innerHTML = `<option value="">-- Sélectionnez un professionnel --</option>`;
+
+    if (!serviceNom) {
+      selectPro.disabled = true;
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}professionnels?service=${encodeURIComponent(serviceNom)}`);
+      if (!response.ok) throw new Error("Erreur lors du chargement des professionnels");
+      const professionnels = await response.json();
+      console.log(professionnels)
+
+      professionnels.forEach(pro => {
+        const option = document.createElement("option");
+        option.value = pro.CODE_EMPLOYE;
+        option.textContent = pro.POSTE === "Médecin"
+          ? `Dr. ${pro.PRENOM_EMPLOYE} ${pro.NOM_EMPLOYE}`
+          : `${pro.PRENOM_EMPLOYE} ${pro.NOM_EMPLOYE}`;
+        selectPro.appendChild(option);
+      });
+
+      selectPro.disabled = false;
+    } catch (error) {
+      console.error("Erreur lors du chargement des professionnels :", error);
+      selectPro.disabled = true;
+    }
+  }
 });
+
 
 function showTab(id) {
   document.querySelectorAll(".tab-content").forEach(sec => sec.classList.add("hidden"));
@@ -110,7 +173,10 @@ async function chargerRendezVous() {
         ? `${patient.PRENOM_PATIENT} ${patient.NOM_PATIENT}`
         : rdv.COURRIEL; // fallback
 
-      const nomAffiche = rdv.POSTE === "Médecin" ? `Dr. ${rdv.NOM_EMPLOYE}` : rdv.NOM_EMPLOYE;
+      // ✅ Affichage du nom complet du professionnel
+      const nomAffiche = rdv.POSTE === "Médecin" 
+        ? `Dr. ${rdv.PRENOM_EMPLOYE} ${rdv.NOM_EMPLOYE}` // Prénom + Nom pour un médecin
+        : `${rdv.PRENOM_EMPLOYE} ${rdv.NOM_EMPLOYE}`; // Prénom + Nom pour un autre professionnel
 
       row.innerHTML = `
         <td class="col-date">${rdv.DATE_RDV}</td>
@@ -139,9 +205,7 @@ async function chargerRendezVous() {
   }
 }
 
-
-
-function modifierRdv(numRdv) {
+async function modifierRdv(numRdv) {
   const rdv = rendezVousGlobaux.find(r => r.NUM_RDV === numRdv);
   if (!rdv) return;
 
@@ -151,50 +215,68 @@ function modifierRdv(numRdv) {
     return;
   }
 
+  // Remplir les champs avec les informations du rendez-vous
   document.getElementById("popupNumRdv").value = rdv.NUM_RDV;
   document.getElementById("popupNomPatient").value = `${patient.PRENOM_PATIENT} ${patient.NOM_PATIENT}`;
   document.getElementById("popupAssurancePatient").value = patient.NO_ASSURANCE_MALADIE;
   document.getElementById("popupDate").value = rdv.DATE_RDV;
-  document.getElementById("popupHeure").value = rdv.HEURE;
+  document.getElementById("popupHour").value = rdv.HEURE;
+  document.getElementById("popupDure").value = rdv.DUREE;
+  console.log('valeur test:' + document.getElementById("popupDure").value);
+  console.log('valeur init test:' + rdv.DUREE);
 
+
+  console.log("type:" + typeof(rdv.HEURE));
+  console.log("type:" + typeof(document.getElementById("popupHour")));
+  console.log('valeur de rdv.HEURE:' + rdv.HEURE);
+  console.log('valeur de popupHour.value:' + document.getElementById("popupHour").value);
+
+  // Charger les services possibles
   const serviceSelect = document.getElementById("popupService");
-  serviceSelect.innerHTML = "";
+  serviceSelect.innerHTML = ""; // Vider avant de remplir*/
 
-  const servicesPossibles = [
-    "Consultation générale",
-    "Suivi de grossesse",
-    "Suivi de maladies chroniques",
-    "Dépistage ITSS",
-    "Vaccination",
-    "Prélèvement sanguin / test urinaire",
-    "Urgence mineure"
-  ];
+  try {
+    const response = await fetch(`${API_URL}services`);
+    if (!response.ok) throw new Error("Erreur lors du chargement des services");
+    const servicesPossibles = await response.json();
 
-  servicesPossibles.forEach(service => {
-    const option = document.createElement("option");
-    option.value = service;
-    option.textContent = service;
-    if (service === rdv.NOM_SERVICE) option.selected = true;
-    serviceSelect.appendChild(option);
-  });
+    servicesPossibles.forEach(service => {
+      const option = document.createElement("option");
+      option.value = service.NOM;
+      option.textContent = service.NOM;
+      if (service.NOM === rdv.NOM_SERVICE) option.selected = true;
+      serviceSelect.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Erreur lors du chargement des services :", error);
+  }
 
-  // Récupérer le nom du professionnel actuel
-  const proNom = rdv.POSTE === "Médecin" ? `Dr. ${rdv.NOM_EMPLOYE}` : rdv.NOM_EMPLOYE;
+  // Sélectionner le professionnel actuel
+  const proSelect = document.getElementById("popupProfessionnel");
+  proSelect.innerHTML = "";
+  const option = document.createElement("option");
+  option.value = rdv.CODE_EMPLOYE;
+  option.textContent = rdv.POSTE === "Médecin"
+    ? `Dr. ${rdv.PRENOM_EMPLOYE} ${rdv.NOM_EMPLOYE}`
+    : `${rdv.PRENOM_EMPLOYE} ${rdv.NOM_EMPLOYE}`;
+  proSelect.appendChild(option);
+  proSelect.value = rdv.CODE_EMPLOYE;
 
-  // Charger uniquement les professionnels du service (et ne pas forcer d'ajout)
-  mettreAJourProfessionnelsPopup(); // pas de paramètre
+  // ⏱️ Remplir le menu déroulant des heures à partir du tableau global optionHeure
+  heureSelect = document.getElementById("popupHour");
+  heureSelect.innerHTML = ""; // Vider les anciennes options
 
-  // Sélectionner le pro si présent
-  setTimeout(() => {
-    const proSelect = document.getElementById("popupProfessionnel");
-    for (let option of proSelect.options) {
-      if (option.value === proNom) {
-        option.selected = true;
-        break;
-      }
-    }
-  }, 50);
 
+
+  // Appeler mettreAJourHeuresDisponibles pour regénérer optionHeure selon les filtres
+  mettreAJourHeuresDisponibles();
+
+  // Ajouter écouteurs pour mettre à jour les heures quand on change date/service/professionnel
+  document.getElementById("popupDate").addEventListener("change", mettreAJourHeuresDisponibles);
+  document.getElementById("popupService").addEventListener("change", mettreAJourHeuresDisponibles);
+  document.getElementById("popupProfessionnel").addEventListener("change", mettreAJourHeuresDisponibles);
+
+  // Afficher le pop-up
   document.getElementById("popupModification").classList.remove("hidden");
 }
 
@@ -205,17 +287,33 @@ function fermerPopup() {
 
 function annulerRdv(numRdv) {
   if (confirm("Voulez-vous vraiment annuler ce rendez-vous ?")) {
-    fetch(`${API_URL}rendezvous/${numRdv}`, { method: "PUT" })
-      .then(res => {
-        if (!res.ok) throw new Error("Échec de l'annulation");
-        return res.json();
+    const action = 'annuler';
+
+    fetch(`${API_URL}rendezvous`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        action,
+        numRdv,
+
       })
-      .then(() => {
-        chargerRendezVous();
-      })
-      .catch(err => alert("Erreur : " + err.message));
+    })
+    .then(res => res.json().then(data => ({ ok: res.ok, data })))
+    .then(({ ok, data }) => {
+      if (!ok || data.error) {
+        throw new Error(data.error || "Échec de l'annulation");
+      }
+
+      alert(data.message || "Rendez-vous annulé avec succès.");
+      console.log(`RDV ${numRdv} annulé.`);
+      chargerRendezVous();
+    })
+    .catch(err => alert("Erreur : " + err.message));
   }
 }
+
 
 async function chargerPatients() {
   try {
@@ -437,4 +535,286 @@ function reinitialiserFiltreRdv() {
   document.getElementById("filtreNomProRdv").value = '';
   document.getElementById("filtreServiceRdv").value = '';
   filtrerRendezVous();
+}
+
+async function validerModification() {
+  const numRdv = document.getElementById("popupNumRdv").value;
+  const jour = document.getElementById("popupDate").value;
+  const heure = document.getElementById("popupHour").value;
+  const dure = document.getElementById("popupDure").value;
+  console.log(document.getElementById("popupDure").value);
+  const action = "modifier";
+
+  // Récupérer l'heure actuelle du rendez-vous
+  const heureActuelle = document.getElementById("popupHeure").value;  // Par exemple : Heure actuelle sélectionnée dans le formulaire
+
+    // 3️⃣ Envoyer la mise à jour avec la bonne durée, en incluant l'heure actuelle du RDV
+  const res = await fetch(`${API_URL}rendezvous`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      action,
+      numRdv,
+      JOUR: jour,
+      HEURE: heure,  // Heure mise à jour
+      DUREE: dure
+    })
+  });
+
+    if (!res.ok) throw new Error("Échec de la modification du rendez-vous");
+
+    let miseajour_json = await res.json();
+
+    if(miseajour_json.status == 'OK'){
+      alert(miseajour_json.message);
+    } else if (miseajour_json.error){
+      alert(miseajour_json.error);
+    }
+
+    fermerPopup();
+    chargerRendezVous();
+}
+
+
+async function mettreAJourHeuresDisponibles() {
+  try {
+    // Récupérer le numéro du rendez-vous (numRdv)
+    const numRdv = document.getElementById("popupNumRdv").value;
+
+    // Convertir numRdv en entier si ce n'est pas déjà un entier
+    const numRdvInt = parseInt(numRdv, 10);
+
+    // Trouver le rendez-vous correspondant dans la liste des rendez-vous
+    const rdv = rendezVousGlobaux.find(r => r.NUM_RDV === numRdvInt);
+    if (!rdv) {
+      console.error("Rendez-vous introuvable");
+      return;
+    }
+
+    // Récupérer la date, le service, le code employé et l'heure depuis le rendez-vous
+    const date = document.getElementById("popupDate").value; // La date du rendez-vous
+    const serviceNom = document.getElementById("popupService").value; // Le service choisi
+    const codeEmploye = rdv.CODE_EMPLOYE; // Le code de l'employé (professionnel) depuis le rendez-vous
+    const heureActuelle = rdv.HEURE; // L'heure actuelle du rendez-vous depuis le RDV
+
+    // Vérifie que la date, le service et le professionnel ont bien été sélectionnés
+    if (!date || !serviceNom || !codeEmploye || !heureActuelle) {
+      console.error("Paramètres manquants. Date, service, employé ou heure.");
+      return;
+    }
+
+    // Debug : Vérification des paramètres avant de faire la requête
+    console.log(`Date: ${date}, Code Employe: ${codeEmploye}, Service: ${serviceNom}, Heure: ${heureActuelle}`);
+
+    // 🔹 1. Récupérer la durée du service sélectionné
+    const resServices = await fetch(`${API_URL}services`);
+    if (!resServices.ok) throw new Error("Erreur chargement services");
+    const services = await resServices.json();
+
+    // Debug : Vérification des services reçus
+    console.log("Services reçus :", services);
+
+    const service = services.find(s => s.NOM === serviceNom); // Trouve le service sélectionné
+    if (!service) throw new Error("Service introuvable");
+    const duree = service.DUREE || 20; // La durée du service (par défaut 20 minutes)
+
+    // 🔹 2. Récupérer les disponibilités du professionnel à cette date et heure
+    const resDispo = await fetch(`${API_URL}disponibilites/${codeEmploye}/${heureActuelle}/${date}`);
+    if (!resDispo.ok) throw new Error("Erreur chargement disponibilités");
+    const plages = await resDispo.json();
+
+    // Debug : Vérification des disponibilités reçues
+    console.log("Disponibilités reçues :", plages);
+
+    const blocRequis = duree / 20; // Calcule le nombre de plages nécessaires en fonction de la durée du service
+    
+    console.log(typeof(heureActuelle));
+
+    // 🔹 4. Remplir les options du menu déroulant avec les heures valides
+    optionHeure = []; // Réinitialiser le tableau avant de le remplir
+
+    for (let i = 0; i < plages.length; i++) {
+      if (plages[i].STATUT === 'INDISPONIBLE' && plages[i].HEURE === heureActuelle +":00") {
+        console.log("je suis entrer");
+        const defaultOption = document.createElement('option');
+            defaultOption.value = plages[i].HEURE;
+            defaultOption.textContent = plages[i].HEURE + " (Heure actuelle)";
+            defaultOption.disabled = false;
+            defaultOption.selected = true;
+            heureSelect.appendChild(defaultOption);
+      }
+    }
+
+    for (let i = 0; i <= plages.length - blocRequis; i++) {
+      const bloc = plages.slice(i, i + blocRequis); // Sélectionne un bloc de plages horaires
+      const toutesDisponibles = bloc.length === blocRequis && bloc.every(p => p.STATUT === "DISPONIBLE"); // Vérifie si toutes les plages du bloc sont disponibles
+
+      if (toutesDisponibles) {
+        optionHeure.push(plages[i].HEURE); // ✅ Ajouter au tableau global
+        console.log(`✅ Option ajoutée :` + plages[i].HEURE);
+      }
+    }
+
+    // 🔍 Debug : Affiche tout le tableau des heures valides
+    console.log("🟦 optionHeure contient :", optionHeure);
+
+
+    // Si aucune heure valide n'a été trouvée, affiche une option indiquant qu'il n'y a pas de disponibilité
+    if (optionHeure.length === 0) {
+      optionHeure.push(heureActuelle);
+    }
+
+    optionHeure.forEach(h => {
+      const option = document.createElement("option");
+      option.value = h;
+      option.textContent = h;
+      if (h === rdv.HEURE) opt.selected = true; // Marquer l'heure actuelle
+      heureSelect.append(option);
+    });
+
+  } catch (err) {
+    alert("Erreur : " + err.message); // Affiche l'erreur en cas de problème
+    console.error("Erreur lors de la mise à jour des heures disponibles :", err);
+  }
+}
+
+async function mettreAJourHeuresDisponiblesNewRdv() {
+  try {
+    const date = document.getElementById("date").value; // La date du rendez-vous
+    const serviceNom = document.getElementById("service").value; // Le service choisi
+
+    const response = await fetch(`${API_URL}professionnels/${encodeURIComponent(serviceNom)}`);
+    if (!response.ok) throw new Error("Erreur lors du chargement des professionnels");
+    const professionnels = await response.json();
+
+    const heureSelect = document.getElementById("heure");
+    if (!heureSelect) {
+      throw new Error("Le champ <select id='heure'> est introuvable.");
+    }
+
+    // Récupérer la date, le service, le code employé et l'heure depuis le rendez-vous
+
+
+    const select = document.getElementById("professionnel");
+    const nomSelectionne = select.options[select.selectedIndex].text.trim();
+
+    // 🔍 Recherche du bon employé dans la liste
+    const correspondant = professionnels.find(p => {
+      const nomComplet = `${p.POSTE === 'Médecin' ? 'Dr. ' : ''}${p.PRENOM} ${p.NOM}`.trim();
+      return nomComplet === nomSelectionne;
+    });
+
+    if (correspondant) {
+      const codeEmploye = correspondant.CODE_EMPLOYE;
+      console.log("✅ Code employé correspondant :", codeEmploye);
+    } else {
+      console.warn("❌ Aucun code employé ne correspond au nom :", nomSelectionne);
+    }
+
+    // Vérifie que la date, le service et le professionnel ont bien été sélectionnés
+    if (!date || !serviceNom || !codeEmploye) {
+      console.log("⏳ En attente que tous les champs soient remplis...");
+      return; // Ne génère pas encore les heures, mais ne quitte pas brutalement avec une erreur
+    }
+
+    // Debug : Vérification des paramètres avant de faire la requête
+    console.log(`Date: ${date}, Code Employe: ${codeEmploye}, Service: ${serviceNom}`);
+
+    // 🔹 1. Récupérer la durée du service sélectionné
+    const resServices = await fetch(`${API_URL}services`);
+    if (!resServices.ok) throw new Error("Erreur chargement services");
+    const services = await resServices.json();
+
+    // Debug : Vérification des services reçus
+    console.log("Services reçus :", services);
+
+    const service = services.find(s => s.NOM === serviceNom); // Trouve le service sélectionné
+    if (!service) throw new Error("Service introuvable");
+    const duree = service.DUREE || 20; // La durée du service (par défaut 20 minutes)
+
+    // 🔹 2. Récupérer les disponibilités du professionnel à cette date et heure
+    const resDispo = await fetch(`${API_URL}disponibilites/${codeEmploye}/${date}`);
+    if (!resDispo.ok) throw new Error("Erreur chargement disponibilités");
+    const plages = await resDispo.json();
+
+    // Debug : Vérification des disponibilités reçues
+    console.log("Disponibilités reçues :", plages);
+
+    const blocRequis = duree / 20; // Calcule le nombre de plages nécessaires en fonction de la durée du service
+
+    // 🔹 4. Remplir les options du menu déroulant avec les heures valides
+    optionHeure = []; // Réinitialiser le tableau avant de le remplir
+
+        const defaultOption = document.createElement('option');
+            defaultOption.value = 'NULL';
+            defaultOption.textContent = 'Heure du Rendez-Vous';
+            defaultOption.disabled = false;
+            defaultOption.selected = true;
+            heureSelect.appendChild(defaultOption);
+
+    for (let i = 0; i <= plages.length - blocRequis; i++) {
+      const bloc = plages.slice(i, i + blocRequis); // Sélectionne un bloc de plages horaires
+      const toutesDisponibles = bloc.length === blocRequis && bloc.every(p => p.STATUT === "DISPONIBLE"); // Vérifie si toutes les plages du bloc sont disponibles
+
+      if (toutesDisponibles) {
+        optionHeure.push(plages[i].HEURE); // ✅ Ajouter au tableau global
+        console.log(`✅ Option ajoutée :` + plages[i].HEURE);
+      }
+    }
+
+    // 🔍 Debug : Affiche tout le tableau des heures valides
+    console.log("🟦 optionHeure contient :", optionHeure);
+
+
+    // Si aucune heure valide n'a été trouvée, affiche une option indiquant qu'il n'y a pas de disponibilité
+      if (optionHeure.length === 0) {
+        const option = document.createElement("option");
+        option.value = "";
+        option.textContent = "Aucune plage disponible";
+        option.disabled = true;
+        option.selected = true;
+        heureSelect.append(option);
+        return;
+      }
+
+    optionHeure.forEach(h => {
+      const option = document.createElement("option");
+      option.value = h;
+      option.textContent = h;
+      option.selected = optionHeure.length === 1; // Sélectionne automatiquement si une seule option
+      heureSelect.append(option);
+    });
+
+  } catch (err) {
+    alert("Erreur : " + err.message); // Affiche l'erreur en cas de problème
+    console.error("Erreur lors de la mise à jour des heures disponibles :", err);
+  }
+}
+
+async function attendreEtEnvoyer() {
+  // ⏳ Attendre que les champs existent dans le DOM
+  while (
+    !document.getElementById("date") ||
+    !document.getElementById("service") ||
+    !document.getElementById("professionnel") ||
+    !document.getElementById("heure")
+  ) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+
+  // ✅ Ajouter des écouteurs pour relancer dynamiquement la mise à jour
+  document.getElementById("date").addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
+  document.getElementById("service").addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
+  document.getElementById("professionnel").addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
+
+  // 🟡 Premier appel si tous les champs sont déjà remplis
+  const date = document.getElementById("date").value;
+  const serviceNom = document.getElementById("service").value;
+  const codeEmploye = document.getElementById("professionnel").value;
+
+  if (date && serviceNom && codeEmploye) {
+    await mettreAJourHeuresDisponiblesNewRdv();
+  }
 }

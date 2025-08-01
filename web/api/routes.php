@@ -43,6 +43,12 @@ get($URL.'/service_employe', 'endpoints/employe/service_employe_get.php');
 // GET pour récupérer horaires + jours travaillés + vacances (nécessaires à la génération)
 get($URL.'/disponibilites/generation', 'endpoints/employe/generer_disponibilites_get.php');
 
+// GET pour récupérer les disponibilités d’un employé à une date précise
+get($URL.'/disponibilites/$codeEmploye/$heureActuelle/$date', 'endpoints/employe/disponibilite_employe_get.php');
+
+// GET pour récupérer les disponibilités d’un employé à une date précise
+get($URL.'/disponibilites/$codeEmploye/$date', 'endpoints/employe/disponibilite_jour_get.php');
+
 
 //POST--
 
@@ -75,7 +81,7 @@ put($URL.'/conge/$idException','endpoints/employe/conge_put.php');
 put($URL.'/employe/user/$codeEmploye','endpoints/employe/employe_put.php');
 
 //PUT pour deplacer un rendez vous
-put($URL.'/rendezvous/id/$numRdv','endpoints/employe/rendezvous_put.php');
+put($URL.'/rendezvous','endpoints/employe/rendezvous_put.php');
 
 // PUT pour avoir ajouter une note de consultation à un dossier
 put($URL. '/note/$numRdv', 'endpoints/employe/note_put.php');

@@ -8,7 +8,6 @@ header('Access-Control-Allow-Methods: PUT');
 
 $data = json_decode(file_get_contents('php://input'), true);
 
-
 try {
     if ($data === null || json_last_error() !== JSON_ERROR_NONE) {
         http_response_code(400);
@@ -17,18 +16,21 @@ try {
     }
 
     $action = strtolower(trim($data['action'] ?? ''));
+    $numRdv = $data['numRdv'] ?? null;
 
-    if (!in_array($action, ['update', 'cancel']) || !$numRdv || !ctype_digit((string)$numRdv)) {
+    if (!in_array($action, ['modifier', 'annuler']) || !$numRdv || !ctype_digit((string)$numRdv)) {
         http_response_code(400);
         echo json_encode(["error" => "Action ou identifiant invalide"]);
         exit;
     }
 
-    $jour = $data['JOUR'] ?? null;
-    $heure = $data['HEURE'] ?? null;
-    $duree = $data['DUREE'] ?? null;
+    $cnx = Database::getInstance();
 
-    if ($action === 'update') {
+    if ($action === 'modifier') {
+        $jour = $data['JOUR'] ?? null;
+        $heure = $data['HEURE'] ?? null;
+        $duree = $data['DUREE'] ?? null;
+
         if (!$jour || !$heure || !$duree) {
             http_response_code(400);
             echo json_encode(['error' => 'Champs manquants ou invalides']);
@@ -45,9 +47,6 @@ try {
             exit;
         }
 
-        $cnx = Database::getInstance();
-        $cnx->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
         $sql = "UPDATE Rendezvous
                 SET JOUR = :jour,
                     HEURE = :heure,
@@ -58,26 +57,23 @@ try {
         $stmt->bindValue(':jour', $jour, PDO::PARAM_STR);
         $stmt->bindValue(':heure', $heure, PDO::PARAM_STR);
         $stmt->bindValue(':duree', (int)$duree, PDO::PARAM_INT);
-        $stmt->bindValue(':num_rdv', $numRdv);
+        $stmt->bindValue(':num_rdv', $numRdv, PDO::PARAM_INT);
         $stmt->execute();
 
         $response = ($stmt->rowCount() > 0)
-            ? ['status' => 'OK', 'message' => 'Rendez-vous mis à jour avec succès', 'numRdv' => $numRdv]
+            ? ['status' => 'OK', 'message' => 'Rendez-vous modifié avec succès', 'numRdv' => $numRdv]
             : ['error' => 'Aucune mise à jour effectuée'];
 
         http_response_code($stmt->rowCount() > 0 ? 200 : 404);
         echo json_encode($response);
 
-    } elseif ($action === 'cancel') {
-        $cnx = Database::getInstance();
-        $cnx->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
+    } elseif ($action === 'annuler') {
         $sql = "UPDATE Rendezvous
                 SET STATUT = 'ANNULÉ'
                 WHERE NUM_RDV = :num_rdv";
 
         $stmt = $cnx->prepare($sql);
-        $stmt->bindValue(':num_rdv', $numRdv);
+        $stmt->bindValue(':num_rdv', $numRdv, PDO::PARAM_INT);
         $stmt->execute();
 
         $response = ($stmt->rowCount() > 0)
