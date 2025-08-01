@@ -1,4 +1,4 @@
-package PagesProfil;
+package com.example.appmobile;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,15 +6,9 @@ import android.widget.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.appmobile.ApiClient;
-import com.example.appmobile.ApiService;
-import com.example.appmobile.MainActivity;
 import com.example.appmobile.ModificationInfo;
 import com.example.appmobile.ModificationMotDePasse;
-import com.example.appmobile.PageMesRDV;
 import com.example.appmobile.PagesRDV.pagePriseService;
-import com.example.appmobile.Patient;
-import com.example.appmobile.R;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -82,14 +76,14 @@ public class PageProfil extends AppCompatActivity {
             finish();
         });
         lienProfil.setOnClickListener(v -> {
-            Intent intent = new Intent(PageProfil.this, ModificationInfo.class);
+            Intent intent = new Intent(PageProfil.this, PagesProfil.ModificationInfo.class);
             intent.putExtra("token", token);
             intent.putExtra("courriel", courrielPatient);
             startActivity(intent);
         });
 
         lienModif.setOnClickListener(v -> {
-            Intent intent = new Intent(PageProfil.this, ModificationMotDePasse.class);
+            Intent intent = new Intent(PageProfil.this, PagesProfil.ModificationMotDePasse.class);
             intent.putExtra("token", token);
             intent.putExtra("courriel", courrielPatient);
             startActivity(intent);

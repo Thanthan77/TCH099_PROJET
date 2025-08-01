@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.appmobile.ApiClient;
 import com.example.appmobile.ApiService;
+import com.example.appmobile.PageProfil;
 import com.example.appmobile.R;
 import com.example.appmobile.Patient;
 
@@ -58,7 +59,7 @@ public class ModificationInfo extends AppCompatActivity {
         chargerInfosPatient(courrielPatient);
 
         btnRetour.setOnClickListener(v -> {
-            Intent intent = new Intent(ModificationInfo.this, PagesProfil.PageProfil.class);
+            Intent intent = new Intent(ModificationInfo.this, PageProfil.class);
             intent.putExtra("courriel", courrielPatient);
             intent.putExtra("token", token);
             startActivity(intent);
@@ -89,7 +90,7 @@ public class ModificationInfo extends AppCompatActivity {
                     if (response.isSuccessful()) {
                         Toast.makeText(ModificationInfo.this, "Changements appliqués", Toast.LENGTH_SHORT).show();
                         // Retour vers PageProfil avec les nouvelles infos
-                        Intent intent = new Intent(ModificationInfo.this, PagesProfil.PageProfil.class);
+                        Intent intent = new Intent(ModificationInfo.this, PageProfil.class);
                         intent.putExtra("courriel", email.getText().toString());
                         intent.putExtra("token", token);
                         startActivity(intent);

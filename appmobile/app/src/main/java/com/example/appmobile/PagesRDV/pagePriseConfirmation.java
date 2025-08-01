@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,11 +13,10 @@ import com.example.appmobile.ApiClient;
 import com.example.appmobile.ApiService;
 import com.example.appmobile.MainActivity;
 import com.example.appmobile.PageMesRDV;
+//import com.example.appmobile.PageProfil;
 import com.example.appmobile.PageProfil;
 import com.example.appmobile.R;
 import com.example.appmobile.RdvRequest;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 

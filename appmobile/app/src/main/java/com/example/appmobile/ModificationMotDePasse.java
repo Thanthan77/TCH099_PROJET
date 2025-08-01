@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.appmobile.ApiClient;
 import com.example.appmobile.ApiService;
+import com.example.appmobile.PageProfil;
 import com.example.appmobile.R;
 
 import java.util.HashMap;
@@ -40,7 +41,7 @@ public class ModificationMotDePasse extends AppCompatActivity {
         token = getIntent().getStringExtra("token");
 
         btnRetour.setOnClickListener(v -> {
-            Intent intent = new Intent(ModificationMotDePasse.this, PagesProfil.PageProfil.class);
+            Intent intent = new Intent(ModificationMotDePasse.this, PageProfil.class);
             intent.putExtra("courriel", courrielPatient);
             intent.putExtra("token", token);
             startActivity(intent);
@@ -75,7 +76,7 @@ public class ModificationMotDePasse extends AppCompatActivity {
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.isSuccessful()) {
                         Toast.makeText(ModificationMotDePasse.this, "Mot de passe changé avec succès", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(ModificationMotDePasse.this, PagesProfil.PageProfil.class);
+                        Intent intent = new Intent(ModificationMotDePasse.this, PageProfil.class);
                         intent.putExtra("courriel", courrielPatient);
                         intent.putExtra("token", token);
                         startActivity(intent);
