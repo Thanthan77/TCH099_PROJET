@@ -934,7 +934,7 @@ async function creerRendezVous() {
     console.log('testdure:' + duree);
 
     // ✅ Mise à jour directe de la disponibilité
-    await changerDisponibilite(codeEmploye, jour, heure,courrielPatient, duree, "OCCUPÉ");
+    //await changerDisponibilite(codeEmploye, jour, heure,courrielPatient, duree, "OCCUPÉ");
 
   } catch (err) {
     console.error("❌ Erreur :", err);
