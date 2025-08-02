@@ -932,6 +932,7 @@ async function creerRendezVous() {
 
     console.log("✅ POST réussi :", json);
     console.log('testdure:' + duree);
+    alert("Le rendez-vous a été ajouté avec succès");
 
     // ✅ Mise à jour directe de la disponibilité
     //await changerDisponibilite(codeEmploye, jour, heure,courrielPatient, duree, "OCCUPÉ");
