@@ -89,6 +89,9 @@ put($URL. '/note/$numRdv', 'endpoints/employe/note_put.php');
 // PUT pour mettre à jour complètement les services d’un employé (écrasement + ajout)
 put($URL.'/service_employe', 'endpoints/employe/service_employe_put.php');
 
+// PUT pour mettre à jour une disponibilité (changer STATUT et lier à un rendez-vous)
+put($URL.'/disponibilites', 'endpoints/employe/disponibilite_put.php');
+
 
 // Section Patients
 

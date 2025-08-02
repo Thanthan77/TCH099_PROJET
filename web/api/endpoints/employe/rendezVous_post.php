@@ -9,7 +9,8 @@ try {
     $cnx = Database::getInstance();
     $cnx->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $champsRequis = ['NOM_EMPLOYE', 'COURRIEL', 'JOUR', 'HEURE', 'DUREE', 'NOM_SERVICE'];
+    // Vérification des champs requis
+    $champsRequis = ['CODE_EMPLOYE', 'COURRIEL', 'JOUR', 'HEURE', 'DUREE', 'NOM_SERVICE'];
     foreach ($champsRequis as $champ) {
         if (!isset($data[$champ])) {
             http_response_code(400);
@@ -18,7 +19,7 @@ try {
         }
     }
 
-    // Vérification de l'existence du courriel dans Patient
+    // Vérification de l'existence du patient
     $sqlPatient = "SELECT COURRIEL FROM Patient WHERE COURRIEL = :courriel LIMIT 1";
     $stmtPatient = $cnx->prepare($sqlPatient);
     $stmtPatient->bindValue(':courriel', $data['COURRIEL']);
@@ -31,22 +32,9 @@ try {
         exit;
     }
 
-    // Recherche du Nom Employe via le codeEmploye
-    $sqlEmploye = "SELECT CODE_EMPLOYE FROM Employe WHERE NOM_EMPLOYE = :nom LIMIT 1";
-    $stmtEmploye = $cnx->prepare($sqlEmploye);
-    $stmtEmploye->bindValue(':nom', $data['NOM_EMPLOYE']);
-    $stmtEmploye->execute();
-    $employe = $stmtEmploye->fetch(PDO::FETCH_ASSOC);
+    $codeEmploye = $data['CODE_EMPLOYE'];
 
-    if (!$employe) {
-        http_response_code(404);
-        echo json_encode(['error' => 'Employé non trouvé avec ce nom']);
-        exit;
-    }
-
-    $codeEmploye = $employe['CODE_EMPLOYE'];
-
-    // Recherche du ID_SERVICE via NOM_SERVICE
+    // Récupération de l'ID du service
     $sqlService = "SELECT ID_SERVICE FROM Service WHERE NOM = :nom_service LIMIT 1";
     $stmtService = $cnx->prepare($sqlService);
     $stmtService->bindValue(':nom_service', $data['NOM_SERVICE']);
@@ -61,26 +49,27 @@ try {
 
     $idService = $service['ID_SERVICE'];
 
+    // Insertion du rendez-vous
     $sql = "INSERT INTO Rendezvous (
-    CODE_EMPLOYE, COURRIEL, JOUR, HEURE, DUREE, ID_SERVICE, NOTE_CONSULT, STATUT
+        CODE_EMPLOYE, COURRIEL, JOUR, HEURE, DUREE, ID_SERVICE, NOTE_CONSULT, STATUT
     ) VALUES (
-        :code_employe, :courriel, :jour, :heure, :duree, :id_service, 'Suivi', 'CONFIRMÉ'
+        :code_employe, :courriel, :jour, :heure, :duree, :id_service, 'Aucune Note', 'CONFIRMÉ'
     )";
 
     $stmt = $cnx->prepare($sql);
     $stmt->bindValue(':code_employe', $codeEmploye);
-    $stmt->bindValue(':courriel',     $data['COURRIEL']);
-    $stmt->bindValue(':jour',         $data['JOUR']);
-    $stmt->bindValue(':heure',        $data['HEURE']);
-    $stmt->bindValue(':duree',        $data['DUREE']);
-    $stmt->bindValue(':id_service',   $idService);
+    $stmt->bindValue(':courriel', $data['COURRIEL']);
+    $stmt->bindValue(':jour', $data['JOUR']);
+    $stmt->bindValue(':heure', $data['HEURE']);
+    $stmt->bindValue(':duree', $data['DUREE']);
+    $stmt->bindValue(':id_service', $idService);
 
     $stmt->execute();
 
     http_response_code(200);
     echo json_encode([
         'status' => 'OK',
-        'message' => "Suvi confirmé pour $data[NOM_EMPLOYE] ($data[COURRIEL]) - Service : $data[NOM_SERVICE]",
+        'message' => "Suivi confirmé pour CODE_EMPLOYE $codeEmploye ($data[COURRIEL]) - Service : $data[NOM_SERVICE]",
         'code_employe' => $codeEmploye,
         'id_service' => $idService
     ]);

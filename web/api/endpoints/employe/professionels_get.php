@@ -9,7 +9,7 @@ try {
     $cnx = Database::getInstance();
     
     $sql = "
-    SELECT NOM_EMPLOYE 
+    SELECT NOM_EMPLOYE, PRENOM_EMPLOYE, CODE_EMPLOYE, POSTE
     FROM Employe 
     WHERE CODE_EMPLOYE LIKE '1%' OR CODE_EMPLOYE LIKE '2%'
 ";

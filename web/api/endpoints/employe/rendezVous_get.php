@@ -10,8 +10,8 @@ try {
     $pstmt = $cnx->prepare("
         SELECT 
             r.NUM_RDV,
-            DATE_FORMAT(r.JOUR, '%Y-%m-%d') AS DATE_RDV,
-            TIME_FORMAT(r.HEURE, '%H:%i')   AS HEURE,
+            DATE_FORMAT(r.JOUR, '%Y-%m-%d') AS JOUR,
+            TIME_FORMAT(r.HEURE, '%H:%i:%s')   AS HEURE,
             r.DUREE,
             r.COURRIEL,
             e.CODE_EMPLOYE,

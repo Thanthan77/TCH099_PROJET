@@ -571,6 +571,8 @@ async function validerModification() {
 
     let miseajour_json = await res.json();
 
+
+
     if(miseajour_json.status == 'OK'){
       alert(miseajour_json.message);
     } else if (miseajour_json.error){
@@ -686,116 +688,108 @@ async function mettreAJourHeuresDisponibles() {
 
 async function mettreAJourHeuresDisponiblesNewRdv() {
   try {
-    const date = document.getElementById("date").value; // La date du rendez-vous
-    const serviceNom = document.getElementById("service").value; // Le service choisi
-
-    const response = await fetch(`${API_URL}professionnels/${encodeURIComponent(serviceNom)}`);
-    if (!response.ok) throw new Error("Erreur lors du chargement des professionnels");
-    const professionnels = await response.json();
-
+    const date = document.getElementById("date").value;
+    const serviceNom = document.getElementById("service").value;
     const heureSelect = document.getElementById("heure");
-    if (!heureSelect) {
-      throw new Error("Le champ <select id='heure'> est introuvable.");
+
+    if (!date || !serviceNom || !heureSelect) {
+      console.warn("⏳ Champs requis manquants.");
+      return;
     }
 
-    // Récupérer la date, le service, le code employé et l'heure depuis le rendez-vous
-
-
-    const select = document.getElementById("professionnel");
-    const nomSelectionne = select.options[select.selectedIndex].text.trim();
-
-    // 🔍 Recherche du bon employé dans la liste
-    const correspondant = professionnels.find(p => {
-      const nomComplet = `${p.POSTE === 'Médecin' ? 'Dr. ' : ''}${p.PRENOM} ${p.NOM}`.trim();
-      return nomComplet === nomSelectionne;
-    });
-
-    if (correspondant) {
-      const codeEmploye = correspondant.CODE_EMPLOYE;
-      console.log("✅ Code employé correspondant :", codeEmploye);
-    } else {
-      console.warn("❌ Aucun code employé ne correspond au nom :", nomSelectionne);
-    }
-
-    // Vérifie que la date, le service et le professionnel ont bien été sélectionnés
-    if (!date || !serviceNom || !codeEmploye) {
-      console.log("⏳ En attente que tous les champs soient remplis...");
-      return; // Ne génère pas encore les heures, mais ne quitte pas brutalement avec une erreur
-    }
-
-    // Debug : Vérification des paramètres avant de faire la requête
-    console.log(`Date: ${date}, Code Employe: ${codeEmploye}, Service: ${serviceNom}`);
-
-    // 🔹 1. Récupérer la durée du service sélectionné
+    // Récupérer la liste des services
     const resServices = await fetch(`${API_URL}services`);
     if (!resServices.ok) throw new Error("Erreur chargement services");
     const services = await resServices.json();
 
-    // Debug : Vérification des services reçus
-    console.log("Services reçus :", services);
+    // Récupérer la liste des professionnels
+    const response = await fetch(`${API_URL}professionnels`);
+    if (!response.ok) throw new Error("Erreur chargement professionnels");
+    const professionnels = await response.json();
 
-    const service = services.find(s => s.NOM === serviceNom); // Trouve le service sélectionné
+    // Trouver le professionnel sélectionné dans le menu
+    const select = document.getElementById("professionnel");
+    if (!select) throw new Error("Champ professionnel introuvable");
+    const nomSelectionne = select.options[select.selectedIndex].text.trim();
+    console.log('nomSelectionne:' + nomSelectionne);
+
+    const correspondant = professionnels.find(p => {
+      const nomComplet = `${p.POSTE === 'Médecin' ? 'Dr. ' : ''}${p.PRENOM_EMPLOYE} ${p.NOM_EMPLOYE}`;
+      console.log('nomComplet:' + nomComplet);
+      return nomComplet === nomSelectionne;
+    });
+
+    if (!correspondant) {
+      console.warn("❌ Aucun professionnel ne correspond à :", nomSelectionne);
+      return;
+    }
+
+    codeEmploye = correspondant.CODE_EMPLOYE;
+
+    const service = services.find(s => s.NOM === serviceNom);
     if (!service) throw new Error("Service introuvable");
-    const duree = service.DUREE || 20; // La durée du service (par défaut 20 minutes)
+    const duree = service.DUREE || 20;
+    const blocRequis = duree / 20;
 
-    // 🔹 2. Récupérer les disponibilités du professionnel à cette date et heure
+    console.log(blocRequis);
+
+    // Récupérer les disponibilités
     const resDispo = await fetch(`${API_URL}disponibilites/${codeEmploye}/${date}`);
     if (!resDispo.ok) throw new Error("Erreur chargement disponibilités");
-    const plages = await resDispo.json();
 
-    // Debug : Vérification des disponibilités reçues
+    const plages = await resDispo.json(); // ✔️ ne pas utiliser .text() avant
+    if (!plages || plages.length === 0) throw new Error("Aucune disponibilité reçue");
+
     console.log("Disponibilités reçues :", plages);
 
-    const blocRequis = duree / 20; // Calcule le nombre de plages nécessaires en fonction de la durée du service
 
-    // 🔹 4. Remplir les options du menu déroulant avec les heures valides
-    optionHeure = []; // Réinitialiser le tableau avant de le remplir
+    console.log("Disponibilités reçues :", plages);
 
-        const defaultOption = document.createElement('option');
-            defaultOption.value = 'NULL';
-            defaultOption.textContent = 'Heure du Rendez-Vous';
-            defaultOption.disabled = false;
-            defaultOption.selected = true;
-            heureSelect.appendChild(defaultOption);
+    // Réinitialiser le menu des heures
+    optionHeure = [];
+    heureSelect.innerHTML = "";
+
+    const defaultOption = document.createElement('option');
+    defaultOption.value = 'NULL';
+    defaultOption.textContent = 'Heure du Rendez-Vous';
+    defaultOption.disabled = false;
+    defaultOption.selected = true;
+    heureSelect.appendChild(defaultOption);
 
     for (let i = 0; i <= plages.length - blocRequis; i++) {
-      const bloc = plages.slice(i, i + blocRequis); // Sélectionne un bloc de plages horaires
-      const toutesDisponibles = bloc.length === blocRequis && bloc.every(p => p.STATUT === "DISPONIBLE"); // Vérifie si toutes les plages du bloc sont disponibles
+      const bloc = plages.slice(i, i + blocRequis);
+      const toutesDisponibles = bloc.length === blocRequis && bloc.every(p => p.STATUT === "DISPONIBLE");
 
       if (toutesDisponibles) {
-        optionHeure.push(plages[i].HEURE); // ✅ Ajouter au tableau global
-        console.log(`✅ Option ajoutée :` + plages[i].HEURE);
+        optionHeure.push(plages[i].HEURE);
+        console.log(`✅ Option ajoutée : ${plages[i].HEURE}`);
       }
     }
 
-    // 🔍 Debug : Affiche tout le tableau des heures valides
-    console.log("🟦 optionHeure contient :", optionHeure);
-
-
-    // Si aucune heure valide n'a été trouvée, affiche une option indiquant qu'il n'y a pas de disponibilité
-      if (optionHeure.length === 0) {
-        const option = document.createElement("option");
-        option.value = "";
-        option.textContent = "Aucune plage disponible";
-        option.disabled = true;
-        option.selected = true;
-        heureSelect.append(option);
-        return;
-      }
+    if (optionHeure.length === 0) {
+      const option = document.createElement("option");
+      option.value = "";
+      option.textContent = "Aucune plage disponible";
+      option.disabled = true;
+      option.selected = true;
+      heureSelect.append(option);
+      return;
+    }
 
     optionHeure.forEach(h => {
       const option = document.createElement("option");
       option.value = h;
       option.textContent = h;
-      option.selected = optionHeure.length === 1; // Sélectionne automatiquement si une seule option
+      option.selected = optionHeure.length === 1;
       heureSelect.append(option);
     });
 
   } catch (err) {
-    alert("Erreur : " + err.message); // Affiche l'erreur en cas de problème
+    alert("Erreur : " + err.message);
     console.error("Erreur lors de la mise à jour des heures disponibles :", err);
   }
 }
+
 
 async function attendreEtEnvoyer() {
   // ⏳ Attendre que les champs existent dans le DOM
@@ -820,5 +814,137 @@ async function attendreEtEnvoyer() {
 
   if (date && serviceNom && codeEmploye) {
     await mettreAJourHeuresDisponiblesNewRdv();
+  }
+}
+
+async function creerRendezVous() {
+  try {
+    const nomPatient = document.getElementById("nomPatient").value.trim();
+    const nomService = document.getElementById("service").value;
+    const professionnelNom = document.getElementById("professionnel").value;
+    const jour = document.getElementById("date").value;
+    const heure = document.getElementById("heure").value;
+
+    if (!nomPatient || !nomService || !professionnelNom || !jour || !heure) {
+      alert("Veuillez remplir tous les champs.");
+      return;
+    }
+
+    // 🔹 Chargement et recherche du professionnel
+    const professionnels = await (await fetch(`${API_URL}professionnels`)).json();
+    const professionnel = professionnels.find(p => {
+      const nom = `${p.POSTE === 'Médecin' ? 'Dr. ' : ''}${p.PRENOM_EMPLOYE} ${p.NOM_EMPLOYE}`.trim();
+      return nom === professionnelNom;
+    });
+    if (!professionnel) throw new Error("Professionnel introuvable.");
+    const codeEmploye = professionnel.CODE_EMPLOYE;
+
+    // 🔹 Chargement et recherche du service
+    const services = await (await fetch(`${API_URL}services`)).json();
+    const service = services.find(s => s.NOM === nomService);
+    if (!service) throw new Error("Service introuvable.");
+    const duree = service.DUREE || 20;
+    console.log(nomService);
+    //console.log(service.NOM);
+    console.log(duree);
+    console.log(service.DUREE);
+
+    // 🔹 Chargement et recherche du patient
+    const patients = await (await fetch(`${API_URL}patients`)).json();
+    const patient = patients.find(p => `${p.PRENOM_PATIENT} ${p.NOM_PATIENT}`.trim() === nomPatient);
+    if (!patient) throw new Error("Patient introuvable.");
+    const courrielPatient = patient.COURRIEL;
+
+    // ✅ Création du rendez-vous
+    const body = {
+      CODE_EMPLOYE: codeEmploye,
+      COURRIEL: courrielPatient,
+      JOUR: jour,
+      HEURE: heure,
+      DUREE: duree,
+      NOM_SERVICE: nomService
+    };
+
+    const resPost = await fetch(`${API_URL}rendezvous/secretaire`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+
+    const text = await resPost.text();
+    let json;
+    try {
+      json = JSON.parse(text);
+    } catch (e) {
+      throw new Error("Réponse du serveur invalide : " + text);
+    }
+
+    if (!resPost.ok) {
+      throw new Error(json?.error || "Erreur serveur");
+    }
+
+    console.log("✅ POST réussi :", json);
+    console.log('testdure:' + duree);
+
+    // ✅ Mise à jour directe de la disponibilité
+    await changerDisponibilite(codeEmploye, jour, heure,courrielPatient, duree, "OCCUPÉ");
+
+  } catch (err) {
+    console.error("❌ Erreur :", err);
+    alert("Erreur : " + err.message);
+  }
+}
+
+
+
+async function changerDisponibilite(codeEmploye, jour, heure, courrielPatient, duree, statut) {
+  const resultat = await fetch(`${API_URL}rendezvous`);
+  if (!resultat.ok) throw new Error("Erreur lors du chargement des rendez-vous");
+  const rdvs = await resultat.json();
+
+  rdvs.forEach(r => {
+    console.log(`📌 RDV : courriel=${r.COURRIEL}, jour=${r.JOUR}, heure=${r.HEURE}`);
+  });
+
+  console.log(`🔍 Recherché : courriel=${courrielPatient}, jour=${jour}, heure=${heure}`);
+
+  const rdv = rdvs.find(r =>
+    r.COURRIEL === courrielPatient &&
+    r.JOUR === jour &&
+    r.HEURE === heure
+  );
+
+  console.log('✅ rdv trouvé :', rdv);
+
+  if (!rdv) {
+    console.warn("Aucun rendez-vous trouvé pour :", courrielPatient, jour, heure);
+    return;
+  }
+
+  const numRdv = rdv.NUM_RDV;
+
+  try {
+    const response = await fetch(`${API_URL}disponibilites`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        CODE_EMPLOYE: codeEmploye,
+        JOUR: jour,
+        HEURE: heure,
+        STATUT: statut,
+        NUM_RDV: rdv.NUM_RDV,
+        DUREE: duree
+      })
+    });
+
+    if (!response.ok) {
+      const erreur = await response.text();
+      throw new Error(`Erreur API: ${erreur}`);
+    }
+
+    console.log(`✅ Disponibilité changée à ${statut} pour ${codeEmploye} le ${jour} à ${heure}`);
+  } catch (err) {
+    console.error("❌ Erreur lors de la mise à jour de la disponibilité :", err.message);
+    alert("Erreur changement disponibilité : " + err.message);
   }
 }
