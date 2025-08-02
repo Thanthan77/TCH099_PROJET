@@ -92,6 +92,9 @@ put($URL.'/service_employe', 'endpoints/employe/service_employe_put.php');
 // PUT pour mettre à jour une disponibilité (changer STATUT et lier à un rendez-vous)
 put($URL.'/disponibilites', 'endpoints/employe/disponibilite_put.php');
 
+// PUT pour remettre à NULL le NUM_RDV d’une disponibilité (libération de plages après annulation)
+put($URL.'/disponibilites/annulation', 'endpoints/employe/disponibilite_annulation_put.php');
+
 
 // Section Patients
 

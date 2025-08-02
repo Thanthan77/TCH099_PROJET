@@ -20,6 +20,7 @@ let tousLesPatients = [];
 let rendezVousGlobaux = [];
 let optionHeure = [];
 let heureSelect;
+let rdvAvantChangement = [];
 
 document.addEventListener("DOMContentLoaded", () => {
   // ⬇️ Chargement initial
@@ -155,6 +156,7 @@ async function chargerRendezVous() {
 
     const rendezvous = await response.json();
     rendezVousGlobaux = rendezvous;
+    
 
     const tbody = document.querySelector("#rdv tbody");
     tbody.innerHTML = "";
@@ -179,7 +181,7 @@ async function chargerRendezVous() {
         : `${rdv.PRENOM_EMPLOYE} ${rdv.NOM_EMPLOYE}`; // Prénom + Nom pour un autre professionnel
 
       row.innerHTML = `
-        <td class="col-date">${rdv.DATE_RDV}</td>
+        <td class="col-date">${rdv.JOUR}</td>
         <td class="col-heure">${rdv.HEURE}</td>
         <td class="col-patient">${nomPatient}</td>
         <td class="col-pro">${nomAffiche}</td>
@@ -219,12 +221,16 @@ async function modifierRdv(numRdv) {
   document.getElementById("popupNumRdv").value = rdv.NUM_RDV;
   document.getElementById("popupNomPatient").value = `${patient.PRENOM_PATIENT} ${patient.NOM_PATIENT}`;
   document.getElementById("popupAssurancePatient").value = patient.NO_ASSURANCE_MALADIE;
-  document.getElementById("popupDate").value = rdv.DATE_RDV;
+  document.getElementById("popupDate").value = rdv.JOUR;
   document.getElementById("popupHour").value = rdv.HEURE;
   document.getElementById("popupDure").value = rdv.DUREE;
   console.log('valeur test:' + document.getElementById("popupDure").value);
   console.log('valeur init test:' + rdv.DUREE);
 
+  rdvAvantChangement = rdv;
+
+  console.log('test 332');
+  console.log(rdvAvantChangement);
 
   console.log("type:" + typeof(rdv.HEURE));
   console.log("type:" + typeof(document.getElementById("popupHour")));
@@ -549,8 +555,46 @@ async function validerModification() {
   console.log(document.getElementById("popupDure").value);
   const action = "modifier";
 
+  const popupNom = document.getElementById("popupProfessionnel").options[
+    document.getElementById("popupProfessionnel").selectedIndex
+  ].text.trim();
+
+  let rdv; // Déclare la variable
+
+  rendezVousGlobaux.forEach(r => {
+    const nomAffiche = r.POSTE === "Médecin"
+      ? `Dr. ${r.PRENOM_EMPLOYE} ${r.NOM_EMPLOYE}`
+      : `${r.PRENOM_EMPLOYE} ${r.NOM_EMPLOYE}`;
+
+    if (nomAffiche.trim() === popupNom) {
+      rdv = r; // ✅ Stocke le bon rendez-vous
+    }
+  });
+  console.log('rdv trouver test 2');
+  console.log({
+  CODE_EMPLOYE: rdv.CODE_EMPLOYE,
+  JOUR: rdv.JOUR,
+  HEURE: rdv.HEURE,
+  STATUT: rdv.STATUT,
+  NUM_RDV: rdv.NUM_RDV,
+  DUREE: rdv.DUREE,
+  COURRIEL: rdv.COURRIEL
+});
+console.log(rdv);
+
+  console.log('rdv trouver test ancier');
+  console.log({
+  CODE_EMPLOYE: rdvAvantChangement.CODE_EMPLOYE,
+  JOUR: rdvAvantChangement.JOUR,
+  HEURE: rdvAvantChangement.HEURE,
+  STATUT: rdvAvantChangement.STATUT,
+  NUM_RDV: rdvAvantChangement.NUM_RDV,
+  DUREE: rdvAvantChangement.DUREE
+});
+
+
   // Récupérer l'heure actuelle du rendez-vous
-  const heureActuelle = document.getElementById("popupHeure").value;  // Par exemple : Heure actuelle sélectionnée dans le formulaire
+  const heureActuelle = document.getElementById("popupHour").value;  // Par exemple : Heure actuelle sélectionnée dans le formulaire
 
     // 3️⃣ Envoyer la mise à jour avec la bonne durée, en incluant l'heure actuelle du RDV
   const res = await fetch(`${API_URL}rendezvous`, {
@@ -562,7 +606,7 @@ async function validerModification() {
       action,
       numRdv,
       JOUR: jour,
-      HEURE: heure,  // Heure mise à jour
+      HEURE: heureActuelle,  // Heure mise à jour
       DUREE: dure
     })
   });
@@ -578,6 +622,9 @@ async function validerModification() {
     } else if (miseajour_json.error){
       alert(miseajour_json.error);
     }
+
+    //changerStatutDisponibilite(rdvAvantChangement.CODE_EMPLOYE, rdvAvantChangement.JOUR, rdvAvantChangement.HEURE, rdvAvantChangement.DUREE,'DISPONIBLE');
+    //changerDisponibilite(rdv.CODE_EMPLOYE, rdv.JOUR, rdv.HEURE, rdv.COURRIEL, rdv.DUREE,'DISPONIBLE');
 
     fermerPopup();
     chargerRendezVous();
@@ -676,7 +723,7 @@ async function mettreAJourHeuresDisponibles() {
       const option = document.createElement("option");
       option.value = h;
       option.textContent = h;
-      if (h === rdv.HEURE) opt.selected = true; // Marquer l'heure actuelle
+      if (h === rdv.HEURE) option.selected = true; // Marquer l'heure actuelle
       heureSelect.append(option);
     });
 
@@ -897,7 +944,7 @@ async function creerRendezVous() {
 
 
 
-async function changerDisponibilite(codeEmploye, jour, heure, courrielPatient, duree, statut) {
+/*async function changerDisponibilite(codeEmploye, jour, heure, courrielPatient, duree, statut) {
   const resultat = await fetch(`${API_URL}rendezvous`);
   if (!resultat.ok) throw new Error("Erreur lors du chargement des rendez-vous");
   const rdvs = await resultat.json();
@@ -932,7 +979,7 @@ async function changerDisponibilite(codeEmploye, jour, heure, courrielPatient, d
         JOUR: jour,
         HEURE: heure,
         STATUT: statut,
-        NUM_RDV: rdv.NUM_RDV,
+        NUM_RDV: numRdv,
         DUREE: duree
       })
     });
@@ -948,3 +995,39 @@ async function changerDisponibilite(codeEmploye, jour, heure, courrielPatient, d
     alert("Erreur changement disponibilité : " + err.message);
   }
 }
+
+async function changerStatutDisponibilite(codeEmploye, jour, heure, duree, statut) {
+
+  console.log('test 555');
+  console.log({
+  CODE_EMPLOYE: codeEmploye,
+  JOUR: jour,
+  HEURE: heure,
+  STATUT: statut,
+  DUREE: duree
+});
+
+  try {
+    const response = await fetch(`${API_URL}disponibilites/annulation`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        CODE_EMPLOYE: codeEmploye,
+        JOUR: jour,
+        HEURE: heure,
+        STATUT: statut,
+        DUREE: duree
+      })
+    });
+
+    if (!response.ok) {
+      const erreur = await response.text();
+      throw new Error(`Erreur API: ${erreur}`);
+    }
+
+    console.log(`✅ Disponibilité changée à ${statut} pour ${codeEmploye} le ${jour} à ${heure}`);
+  } catch (err) {
+    console.error("❌ Erreur lors de la mise à jour de la disponibilité :", err.message);
+    alert("Erreur changement disponibilité : " + err.message);
+  }
+}*/
