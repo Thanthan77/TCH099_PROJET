@@ -36,13 +36,13 @@ public class HoraireAdapter extends ArrayAdapter<HoraireRdv> {
         HoraireRdv horaire  = getItem(position);
 
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.horaire_rdv, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.activity_horaire_rdv, parent, false);
         }
 
         nomService = convertView.findViewById(R.id.nomService);
          dateRdv = convertView.findViewById(R.id.dateRdv);
         heureRdv = convertView.findViewById(R.id.heureRdv);
-       btnPrendreRdv = convertView.findViewById(R.id.btnRdv);
+       btnPrendreRdv = convertView.findViewById(R.id.btnPrendreRdv);
 
 
         nomService.setText(horaire.getNomService());
