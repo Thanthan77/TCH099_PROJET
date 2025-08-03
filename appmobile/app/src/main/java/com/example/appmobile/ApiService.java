@@ -17,26 +17,26 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
 public interface ApiService {
-    @POST("api/login_patient")
+    @POST("login_patient")
     Call<LoginResponse> login(@Body LoginRequest request);
 
-    @GET("api/services")
+    @GET("services")
     Call<List<ServiceRequest>> getServices();
 
-   @GET ("api/disponibilité")
+   @GET ("disponibilité")
     Call<List<HoraireRequest>> getHoraire () ;
 
-    @GET("api/rendezvous/patient/{courriel}")
+    @GET("rendezvous/patient/{courriel}")
     Call<List<RdvRequest>> getRDV(@Path("courriel") String courriel);
-   @POST("api/rendez_vous")
+   @POST("rendez_vous")
    Call<List<RdvRequest>> postModifRdv();
 
-    @PUT("api/rendezVous/id/patient/{numRdv}")
+    @PUT("rendezVous/id/patient/{numRdv}")
 Call<Void> putAnnulerRdv(@Path("numRdv") int idRdv);
 
-    @POST("api/inscription_patient.php")
+    @POST("inscription_patient.php")
     Call<ResponseBody> inscrirePatient(@Body RequestBody body);
-    @GET("api/patient_get.php")
+    @GET("patient_get.php")
     Call<List<Patient>> getPatient(@Query("courriel") String courriel);
 
     @PUT("patient_put.php")
