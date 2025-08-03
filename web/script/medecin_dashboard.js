@@ -261,30 +261,44 @@ window.addEventListener("click", function (event) {
 
 async function chargerDemandesVacances() {
   try {
+    console.log("Début de la fonction chargerDemandesVacances");
+
     const res = await fetch(`${API_URL}conge/${codeEmploye}`);
+    console.log("Requête envoyée à l'API :", `${API_URL}conge/${codeEmploye}`);
+
     const data = await res.json();
+    console.log("Données reçues :", data);
 
     const tbody = document.querySelector('table tbody');
+    console.log("Élément <tbody> sélectionné :", tbody);
 
     if (!Array.isArray(data) || !data.length) {
+      console.log("Aucune donnée valide trouvée");
       tbody.innerHTML = '<tr><td colspan="3">Aucune demande de vacances</td></tr>';
       return;
     }
 
-    tbody.innerHTML = data.map(item => `
-      <tr>
-        <td>${escapeHtml(item.PRENOM_EMPLOYE || '')} ${escapeHtml(item.NOM_EMPLOYE || '')}</td>
-        <td>${escapeHtml(item.DATE_DEBUT)}</td>
-        <td>${escapeHtml(item.DATE_FIN)}</td>
-        <td>${escapeHtml(item.STATUS)}</td>
-      </tr>
-    `).join('');
+    tbody.innerHTML = data.map(item => {
+      const ligne = `
+        <tr>
+          <td>${escapeHtml(item.PRENOM_EMPLOYE || '')} ${escapeHtml(item.NOM_EMPLOYE || '')}</td>
+          <td>${escapeHtml(item.DATE_DEBUT)}</td>
+          <td>${escapeHtml(item.DATE_FIN)}</td>
+          <td>${escapeHtml(item.STATUS)}</td>
+        </tr>
+      `;
+      console.log("Ligne générée :", ligne);
+      return ligne;
+    }).join('');
+    
+    console.log("Table remplie avec succès");
   } catch (error) {
     console.error("Erreur lors du chargement des vacances :", error);
     const tbody = document.querySelector('table tbody');
     tbody.innerHTML = '<tr><td colspan="3">Erreur de chargement des vacances</td></tr>';
   }
 }
+
 
 
 
