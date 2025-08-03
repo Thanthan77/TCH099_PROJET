@@ -49,17 +49,17 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
 
         RdvInfo rdv = getItem(position);
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.texteadaptater, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.activity_texteadaptater, parent, false);
         }
 
 
 
 
-        serviceRdv = convertView.findViewById(R.id.nomService2);
-        daterdv = convertView.findViewById(R.id.dateRdv2);
-        timeRdv = convertView.findViewById(R.id.heureRdv2);
-        emailRdv = convertView.findViewById(R.id.emailPatient);
-        annulerRdv = convertView.findViewById(R.id.buttonAnnulerRdv);
+        serviceRdv = convertView.findViewById(R.id.textViewRdvService);
+        daterdv = convertView.findViewById(R.id.editTextDateRdv);
+        timeRdv = convertView.findViewById(R.id.editTextTimeRdv);
+        emailRdv = convertView.findViewById(R.id.editTextTextEmailAddressRdv);
+        annulerRdv = convertView.findViewById(R.id.buttonannulationduRdv);
 
 
         daterdv.setText(rdv.getJourRdv());
