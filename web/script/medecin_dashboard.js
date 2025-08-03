@@ -175,7 +175,7 @@ let demandeEnvoyee = false;
 document.addEventListener('DOMContentLoaded', () => {
   chargerAfficherRendezVous();
   chargerAfficherHoraires();
-  chargerDemandesVacances(); // ✅ appel ajouté
+  chargerDemandesVacances();
 
   const btnVacances = document.querySelector("#vacances button");
   if (btnVacances) {
@@ -203,13 +203,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = { dateDebut, dateFin };
 
       try {
-        const response = await fetch(`${API_URL}vacance/employe/${codeEmploye}`, {
+        const response = await fetch(`${API_URL}conge/employe/${codeEmploye}`, {
           method: "POST",
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
         });
 
         const rawText = await response.text();
+        console.log("Répnse du serveur : ", rawText);
         const json = JSON.parse(rawText);
 
         if (!response.ok) throw new Error(json.error || "Erreur inconnue");
@@ -217,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (json.status === "OK") {
           errDiv.style.color = "green";
           errDiv.innerText = json.message || "Demande envoyée avec succès.";
-          chargerDemandesVacances(); // ✅ recharge après ajout
+          chargerDemandesVacances(); 
         } else {
           errDiv.style.color = "red";
           errDiv.innerText = json.error || "Une erreur s'est produite lors de la demande.";

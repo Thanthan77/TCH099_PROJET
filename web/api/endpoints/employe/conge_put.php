@@ -9,7 +9,7 @@ $cnx = null;
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
-// 🛡️ Vérifie que les paramètres sont fournis
+// Vérifie que les paramètres sont fournis
 if (!isset($data['action'], $data['id_exc'])) {
     http_response_code(400);
     echo json_encode(["error" => "Paramètres manquants (action, id_exc)"]);
@@ -28,7 +28,7 @@ try {
 
     $cnx = Database::getInstance();
 
-    // 🔍 Vérifie que l'exception est bien en attente
+    // Vérifie que l'exception est bien en attente
     $checkQuery = "SELECT * FROM Exception_horaire WHERE ID_EXC = :id AND STATUS = 'EN ATTENTE'";
     $stmt = $cnx->prepare($checkQuery);
     $stmt->bindValue(':id', $idException, PDO::PARAM_INT);
@@ -42,7 +42,7 @@ try {
     }
 
     if ($action === 'accepter') {
-        // ✅ Met à jour le statut à ACCEPTÉ
+        // Met à jour le statut à ACCEPTÉ
         $updateQuery = "UPDATE Exception_horaire SET STATUS = 'APPROUVÉ' WHERE ID_EXC = :id";
         $stmt = $cnx->prepare($updateQuery);
         $stmt->bindValue(':id', $idException, PDO::PARAM_INT);
@@ -51,7 +51,7 @@ try {
         http_response_code(200);
         echo json_encode(["status" => "success", "message" => "Exception acceptée"]);
     } else {
-        // ✅ Met à jour le statut à REJETÉ
+        // Met à jour le statut à REJETÉ
         $updateQuery = "UPDATE Exception_horaire SET STATUS = 'REJETÉ' WHERE ID_EXC = :id";
         $stmt = $cnx->prepare($updateQuery);
         $stmt->bindValue(':id', $idException, PDO::PARAM_INT);

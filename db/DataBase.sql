@@ -1,3 +1,126 @@
+-- 1) EMPLOYE
+DROP TABLE IF EXISTS Employe;
+CREATE TABLE Employe (
+  CODE_EMPLOYE int NOT NULL,
+  PRENOM_EMPLOYE varchar(30) DEFAULT NULL,
+  NOM_EMPLOYE varchar(30) DEFAULT NULL,
+  ETAT_CIVIL enum('Celibataire','Marié','Divorcé') DEFAULT NULL,
+  MOT_DE_PASSE varchar(255) DEFAULT NULL,
+  COURRIEL varchar(100) DEFAULT NULL,
+  TELEPHONE varchar(20) DEFAULT NULL,
+  ADRESSE varchar(100) DEFAULT NULL,
+  DATE_NAISSANCE date DEFAULT NULL,
+  SEXE enum('Homme','Femme') DEFAULT NULL,
+  POSTE varchar(30) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+ALTER TABLE Employe
+  ADD PRIMARY KEY (CODE_EMPLOYE),
+  ADD UNIQUE KEY COURRIEL (COURRIEL);
+
+-- 2) SERVICE
+DROP TABLE IF EXISTS Service;
+CREATE TABLE Service (
+  ID_SERVICE int NOT NULL,
+  NOM varchar(50) DEFAULT NULL,
+  DESCRIPTION varchar(100) DEFAULT NULL,
+  DUREE int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+ALTER TABLE Service
+  ADD PRIMARY KEY (ID_SERVICE);
+
+-- 3) PATIENT 
+DROP TABLE IF EXISTS Patient;
+CREATE TABLE Patient (
+  COURRIEL varchar(30) NOT NULL,
+  PRENOM_PATIENT varchar(30) DEFAULT NULL,
+  NOM_PATIENT varchar(30) DEFAULT NULL,
+  MOT_DE_PASSE varchar(30) DEFAULT NULL,
+  NUM_TEL bigint DEFAULT NULL,
+  NUM_CIVIQUE int DEFAULT NULL,
+  RUE varchar(30) DEFAULT NULL,
+  VILLE varchar(30) DEFAULT NULL,
+  CODE_POSTAL varchar(15) DEFAULT NULL,
+  NO_ASSURANCE_MALADIE varchar(20) DEFAULT NULL,
+  DATE_NAISSANCE date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+ALTER TABLE Patient
+  ADD PRIMARY KEY (COURRIEL);
+
+-- 4) HORAIRE 
+DROP TABLE IF EXISTS Horaire;
+CREATE TABLE Horaire (
+  ID_HORAIRE int NOT NULL,
+  CODE_EMPLOYE int NOT NULL,
+  HEURE_DEBUT time NOT NULL,
+  HEURE_FIN time NOT NULL,
+  JOURS varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+ALTER TABLE Horaire
+  ADD PRIMARY KEY (ID_HORAIRE),
+  ADD KEY FK_HORAIRE_EMP (CODE_EMPLOYE);
+
+ALTER TABLE Horaire
+  MODIFY ID_HORAIRE int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+ALTER TABLE Horaire
+  ADD CONSTRAINT FK_HORAIRE_EMP FOREIGN KEY (CODE_EMPLOYE) REFERENCES Employe (CODE_EMPLOYE) ON DELETE CASCADE;
+
+-- 5) EXCEPTION_HORAIRE 
+DROP TABLE IF EXISTS Exception_horaire;
+CREATE TABLE Exception_horaire (
+  ID_EXC INT NOT NULL AUTO_INCREMENT,
+  CODE_EMPLOYE INT NOT NULL,
+  DATE_DEBUT DATE NOT NULL,
+  DATE_FIN DATE NOT NULL,
+  TYPE_CONGE ENUM('CONGÉ','MALADIE') NOT NULL,
+  STATUS ENUM('EN ATTENTE','APPROUVÉ','REJETÉ') NOT NULL DEFAULT 'EN ATTENTE',
+  PRIMARY KEY (ID_EXC),
+  FOREIGN KEY (CODE_EMPLOYE) REFERENCES Employe(CODE_EMPLOYE)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+ALTER TABLE Exception_horaire
+  ADD CONSTRAINT UQ_EXC_EMP_DATE UNIQUE (CODE_EMPLOYE, DATE_DEBUT);
+
+ALTER TABLE Exception_horaire
+  MODIFY ID_EXC int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;  
+
+ALTER TABLE Exception_horaire
+  ADD CONSTRAINT FK_EXC_EMP FOREIGN KEY (CODE_EMPLOYE) REFERENCES Employe (CODE_EMPLOYE) ON DELETE CASCADE;  
+
+-- 6) RENDEZVOUS
+DROP TABLE IF EXISTS Rendezvous;
+CREATE TABLE Rendezvous (
+  NUM_RDV int NOT NULL,
+  CODE_EMPLOYE int NOT NULL,
+  COURRIEL varchar(30) NOT NULL,
+  JOUR date NOT NULL,
+  HEURE time NOT NULL,
+  DUREE int NOT NULL,
+  ID_SERVICE int NOT NULL,
+  NOTE_CONSULT varchar(255) DEFAULT NULL,
+  STATUT enum('CONFIRMÉ','ANNULÉ','TERMINÉ','ATTENTE') NOT NULL DEFAULT 'CONFIRMÉ'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+ALTER TABLE Rendezvous
+  ADD PRIMARY KEY (NUM_RDV),
+  ADD KEY FK_RV_EMP (CODE_EMPLOYE),
+  ADD KEY FK_RV_PAT (COURRIEL),
+  ADD KEY FK_RV_SVC (ID_SERVICE);
+
+ALTER TABLE Rendezvous
+  MODIFY NUM_RDV int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
+
+ALTER TABLE Rendezvous
+  ADD CONSTRAINT FK_RV_EMP FOREIGN KEY (CODE_EMPLOYE) REFERENCES Employe (CODE_EMPLOYE) ON DELETE CASCADE,
+  ADD CONSTRAINT FK_RV_PAT FOREIGN KEY (COURRIEL) REFERENCES Patient (COURRIEL) ON DELETE CASCADE,
+  ADD CONSTRAINT FK_RV_SVC FOREIGN KEY (ID_SERVICE) REFERENCES Service (ID_SERVICE) ON DELETE RESTRICT;  
+
+
+-- 7) DISPONIBILITE 
 DROP TABLE IF EXISTS Disponibilite;
 CREATE TABLE Disponibilite (
   ID_DISPONIBILITE int NOT NULL,
@@ -8,7 +131,206 @@ CREATE TABLE Disponibilite (
   STATUT enum('DISPONIBLE','PAUSE','OCCUPÉ') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO Disponibilite (ID_DISPONIBILITE, CODE_EMPLOYE, JOUR, HEURE, NUM_RDV, STATUT) VALUES
+ALTER TABLE Disponibilite
+  ADD PRIMARY KEY (ID_DISPONIBILITE),
+  ADD KEY CODE_EMPLOYE (CODE_EMPLOYE),
+  ADD KEY NUM_RDV (NUM_RDV);
+
+ALTER TABLE Disponibilite
+  MODIFY ID_DISPONIBILITE int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=679;
+
+ALTER TABLE Disponibilite
+  ADD CONSTRAINT disponibilite_ibfk_1 FOREIGN KEY (CODE_EMPLOYE) REFERENCES Employe (CODE_EMPLOYE),
+  ADD CONSTRAINT disponibilite_ibfk_2 FOREIGN KEY (NUM_RDV) REFERENCES Rendezvous (NUM_RDV);
+
+
+
+-- 8) SERVICEEMPLOYE 
+DROP TABLE IF EXISTS ServiceEmploye;
+CREATE TABLE ServiceEmploye (
+  ID_SERVICE int NOT NULL,
+  CODE_EMPLOYE int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+ALTER TABLE ServiceEmploye
+  ADD PRIMARY KEY (ID_SERVICE,CODE_EMPLOYE),
+  ADD KEY CODE_EMPLOYE (CODE_EMPLOYE);
+
+ALTER TABLE ServiceEmploye
+  ADD CONSTRAINT serviceemploye_ibfk_1 FOREIGN KEY (ID_SERVICE) REFERENCES Service (ID_SERVICE),
+  ADD CONSTRAINT serviceemploye_ibfk_2 FOREIGN KEY (CODE_EMPLOYE) REFERENCES Employe (CODE_EMPLOYE);
+
+
+
+-- 9) JOURTRAVAIL
+DROP TABLE IF EXISTS JourTravail;
+CREATE TABLE JourTravail (
+  CODE_EMPLOYE int NOT NULL,
+  JOUR_SEMAINE tinyint NOT NULL
+) ;
+
+ALTER TABLE JourTravail
+  ADD PRIMARY KEY (CODE_EMPLOYE,JOUR_SEMAINE);
+
+ALTER TABLE JourTravail
+  ADD CONSTRAINT jourtravail_ibfk_1 FOREIGN KEY (CODE_EMPLOYE) REFERENCES Employe (CODE_EMPLOYE) ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+
+
+-- 9) INSERTIONS 
+
+
+INSERT INTO Employe (CODE_EMPLOYE, PRENOM_EMPLOYE, NOM_EMPLOYE, ETAT_CIVIL, MOT_DE_PASSE, COURRIEL, TELEPHONE, ADRESSE, DATE_NAISSANCE, SEXE, POSTE) 
+VALUES
+(100, 'Alice', 'Durand', 'Celibataire', '123', 'alice.durand@example.com', '5141234567', '123 rue des Lilas', '1985-03-22', 'Femme', 'Médecin'),
+(101, 'Jean', 'Dupont', NULL, '123', 'jean.dupont@example.com', '5141234568', '456 rue des Érables', '1978-11-10', 'Homme', 'Médecin'),
+(102, 'Monique', 'Jodoin', 'Celibataire', '123', 'monique.jodoin@example.com', '5141234569', '789 rue des Pins', '1990-06-15', 'Femme', 'Médecin'),
+(103, 'Wassim', 'Ouali', 'Celibataire', '$2y$10$j0WYqJd9xsreMleUaCM0teLBLv5ikjea3o1qIecEKL1nUdY1pG11q', 'wassim@exemple.ca', '514 588 88 99', '7979 rue walabi', '2000-01-04', 'Homme', 'Médecin'),
+(200, 'Bruno', 'Martin', NULL, '123', 'bruno.martin@example.com', '5141234570', '321 rue Ontario', '1982-02-05', 'Homme', 'Infirmier'),
+(201, 'Isabelle', 'Langlois', 'Celibataire', '123', 'isabelle.langlois@example.com', '5141234571', '654 rue Mont-Royal', '1992-09-18', 'Femme', 'Infirmier'),
+(202, 'Dominic', 'Dublois', 'Celibataire', '123', 'dominic.dublois@example.com', '5141234572', '987 rue Sherbrooke', '1988-12-03', 'Homme', 'Infirmier'),
+(300, 'Claire', 'Moreau', NULL, '123', 'claire.moreau@example.com', '5141234573', '135 rue Papineau', '1980-07-25', 'Femme', 'Secrétaire'),
+(400, 'George', 'Smith', 'Divorcé', '123', 'george.smith@example.com', '5141234575', '369 rue Berri', '1975-01-30', 'Femme', 'Administrateur');
+
+
+INSERT INTO Service (ID_SERVICE, NOM, DESCRIPTION, DUREE) 
+VALUES
+(1, 'Consultation générale', 'Évaluation de santé pour tout problème courant', 40),
+(2, 'Suivi de grossesse', 'Suivi médical de grossesse', 40),
+(3, 'Suivi de maladies chroniques', 'Contrôle régulier (diabète, hypertension, etc.)', 60),
+(4, 'Dépistage ITSS', 'Tests pour infections transmissibles (ITSS)', 20),
+(5, 'Vaccination', 'Vaccin de routine, voyage ou saisonnier', 20),
+(6, 'Prélèvement sanguin / test urinaire', 'Prise de sang ou test urinaire', 20),
+(7, 'Urgence mineure', 'Blessures légères, infections, douleurs modérées', 40);
+
+
+INSERT INTO Patient (COURRIEL, PRENOM_PATIENT, NOM_PATIENT, MOT_DE_PASSE, NUM_TEL, NUM_CIVIQUE, RUE, VILLE, CODE_POSTAL, NO_ASSURANCE_MALADIE, DATE_NAISSANCE) 
+VALUES
+('alexandre.robert@example.com', 'Alexandre', 'Robert', 'Ar5#Yn9FkL', 8194455667, 76, 'chemin des Érables', 'Gatineau', 'J8Y6N7', 'RAMQ00112233', '1986-08-19'),
+('amanda.boudreau@example.com', 'Amanda', 'Boudreau', 'Ab7$Vn2PrT', 8194567890, 88, 'rue Wellington', 'Sherbrooke', 'J1H5R4', 'RAMQ66778899', '1999-03-22'),
+('ana@example.com', 'Ana', 'Lefebvre', 'Aq4#Mn5TjP', 4387654321, 55, 'rue Sainte-Catherine', 'Laval', 'H7N4A2', 'RAMQ98765432', '1988-11-30'),
+('antoine.lavoie@example.com', 'Antoine', 'Lavoie', 'Al5%Rc2FnT', 4507654321, 15, 'avenue Papineau', 'Laval', 'H7N2L1', 'RAMQ33445566', '1985-01-20'),
+('celine.durand@example.com', 'Céline', 'Durand', 'Cd5*Kp1JnV', 4387788990, 19, 'boulevard René-Lévesque', 'Québec', 'G1R2V3', 'RAMQ33442255', '1989-07-23'),
+('claire@example.com', 'Claire', 'Bélanger', 'Cq2&Jm8ZrY', 4384567890, 27, '321 chemin des Érables', 'Longueuil', 'J4N6B9', 'RAMQ56789012', '1998-05-30'),
+('david@example.com', 'David', 'Roy', 'Dx9%Rc1LpN', 8193456789, 42, '789 boulevard Mercure', 'Saguenay', 'G7H4B2', 'RAMQ45678901', '1983-12-02'),
+('eric@example.com', 'Éric', 'Fortin', 'Er6@Vb3XkU', 4505678901, 50, '12 rue du Lac', 'Gatineau', 'J8Y3K4', 'RAMQ67890123', '1975-09-10'),
+('isabelle@example.com', 'Isabelle', 'Martin', 'In4$Bm9RzY', 4508901234, 45, '56 rue Principale', 'Shawinigan', 'G9N5L8', 'RAMQ90123456', '1980-10-28'),
+('julie.bernard@example.com', 'Julie', 'Bernard', 'Jb1!Qw6KlM', 4388765432, 250, 'boulevard René-Lévesque', 'Québec', 'G1R5V2', 'RAMQ22334455', '1992-09-05'),
+('karine.blais@example.com', 'Karine', 'Blais', 'Kb2$Wm8HpT', 4185566778, 48, 'rue du Marché', 'Trois-Rivières', 'G8Z2L8', 'RAMQ11220033', '1993-11-11'),
+('kevin.dumont@example.com', 'Kevin', 'Dumont', 'Kd3#Yl8WpN', 4183456789, 50, 'rue des Forges', 'Trois-Rivières', 'G8Z1K3', 'RAMQ55667788', '1988-12-10'),
+('leo@example.com', 'Léo', 'Dubois', 'Ln8@Xf2RmS', 5141234567, 100, 'rue Ontario', 'Montréal', 'H2K3K4', 'RAMQ12345678', '1995-06-15'),
+('lucie.morel@example.com', 'Lucie', 'Morel', 'Lm9@Qt4BhS', 5141122334, 110, 'rue Beaubien', 'Montréal', 'H2V3R4', 'RAMQ77889900', '1982-02-14'),
+('marc@example.com', 'Marc', 'Tremblay', 'Mv3!Kz7BhQ', 4509876543, 29, '1234 rue des Fleurs', 'Québec', 'G1X0A1', 'RAMQ23456789', '1996-03-22'),
+('marie-claude.leblanc@example.c', 'Marie-Claude', 'Leblanc', 'Mc2&Zd7XpK', 8196543210, 300, 'chemin Sainte-Foy', 'Gatineau', 'J8T4B5', 'RAMQ44556677', '1970-07-30'),
+('marie@example.com', 'Marie', 'Tremblay', 'Mk7*Ga4QsT', 4186789012, 38, '85 rue de la Commune', 'Québec', 'G1K3M2', 'RAMQ78901234', '1987-11-05'),
+('olivier.perreault@example.com', 'Olivier', 'Perreault', 'Or8@Vt2ZlQ', 4508899001, 57, 'rue Notre-Dame', 'Longueuil', 'J4K5B2', 'RAMQ44553366', '1981-01-30'),
+('paul.gagnon@example.com', 'Paul', 'Gagnon', 'Pu8&Tx2ZdR', 5149876543, 120, 'rue Saint-Denis', 'Montréal', 'H2X2L4', 'RAMQ11223344', '1978-04-12'),
+('philippe.leblanc@example.com', 'Philippe', 'LeBlanc', 'Pl7&Qz3RmX', 5146677889, 102, 'avenue Laval', 'Montréal', 'H3A1T9', 'RAMQ22331144', '1975-03-05'),
+('pierre.fortin@example.com', 'Pierre', 'Fortin', 'Pf4%Xc1JkV', 4382233445, 210, 'avenue des Pins', 'Québec', 'G1P4K5', 'RAMQ88990011', '1979-05-27'),
+('sophie.girard@example.com', 'Sophie', 'Girard', 'Sg6!Zm3LpQ', 4503344556, 33, 'boulevard Talbot', 'Laval', 'H7L5M6', 'RAMQ99001122', '1990-12-02'),
+('sophie@example.com', 'Sophie', 'Gagnon', 'Sp5$Ty6GdW', 5142345678, 34, '56 avenue du Parc', 'Montréal', 'H3A2J1', 'RAMQ34567890', '1991-08-15'),
+('yannick@example.com', 'Yannick', 'Boucher', 'Yk3#Pl7SdN', 5147890123, 31, '998 avenue Saint-Jean', 'Montréal', 'H4C2J7', 'RAMQ89012345', '1993-07-19');
+
+
+INSERT INTO Horaire (ID_HORAIRE, CODE_EMPLOYE, HEURE_DEBUT, HEURE_FIN, JOURS) 
+VALUES
+(1, 100, '10:00:00', '15:00:00', 'Lundi, Mardi, Jeudi, Vendredi'),
+(2, 101, '09:00:00', '16:00:00', 'Lundi, Mercredi, Vendredi'),
+(3, 102, '09:00:00', '16:00:00', 'Mardi, Mercredi, Jeudi'),
+(4, 200, '08:00:00', '17:00:00', 'Lundi, Mardi, Mercredi, Jeudi, Vendredi'),
+(5, 201, '08:00:00', '17:00:00', 'Lundi, Mardi, Mercredi, Jeudi, Vendredi'),
+(6, 202, '08:00:00', '17:00:00', 'Lundi, Mardi, Mercredi, Jeudi, Vendredi'),
+(7, 300, '08:00:00', '17:00:00', 'Lundi, Mardi, Mercredi, Jeudi, Vendredi'),
+(8, 400, '09:00:00', '17:00:00', 'Lundi, Mardi, Mercredi, Jeudi, Vendredi');
+
+
+INSERT INTO Exception_horaire (ID_EXC, CODE_EMPLOYE, DATE_DEBUT, DATE_FIN, TYPE_CONGE, STATUS) 
+VALUES
+(1, 100, '2025-08-01', '2025-08-07', 'CONGÉ', 'APPROUVÉ'),
+(2, 101, '2025-08-10', '2025-08-10', 'CONGÉ', 'APPROUVÉ'),
+(3, 102, '2025-08-07', '2025-08-25', 'CONGÉ', 'REJETÉ'),
+(4, 200, '2025-08-12', '2025-08-14', 'CONGÉ', 'REJETÉ'),
+(5, 201, '2025-08-20', '2025-08-27', 'CONGÉ', 'EN ATTENTE'),
+(6, 202, '2025-09-19', '2025-09-26', 'CONGÉ', 'EN ATTENTE'),
+(7, 300, '2025-11-14', '2025-11-18', 'CONGÉ', 'EN ATTENTE');
+
+
+INSERT INTO Rendezvous (NUM_RDV, CODE_EMPLOYE, COURRIEL, JOUR, HEURE, DUREE, ID_SERVICE, NOTE_CONSULT, STATUT) 
+VALUES
+(1, 100, 'celine.durand@example.com', '2025-08-04', '08:00:00', 20, 1, '', 'CONFIRMÉ'),
+(2, 200, 'marc@example.com', '2025-08-01', '16:00:00', 20, 6, '', 'CONFIRMÉ'),
+(3, 101, 'yannick@example.com', '2025-08-06', '11:35:00', 20, 2, '', 'CONFIRMÉ'),
+(4, 101, 'sophie.girard@example.com', '2025-08-06', '14:30:00', 20, 1, '', 'CONFIRMÉ'),
+(5, 202, 'david@example.com', '2025-08-08', '13:40:00', 20, 7, '', 'CONFIRMÉ'),
+(6, 200, 'pierre.fortin@example.com', '2025-08-11', '09:40:00', 20, 7, '', 'CONFIRMÉ'),
+(7, 202, 'julie.bernard@example.com', '2025-08-12', '09:35:00', 20, 3, '', 'CONFIRMÉ'),
+(8, 201, 'olivier.perreault@example.com', '2025-08-13', '13:45:00', 20, 4, '', 'CONFIRMÉ'),
+(9, 102, 'claire@example.com', '2025-08-14', '12:25:00', 20, 3, '', 'CONFIRMÉ'),
+(10, 200, 'paul.gagnon@example.com', '2025-08-18', '12:00:00', 20, 6, '', 'CONFIRMÉ'),
+(11, 201, 'karine.blais@example.com', '2025-08-19', '09:40:00', 20, 5, '', 'CONFIRMÉ'),
+(12, 201, 'leo@example.com', '2025-08-19', '12:35:00', 20, 2, '', 'CONFIRMÉ'),
+(13, 200, 'eric@example.com', '2025-08-21', '10:15:00', 20, 6, '', 'CONFIRMÉ'),
+(14, 102, 'sophie@example.com', '2025-08-21', '11:15:00', 20, 4, '', 'CONFIRMÉ'),
+(15, 202, 'amanda.boudreau@example.com', '2025-08-27', '10:10:00', 20, 1, '', 'CONFIRMÉ'),
+(16, 101, 'ana@example.com', '2025-08-27', '12:10:00', 20, 3, '', 'CONFIRMÉ'),
+(17, 202, 'marie-claude.leblanc@example.c', '2025-08-27', '13:05:00', 20, 7, '', 'CONFIRMÉ'),
+(18, 101, 'isabelle@example.com', '2025-08-27', '13:55:00', 20, 4, '', 'CONFIRMÉ'),
+(19, 102, 'antoine.lavoie@example.com', '2025-08-28', '10:05:00', 20, 3, '', 'CONFIRMÉ'),
+(20, 102, 'lucie.morel@example.com', '2025-08-28', '12:25:00', 20, 6, '', 'CONFIRMÉ'),
+(21, 201, 'marie@example.com', '2025-08-29', '13:10:00', 20, 4, '', 'CONFIRMÉ'),
+(22, 201, 'alexandre.robert@example.com', '2025-08-04', '13:40:00', 40, 2, 'Suivi', 'CONFIRMÉ'),
+(23, 201, 'antoine.lavoie@example.com', '2025-08-04', '09:40:00', 20, 4, 'Aucune Note', 'CONFIRMÉ'),
+(24, 202, 'ana@example.com', '2025-08-04', '11:40:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
+(25, 201, 'ana@example.com', '2025-08-04', '10:20:00', 20, 4, 'Aucune Note', 'CONFIRMÉ'),
+(26, 101, 'ana@example.com', '2025-08-04', '11:20:00', 40, 1, 'Aucune Note', 'CONFIRMÉ'),
+(27, 101, 'amanda.boudreau@example.com', '2025-08-04', '09:40:00', 40, 2, 'Aucune Note', 'CONFIRMÉ'),
+(28, 101, 'amanda.boudreau@example.com', '2025-08-04', '09:40:00', 40, 2, 'Aucune Note', 'CONFIRMÉ'),
+(29, 101, 'amanda.boudreau@example.com', '2025-08-04', '09:40:00', 40, 2, 'Aucune Note', 'CONFIRMÉ'),
+(30, 201, 'amanda.boudreau@example.com', '2025-08-04', '11:40:00', 20, 4, 'Aucune Note', 'CONFIRMÉ'),
+(31, 202, 'ana@example.com', '2025-08-04', '11:40:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
+(32, 202, 'alexandre.robert@example.com', '2025-08-04', '11:40:00', 40, 7, 'Aucune Note', 'CONFIRMÉ'),
+(33, 202, 'celine.durand@example.com', '2025-08-04', '09:20:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
+(34, 201, 'pierre.fortin@example.com', '2025-08-06', '13:40:00', 20, 5, 'Aucune Note', 'CONFIRMÉ'),
+(35, 201, 'pierre.fortin@example.com', '2025-08-06', '13:40:00', 20, 5, 'Aucune Note', 'CONFIRMÉ'),
+(36, 201, 'pierre.fortin@example.com', '2025-08-06', '13:40:00', 20, 5, 'Aucune Note', 'CONFIRMÉ'),
+(37, 201, 'marc@example.com', '2025-08-05', '11:20:00', 20, 4, 'Aucune Note', 'CONFIRMÉ'),
+(38, 201, 'antoine.lavoie@example.com', '2025-08-04', '13:00:00', 20, 4, 'Aucune Note', 'CONFIRMÉ'),
+(39, 201, 'celine.durand@example.com', '2025-08-04', '14:20:00', 20, 5, 'Aucune Note', 'CONFIRMÉ'),
+(40, 202, 'ana@example.com', '2025-08-04', '14:40:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
+(41, 201, 'celine.durand@example.com', '2025-08-04', '11:00:00', 40, 2, 'Aucune Note', 'CONFIRMÉ'),
+(42, 201, 'celine.durand@example.com', '2025-08-04', '11:00:00', 40, 2, 'Aucune Note', 'CONFIRMÉ'),
+(43, 202, 'ana@example.com', '2025-08-04', '11:40:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
+(44, 200, 'antoine.lavoie@example.com', '2025-08-04', '13:40:00', 20, 6, 'Aucune Note', 'CONFIRMÉ'),
+(45, 101, 'alexandre.robert@example.com', '2025-08-04', '13:40:00', 40, 2, 'Aucune Note', 'CONFIRMÉ'),
+(46, 101, 'alexandre.robert@example.com', '2025-08-04', '13:40:00', 40, 2, 'Aucune Note', 'CONFIRMÉ'),
+(47, 202, 'amanda.boudreau@example.com', '2025-08-04', '11:20:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
+(48, 202, 'amanda.boudreau@example.com', '2025-08-04', '11:20:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
+(49, 201, 'ana@example.com', '2025-08-04', '13:20:00', 20, 4, 'Aucune Note', 'CONFIRMÉ'),
+(50, 201, 'ana@example.com', '2025-08-04', '10:40:00', 20, 4, 'Aucune Note', 'CONFIRMÉ'),
+(51, 202, 'amanda.boudreau@example.com', '2025-08-05', '09:40:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
+(52, 202, 'ana@example.com', '2025-08-04', '14:20:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
+(53, 202, 'ana@example.com', '2025-08-04', '14:20:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
+(54, 202, 'ana@example.com', '2025-08-04', '11:40:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
+(55, 202, 'ana@example.com', '2025-08-04', '11:40:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
+(56, 202, 'alexandre.robert@example.com', '2025-08-04', '14:00:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
+(57, 202, 'alexandre.robert@example.com', '2025-08-04', '14:00:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
+(58, 201, 'amanda.boudreau@example.com', '2025-08-04', '10:40:00', 20, 5, 'Aucune Note', 'CONFIRMÉ'),
+(59, 201, 'ana@example.com', '2025-08-04', '13:40:00', 20, 5, 'Aucune Note', 'CONFIRMÉ'),
+(60, 101, 'amanda.boudreau@example.com', '2025-08-04', '10:20:00', 40, 2, 'Aucune Note', 'CONFIRMÉ'),
+(61, 101, 'amanda.boudreau@example.com', '2025-08-04', '12:00:00', 40, 1, 'Aucune Note', 'CONFIRMÉ'),
+(62, 201, 'celine.durand@example.com', '2025-08-04', '13:00:00', 20, 5, 'Aucune Note', 'CONFIRMÉ'),
+(63, 101, 'amanda.boudreau@example.com', '2025-08-04', '13:00:00', 40, 2, 'Aucune Note', 'CONFIRMÉ'),
+(64, 202, 'amanda.boudreau@example.com', '2025-08-04', '13:20:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
+(65, 201, 'ana@example.com', '2025-08-04', '14:00:00', 20, 4, 'Aucune Note', 'CONFIRMÉ'),
+(66, 201, 'amanda.boudreau@example.com', '2025-08-04', '14:40:00', 20, 4, 'Aucune Note', 'CONFIRMÉ'),
+(67, 202, 'alexandre.robert@example.com', '2025-08-05', '09:00:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
+(68, 202, 'amanda.boudreau@example.com', '2025-08-04', '14:20:00', 60, 3, 'Aucune Note', 'CONFIRMÉ');
+
+
+INSERT INTO Disponibilite (ID_DISPONIBILITE, CODE_EMPLOYE, JOUR, HEURE, NUM_RDV, STATUT) 
+VALUES
+
 (46, 101, '2025-08-04', '09:00:00', NULL, 'DISPONIBLE'),
 (47, 101, '2025-08-04', '09:20:00', NULL, 'DISPONIBLE'),
 (48, 101, '2025-08-04', '09:40:00', NULL, 'DISPONIBLE'),
@@ -575,75 +897,27 @@ INSERT INTO Disponibilite (ID_DISPONIBILITE, CODE_EMPLOYE, JOUR, HEURE, NUM_RDV,
 (677, 400, '2025-08-01', '16:20:00', NULL, 'DISPONIBLE'),
 (678, 400, '2025-08-01', '16:40:00', NULL, 'DISPONIBLE');
 
-DROP TABLE IF EXISTS Employe;
-CREATE TABLE Employe (
-  CODE_EMPLOYE int NOT NULL,
-  PRENOM_EMPLOYE varchar(30) DEFAULT NULL,
-  NOM_EMPLOYE varchar(30) DEFAULT NULL,
-  ETAT_CIVIL enum('Celibataire','Marié','Divorcé') DEFAULT NULL,
-  MOT_DE_PASSE varchar(255) DEFAULT NULL,
-  COURRIEL varchar(100) DEFAULT NULL,
-  TELEPHONE varchar(20) DEFAULT NULL,
-  ADRESSE varchar(100) DEFAULT NULL,
-  DATE_NAISSANCE date DEFAULT NULL,
-  SEXE enum('Homme','Femme') DEFAULT NULL,
-  POSTE varchar(30) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO Employe (CODE_EMPLOYE, PRENOM_EMPLOYE, NOM_EMPLOYE, ETAT_CIVIL, MOT_DE_PASSE, COURRIEL, TELEPHONE, ADRESSE, DATE_NAISSANCE, SEXE, POSTE) VALUES
-(100, 'Alice', 'Durand', 'Celibataire', '123', 'alice.durand@example.com', '5141234567', '123 rue des Lilas', '1985-03-22', 'Femme', 'Médecin'),
-(101, 'Jean', 'Dupont', NULL, '123', 'jean.dupont@example.com', '5141234568', '456 rue des Érables', '1978-11-10', 'Homme', 'Médecin'),
-(102, 'Monique', 'Jodoin', 'Celibataire', '123', 'monique.jodoin@example.com', '5141234569', '789 rue des Pins', '1990-06-15', 'Femme', 'Médecin'),
-(103, 'Wassim', 'Ouali', 'Celibataire', '$2y$10$j0WYqJd9xsreMleUaCM0teLBLv5ikjea3o1qIecEKL1nUdY1pG11q', 'wassim@exemple.ca', '514 588 88 99', '7979 rue walabi', '2000-01-04', 'Homme', 'Médecin'),
-(200, 'Bruno', 'Martin', NULL, '123', 'bruno.martin@example.com', '5141234570', '321 rue Ontario', '1982-02-05', 'Homme', 'Infirmier'),
-(201, 'Isabelle', 'Langlois', 'Celibataire', '123', 'isabelle.langlois@example.com', '5141234571', '654 rue Mont-Royal', '1992-09-18', 'Femme', 'Infirmier'),
-(202, 'Dominic', 'Dublois', 'Celibataire', '123', 'dominic.dublois@example.com', '5141234572', '987 rue Sherbrooke', '1988-12-03', 'Homme', 'Infirmier'),
-(300, 'Claire', 'Moreau', NULL, '123', 'claire.moreau@example.com', '5141234573', '135 rue Papineau', '1980-07-25', 'Femme', 'Secrétaire'),
-(400, 'George', 'Smith', 'Divorcé', '123', 'george.smith@example.com', '5141234575', '369 rue Berri', '1975-01-30', 'Femme', 'Administrateur');
+INSERT INTO ServiceEmploye (ID_SERVICE, CODE_EMPLOYE) VALUES
+(5, 100),
+(1, 101),
+(2, 101),
+(3, 101),
+(4, 101),
+(3, 102),
+(4, 102),
+(6, 102),
+(6, 200),
+(7, 200),
+(2, 201),
+(4, 201),
+(5, 201),
+(1, 202),
+(3, 202),
+(4, 202),
+(7, 202);
 
-DROP TABLE IF EXISTS Exception_horaire;
-CREATE TABLE Exception_horaire (
-  ID_EXC int NOT NULL,
-  CODE_EMPLOYE int NOT NULL,
-  DATE_DEBUT date NOT NULL,
-  DATE_FIN date NOT NULL,
-  TYPE_CONGE enum('CONGÉ','MALADIE') NOT NULL,
-  STATUS enum('EN ATTENTE','APPROUVÉ','REJETÉ') NOT NULL DEFAULT 'EN ATTENTE'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO Exception_horaire (ID_EXC, CODE_EMPLOYE, DATE_DEBUT, DATE_FIN, TYPE_CONGE, STATUS) VALUES
-(1, 100, '2025-08-01', '2025-08-07', 'CONGÉ', 'APPROUVÉ'),
-(2, 101, '2025-08-10', '2025-08-10', 'CONGÉ', 'APPROUVÉ'),
-(3, 102, '2025-08-07', '2025-08-25', 'CONGÉ', 'REJETÉ'),
-(4, 200, '2025-08-12', '2025-08-14', 'CONGÉ', 'REJETÉ'),
-(5, 201, '2025-08-20', '2025-08-27', 'CONGÉ', 'EN ATTENTE'),
-(6, 202, '2025-09-19', '2025-09-26', 'CONGÉ', 'EN ATTENTE'),
-(7, 300, '2025-11-14', '2025-11-18', 'CONGÉ', 'EN ATTENTE');
-
-DROP TABLE IF EXISTS Horaire;
-CREATE TABLE Horaire (
-  ID_HORAIRE int NOT NULL,
-  CODE_EMPLOYE int NOT NULL,
-  HEURE_DEBUT time NOT NULL,
-  HEURE_FIN time NOT NULL,
-  JOURS varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-INSERT INTO Horaire (ID_HORAIRE, CODE_EMPLOYE, HEURE_DEBUT, HEURE_FIN, JOURS) VALUES
-(1, 100, '10:00:00', '15:00:00', 'Lundi, Mardi, Jeudi, Vendredi'),
-(2, 101, '09:00:00', '16:00:00', 'Lundi, Mercredi, Vendredi'),
-(3, 102, '09:00:00', '16:00:00', 'Mardi, Mercredi, Jeudi'),
-(4, 200, '08:00:00', '17:00:00', 'Lundi, Mardi, Mercredi, Jeudi, Vendredi'),
-(5, 201, '08:00:00', '17:00:00', 'Lundi, Mardi, Mercredi, Jeudi, Vendredi'),
-(6, 202, '08:00:00', '17:00:00', 'Lundi, Mardi, Mercredi, Jeudi, Vendredi'),
-(7, 300, '08:00:00', '17:00:00', 'Lundi, Mardi, Mercredi, Jeudi, Vendredi'),
-(8, 400, '09:00:00', '17:00:00', 'Lundi, Mardi, Mercredi, Jeudi, Vendredi');
-
-DROP TABLE IF EXISTS JourTravail;
-CREATE TABLE JourTravail (
-  CODE_EMPLOYE int NOT NULL,
-  JOUR_SEMAINE tinyint NOT NULL
-) ;
 
 INSERT INTO JourTravail (CODE_EMPLOYE, JOUR_SEMAINE) VALUES
 (100, 1),
@@ -681,244 +955,3 @@ INSERT INTO JourTravail (CODE_EMPLOYE, JOUR_SEMAINE) VALUES
 (400, 3),
 (400, 4),
 (400, 5);
-
-DROP TABLE IF EXISTS Patient;
-CREATE TABLE Patient (
-  COURRIEL varchar(30) NOT NULL,
-  PRENOM_PATIENT varchar(30) DEFAULT NULL,
-  NOM_PATIENT varchar(30) DEFAULT NULL,
-  MOT_DE_PASSE varchar(30) DEFAULT NULL,
-  NUM_TEL bigint DEFAULT NULL,
-  NUM_CIVIQUE int DEFAULT NULL,
-  RUE varchar(30) DEFAULT NULL,
-  VILLE varchar(30) DEFAULT NULL,
-  CODE_POSTAL varchar(15) DEFAULT NULL,
-  NO_ASSURANCE_MALADIE varchar(20) DEFAULT NULL,
-  DATE_NAISSANCE date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-INSERT INTO Patient (COURRIEL, PRENOM_PATIENT, NOM_PATIENT, MOT_DE_PASSE, NUM_TEL, NUM_CIVIQUE, RUE, VILLE, CODE_POSTAL, NO_ASSURANCE_MALADIE, DATE_NAISSANCE) VALUES
-('alexandre.robert@example.com', 'Alexandre', 'Robert', 'Ar5#Yn9FkL', 8194455667, 76, 'chemin des Érables', 'Gatineau', 'J8Y6N7', 'RAMQ00112233', '1986-08-19'),
-('amanda.boudreau@example.com', 'Amanda', 'Boudreau', 'Ab7$Vn2PrT', 8194567890, 88, 'rue Wellington', 'Sherbrooke', 'J1H5R4', 'RAMQ66778899', '1999-03-22'),
-('ana@example.com', 'Ana', 'Lefebvre', 'Aq4#Mn5TjP', 4387654321, 55, 'rue Sainte-Catherine', 'Laval', 'H7N4A2', 'RAMQ98765432', '1988-11-30'),
-('antoine.lavoie@example.com', 'Antoine', 'Lavoie', 'Al5%Rc2FnT', 4507654321, 15, 'avenue Papineau', 'Laval', 'H7N2L1', 'RAMQ33445566', '1985-01-20'),
-('celine.durand@example.com', 'Céline', 'Durand', 'Cd5*Kp1JnV', 4387788990, 19, 'boulevard René-Lévesque', 'Québec', 'G1R2V3', 'RAMQ33442255', '1989-07-23'),
-('claire@example.com', 'Claire', 'Bélanger', 'Cq2&Jm8ZrY', 4384567890, 27, '321 chemin des Érables', 'Longueuil', 'J4N6B9', 'RAMQ56789012', '1998-05-30'),
-('david@example.com', 'David', 'Roy', 'Dx9%Rc1LpN', 8193456789, 42, '789 boulevard Mercure', 'Saguenay', 'G7H4B2', 'RAMQ45678901', '1983-12-02'),
-('eric@example.com', 'Éric', 'Fortin', 'Er6@Vb3XkU', 4505678901, 50, '12 rue du Lac', 'Gatineau', 'J8Y3K4', 'RAMQ67890123', '1975-09-10'),
-('isabelle@example.com', 'Isabelle', 'Martin', 'In4$Bm9RzY', 4508901234, 45, '56 rue Principale', 'Shawinigan', 'G9N5L8', 'RAMQ90123456', '1980-10-28'),
-('julie.bernard@example.com', 'Julie', 'Bernard', 'Jb1!Qw6KlM', 4388765432, 250, 'boulevard René-Lévesque', 'Québec', 'G1R5V2', 'RAMQ22334455', '1992-09-05'),
-('karine.blais@example.com', 'Karine', 'Blais', 'Kb2$Wm8HpT', 4185566778, 48, 'rue du Marché', 'Trois-Rivières', 'G8Z2L8', 'RAMQ11220033', '1993-11-11'),
-('kevin.dumont@example.com', 'Kevin', 'Dumont', 'Kd3#Yl8WpN', 4183456789, 50, 'rue des Forges', 'Trois-Rivières', 'G8Z1K3', 'RAMQ55667788', '1988-12-10'),
-('leo@example.com', 'Léo', 'Dubois', 'Ln8@Xf2RmS', 5141234567, 100, 'rue Ontario', 'Montréal', 'H2K3K4', 'RAMQ12345678', '1995-06-15'),
-('lucie.morel@example.com', 'Lucie', 'Morel', 'Lm9@Qt4BhS', 5141122334, 110, 'rue Beaubien', 'Montréal', 'H2V3R4', 'RAMQ77889900', '1982-02-14'),
-('marc@example.com', 'Marc', 'Tremblay', 'Mv3!Kz7BhQ', 4509876543, 29, '1234 rue des Fleurs', 'Québec', 'G1X0A1', 'RAMQ23456789', '1996-03-22'),
-('marie-claude.leblanc@example.c', 'Marie-Claude', 'Leblanc', 'Mc2&Zd7XpK', 8196543210, 300, 'chemin Sainte-Foy', 'Gatineau', 'J8T4B5', 'RAMQ44556677', '1970-07-30'),
-('marie@example.com', 'Marie', 'Tremblay', 'Mk7*Ga4QsT', 4186789012, 38, '85 rue de la Commune', 'Québec', 'G1K3M2', 'RAMQ78901234', '1987-11-05'),
-('olivier.perreault@example.com', 'Olivier', 'Perreault', 'Or8@Vt2ZlQ', 4508899001, 57, 'rue Notre-Dame', 'Longueuil', 'J4K5B2', 'RAMQ44553366', '1981-01-30'),
-('paul.gagnon@example.com', 'Paul', 'Gagnon', 'Pu8&Tx2ZdR', 5149876543, 120, 'rue Saint-Denis', 'Montréal', 'H2X2L4', 'RAMQ11223344', '1978-04-12'),
-('philippe.leblanc@example.com', 'Philippe', 'LeBlanc', 'Pl7&Qz3RmX', 5146677889, 102, 'avenue Laval', 'Montréal', 'H3A1T9', 'RAMQ22331144', '1975-03-05'),
-('pierre.fortin@example.com', 'Pierre', 'Fortin', 'Pf4%Xc1JkV', 4382233445, 210, 'avenue des Pins', 'Québec', 'G1P4K5', 'RAMQ88990011', '1979-05-27'),
-('sophie.girard@example.com', 'Sophie', 'Girard', 'Sg6!Zm3LpQ', 4503344556, 33, 'boulevard Talbot', 'Laval', 'H7L5M6', 'RAMQ99001122', '1990-12-02'),
-('sophie@example.com', 'Sophie', 'Gagnon', 'Sp5$Ty6GdW', 5142345678, 34, '56 avenue du Parc', 'Montréal', 'H3A2J1', 'RAMQ34567890', '1991-08-15'),
-('yannick@example.com', 'Yannick', 'Boucher', 'Yk3#Pl7SdN', 5147890123, 31, '998 avenue Saint-Jean', 'Montréal', 'H4C2J7', 'RAMQ89012345', '1993-07-19');
-
-DROP TABLE IF EXISTS Rendezvous;
-CREATE TABLE Rendezvous (
-  NUM_RDV int NOT NULL,
-  CODE_EMPLOYE int NOT NULL,
-  COURRIEL varchar(30) NOT NULL,
-  JOUR date NOT NULL,
-  HEURE time NOT NULL,
-  DUREE int NOT NULL,
-  ID_SERVICE int NOT NULL,
-  NOTE_CONSULT varchar(255) DEFAULT NULL,
-  STATUT enum('CONFIRMÉ','ANNULÉ','TERMINÉ','ATTENTE') NOT NULL DEFAULT 'CONFIRMÉ'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-INSERT INTO Rendezvous (NUM_RDV, CODE_EMPLOYE, COURRIEL, JOUR, HEURE, DUREE, ID_SERVICE, NOTE_CONSULT, STATUT) VALUES
-(1, 100, 'celine.durand@example.com', '2025-08-04', '08:00:00', 20, 1, '', 'CONFIRMÉ'),
-(2, 200, 'marc@example.com', '2025-08-01', '16:00:00', 20, 6, '', 'CONFIRMÉ'),
-(3, 101, 'yannick@example.com', '2025-08-06', '11:35:00', 20, 2, '', 'CONFIRMÉ'),
-(4, 101, 'sophie.girard@example.com', '2025-08-06', '14:30:00', 20, 1, '', 'CONFIRMÉ'),
-(5, 202, 'david@example.com', '2025-08-08', '13:40:00', 20, 7, '', 'CONFIRMÉ'),
-(6, 200, 'pierre.fortin@example.com', '2025-08-11', '09:40:00', 20, 7, '', 'CONFIRMÉ'),
-(7, 202, 'julie.bernard@example.com', '2025-08-12', '09:35:00', 20, 3, '', 'CONFIRMÉ'),
-(8, 201, 'olivier.perreault@example.com', '2025-08-13', '13:45:00', 20, 4, '', 'CONFIRMÉ'),
-(9, 102, 'claire@example.com', '2025-08-14', '12:25:00', 20, 3, '', 'CONFIRMÉ'),
-(10, 200, 'paul.gagnon@example.com', '2025-08-18', '12:00:00', 20, 6, '', 'CONFIRMÉ'),
-(11, 201, 'karine.blais@example.com', '2025-08-19', '09:40:00', 20, 5, '', 'CONFIRMÉ'),
-(12, 201, 'leo@example.com', '2025-08-19', '12:35:00', 20, 2, '', 'CONFIRMÉ'),
-(13, 200, 'eric@example.com', '2025-08-21', '10:15:00', 20, 6, '', 'CONFIRMÉ'),
-(14, 102, 'sophie@example.com', '2025-08-21', '11:15:00', 20, 4, '', 'CONFIRMÉ'),
-(15, 202, 'amanda.boudreau@example.com', '2025-08-27', '10:10:00', 20, 1, '', 'CONFIRMÉ'),
-(16, 101, 'ana@example.com', '2025-08-27', '12:10:00', 20, 3, '', 'CONFIRMÉ'),
-(17, 202, 'marie-claude.leblanc@example.c', '2025-08-27', '13:05:00', 20, 7, '', 'CONFIRMÉ'),
-(18, 101, 'isabelle@example.com', '2025-08-27', '13:55:00', 20, 4, '', 'CONFIRMÉ'),
-(19, 102, 'antoine.lavoie@example.com', '2025-08-28', '10:05:00', 20, 3, '', 'CONFIRMÉ'),
-(20, 102, 'lucie.morel@example.com', '2025-08-28', '12:25:00', 20, 6, '', 'CONFIRMÉ'),
-(21, 201, 'marie@example.com', '2025-08-29', '13:10:00', 20, 4, '', 'CONFIRMÉ'),
-(22, 201, 'alexandre.robert@example.com', '2025-08-04', '13:40:00', 40, 2, 'Suivi', 'CONFIRMÉ'),
-(23, 201, 'antoine.lavoie@example.com', '2025-08-04', '09:40:00', 20, 4, 'Aucune Note', 'CONFIRMÉ'),
-(24, 202, 'ana@example.com', '2025-08-04', '11:40:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
-(25, 201, 'ana@example.com', '2025-08-04', '10:20:00', 20, 4, 'Aucune Note', 'CONFIRMÉ'),
-(26, 101, 'ana@example.com', '2025-08-04', '11:20:00', 40, 1, 'Aucune Note', 'CONFIRMÉ'),
-(27, 101, 'amanda.boudreau@example.com', '2025-08-04', '09:40:00', 40, 2, 'Aucune Note', 'CONFIRMÉ'),
-(28, 101, 'amanda.boudreau@example.com', '2025-08-04', '09:40:00', 40, 2, 'Aucune Note', 'CONFIRMÉ'),
-(29, 101, 'amanda.boudreau@example.com', '2025-08-04', '09:40:00', 40, 2, 'Aucune Note', 'CONFIRMÉ'),
-(30, 201, 'amanda.boudreau@example.com', '2025-08-04', '11:40:00', 20, 4, 'Aucune Note', 'CONFIRMÉ'),
-(31, 202, 'ana@example.com', '2025-08-04', '11:40:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
-(32, 202, 'alexandre.robert@example.com', '2025-08-04', '11:40:00', 40, 7, 'Aucune Note', 'CONFIRMÉ'),
-(33, 202, 'celine.durand@example.com', '2025-08-04', '09:20:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
-(34, 201, 'pierre.fortin@example.com', '2025-08-06', '13:40:00', 20, 5, 'Aucune Note', 'CONFIRMÉ'),
-(35, 201, 'pierre.fortin@example.com', '2025-08-06', '13:40:00', 20, 5, 'Aucune Note', 'CONFIRMÉ'),
-(36, 201, 'pierre.fortin@example.com', '2025-08-06', '13:40:00', 20, 5, 'Aucune Note', 'CONFIRMÉ'),
-(37, 201, 'marc@example.com', '2025-08-05', '11:20:00', 20, 4, 'Aucune Note', 'CONFIRMÉ'),
-(38, 201, 'antoine.lavoie@example.com', '2025-08-04', '13:00:00', 20, 4, 'Aucune Note', 'CONFIRMÉ'),
-(39, 201, 'celine.durand@example.com', '2025-08-04', '14:20:00', 20, 5, 'Aucune Note', 'CONFIRMÉ'),
-(40, 202, 'ana@example.com', '2025-08-04', '14:40:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
-(41, 201, 'celine.durand@example.com', '2025-08-04', '11:00:00', 40, 2, 'Aucune Note', 'CONFIRMÉ'),
-(42, 201, 'celine.durand@example.com', '2025-08-04', '11:00:00', 40, 2, 'Aucune Note', 'CONFIRMÉ'),
-(43, 202, 'ana@example.com', '2025-08-04', '11:40:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
-(44, 200, 'antoine.lavoie@example.com', '2025-08-04', '13:40:00', 20, 6, 'Aucune Note', 'CONFIRMÉ'),
-(45, 101, 'alexandre.robert@example.com', '2025-08-04', '13:40:00', 40, 2, 'Aucune Note', 'CONFIRMÉ'),
-(46, 101, 'alexandre.robert@example.com', '2025-08-04', '13:40:00', 40, 2, 'Aucune Note', 'CONFIRMÉ'),
-(47, 202, 'amanda.boudreau@example.com', '2025-08-04', '11:20:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
-(48, 202, 'amanda.boudreau@example.com', '2025-08-04', '11:20:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
-(49, 201, 'ana@example.com', '2025-08-04', '13:20:00', 20, 4, 'Aucune Note', 'CONFIRMÉ'),
-(50, 201, 'ana@example.com', '2025-08-04', '10:40:00', 20, 4, 'Aucune Note', 'CONFIRMÉ'),
-(51, 202, 'amanda.boudreau@example.com', '2025-08-05', '09:40:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
-(52, 202, 'ana@example.com', '2025-08-04', '14:20:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
-(53, 202, 'ana@example.com', '2025-08-04', '14:20:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
-(54, 202, 'ana@example.com', '2025-08-04', '11:40:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
-(55, 202, 'ana@example.com', '2025-08-04', '11:40:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
-(56, 202, 'alexandre.robert@example.com', '2025-08-04', '14:00:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
-(57, 202, 'alexandre.robert@example.com', '2025-08-04', '14:00:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
-(58, 201, 'amanda.boudreau@example.com', '2025-08-04', '10:40:00', 20, 5, 'Aucune Note', 'CONFIRMÉ'),
-(59, 201, 'ana@example.com', '2025-08-04', '13:40:00', 20, 5, 'Aucune Note', 'CONFIRMÉ'),
-(60, 101, 'amanda.boudreau@example.com', '2025-08-04', '10:20:00', 40, 2, 'Aucune Note', 'CONFIRMÉ'),
-(61, 101, 'amanda.boudreau@example.com', '2025-08-04', '12:00:00', 40, 1, 'Aucune Note', 'CONFIRMÉ'),
-(62, 201, 'celine.durand@example.com', '2025-08-04', '13:00:00', 20, 5, 'Aucune Note', 'CONFIRMÉ'),
-(63, 101, 'amanda.boudreau@example.com', '2025-08-04', '13:00:00', 40, 2, 'Aucune Note', 'CONFIRMÉ'),
-(64, 202, 'amanda.boudreau@example.com', '2025-08-04', '13:20:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
-(65, 201, 'ana@example.com', '2025-08-04', '14:00:00', 20, 4, 'Aucune Note', 'CONFIRMÉ'),
-(66, 201, 'amanda.boudreau@example.com', '2025-08-04', '14:40:00', 20, 4, 'Aucune Note', 'CONFIRMÉ'),
-(67, 202, 'alexandre.robert@example.com', '2025-08-05', '09:00:00', 60, 3, 'Aucune Note', 'CONFIRMÉ'),
-(68, 202, 'amanda.boudreau@example.com', '2025-08-04', '14:20:00', 60, 3, 'Aucune Note', 'CONFIRMÉ');
-
-DROP TABLE IF EXISTS Service;
-CREATE TABLE Service (
-  ID_SERVICE int NOT NULL,
-  NOM varchar(50) DEFAULT NULL,
-  DESCRIPTION varchar(100) DEFAULT NULL,
-  DUREE int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-INSERT INTO Service (ID_SERVICE, NOM, DESCRIPTION, DUREE) VALUES
-(1, 'Consultation générale', 'Évaluation de santé pour tout problème courant', 40),
-(2, 'Suivi de grossesse', 'Suivi médical de grossesse', 40),
-(3, 'Suivi de maladies chroniques', 'Contrôle régulier (diabète, hypertension, etc.)', 60),
-(4, 'Dépistage ITSS', 'Tests pour infections transmissibles (ITSS)', 20),
-(5, 'Vaccination', 'Vaccin de routine, voyage ou saisonnier', 20),
-(6, 'Prélèvement sanguin / test urinaire', 'Prise de sang ou test urinaire', 20),
-(7, 'Urgence mineure', 'Blessures légères, infections, douleurs modérées', 40);
-
-DROP TABLE IF EXISTS ServiceEmploye;
-CREATE TABLE ServiceEmploye (
-  ID_SERVICE int NOT NULL,
-  CODE_EMPLOYE int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-INSERT INTO ServiceEmploye (ID_SERVICE, CODE_EMPLOYE) VALUES
-(5, 100),
-(1, 101),
-(2, 101),
-(3, 101),
-(4, 101),
-(3, 102),
-(4, 102),
-(6, 102),
-(6, 200),
-(7, 200),
-(2, 201),
-(4, 201),
-(5, 201),
-(1, 202),
-(3, 202),
-(4, 202),
-(7, 202);
-
-
-ALTER TABLE Disponibilite
-  ADD PRIMARY KEY (ID_DISPONIBILITE),
-  ADD KEY CODE_EMPLOYE (CODE_EMPLOYE),
-  ADD KEY NUM_RDV (NUM_RDV);
-
-ALTER TABLE Employe
-  ADD PRIMARY KEY (CODE_EMPLOYE),
-  ADD UNIQUE KEY COURRIEL (COURRIEL);
-
-ALTER TABLE Exception_horaire
-  ADD PRIMARY KEY (ID_EXC),
-  ADD UNIQUE KEY UQ_EXC_DATE_DEBUT (DATE_DEBUT),
-  ADD UNIQUE KEY UQ_EXC_DATE_FIN (DATE_FIN),
-  ADD KEY FK_EXC_EMP (CODE_EMPLOYE);
-
-ALTER TABLE Horaire
-  ADD PRIMARY KEY (ID_HORAIRE),
-  ADD KEY FK_HORAIRE_EMP (CODE_EMPLOYE);
-
-ALTER TABLE JourTravail
-  ADD PRIMARY KEY (CODE_EMPLOYE,JOUR_SEMAINE);
-
-ALTER TABLE Patient
-  ADD PRIMARY KEY (COURRIEL);
-
-ALTER TABLE Rendezvous
-  ADD PRIMARY KEY (NUM_RDV),
-  ADD KEY FK_RV_EMP (CODE_EMPLOYE),
-  ADD KEY FK_RV_PAT (COURRIEL),
-  ADD KEY FK_RV_SVC (ID_SERVICE);
-
-ALTER TABLE Service
-  ADD PRIMARY KEY (ID_SERVICE);
-
-ALTER TABLE ServiceEmploye
-  ADD PRIMARY KEY (ID_SERVICE,CODE_EMPLOYE),
-  ADD KEY CODE_EMPLOYE (CODE_EMPLOYE);
-
-
-ALTER TABLE Disponibilite
-  MODIFY ID_DISPONIBILITE int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=679;
-
-ALTER TABLE Exception_horaire
-  MODIFY ID_EXC int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-
-ALTER TABLE Horaire
-  MODIFY ID_HORAIRE int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
-
-ALTER TABLE Rendezvous
-  MODIFY NUM_RDV int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
-
-
-ALTER TABLE Disponibilite
-  ADD CONSTRAINT disponibilite_ibfk_1 FOREIGN KEY (CODE_EMPLOYE) REFERENCES Employe (CODE_EMPLOYE),
-  ADD CONSTRAINT disponibilite_ibfk_2 FOREIGN KEY (NUM_RDV) REFERENCES Rendezvous (NUM_RDV);
-
-ALTER TABLE Exception_horaire
-  ADD CONSTRAINT FK_EXC_EMP FOREIGN KEY (CODE_EMPLOYE) REFERENCES Employe (CODE_EMPLOYE) ON DELETE CASCADE;
-
-ALTER TABLE Horaire
-  ADD CONSTRAINT FK_HORAIRE_EMP FOREIGN KEY (CODE_EMPLOYE) REFERENCES Employe (CODE_EMPLOYE) ON DELETE CASCADE;
-
-ALTER TABLE JourTravail
-  ADD CONSTRAINT jourtravail_ibfk_1 FOREIGN KEY (CODE_EMPLOYE) REFERENCES Employe (CODE_EMPLOYE) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE Rendezvous
-  ADD CONSTRAINT FK_RV_EMP FOREIGN KEY (CODE_EMPLOYE) REFERENCES Employe (CODE_EMPLOYE) ON DELETE CASCADE,
-  ADD CONSTRAINT FK_RV_PAT FOREIGN KEY (COURRIEL) REFERENCES Patient (COURRIEL) ON DELETE CASCADE,
-  ADD CONSTRAINT FK_RV_SVC FOREIGN KEY (ID_SERVICE) REFERENCES Service (ID_SERVICE) ON DELETE RESTRICT;
-
-ALTER TABLE ServiceEmploye
-  ADD CONSTRAINT serviceemploye_ibfk_1 FOREIGN KEY (ID_SERVICE) REFERENCES Service (ID_SERVICE),
-  ADD CONSTRAINT serviceemploye_ibfk_2 FOREIGN KEY (CODE_EMPLOYE) REFERENCES Employe (CODE_EMPLOYE);
