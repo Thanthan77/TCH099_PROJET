@@ -16,7 +16,7 @@ import retrofit2.Response;
 
 public class PageProfil extends AppCompatActivity {
 
-    private EditText prenom, nom, dateNaissance, noAssurance, courriel;
+    private EditText prenom, nom, dateNaissance, noAssurance, email;
     private EditText numCivique, rue, ville, codePostal;
     private TextView lienAccueil, lienRDV, lienProfil, lienModif, lienDeconnexion;
 
@@ -32,7 +32,7 @@ public class PageProfil extends AppCompatActivity {
         nom = findViewById(R.id.profil_nom);
         dateNaissance = findViewById(R.id.profil_naissance);
         noAssurance = findViewById(R.id.profil_nam);
-        courriel = findViewById(R.id.profil_email);
+        email = findViewById(R.id.profil_email);
         numCivique = findViewById(R.id.profil_civique);
         rue = findViewById(R.id.profil_rue);
         ville = findViewById(R.id.profil_ville);
@@ -96,7 +96,7 @@ public class PageProfil extends AppCompatActivity {
         nom.setEnabled(false);
         dateNaissance.setEnabled(false);
         noAssurance.setEnabled(false);
-        courriel.setEnabled(false);
+        email.setEnabled(false);
         numCivique.setEnabled(false);
         rue.setEnabled(false);
         ville.setEnabled(false);
@@ -117,7 +117,7 @@ public class PageProfil extends AppCompatActivity {
                     nom.setText(patient.getNom());
                     dateNaissance.setText(patient.getDateNaissance());
                     noAssurance.setText(patient.getNoAssurance());
-                    courriel.setText(patient.getCourriel());
+                    email.setText(patient.getCourriel());
                     numCivique.setText(String.valueOf(patient.getNumCivique()));
                     rue.setText(patient.getRue());
                     ville.setText(patient.getVille());

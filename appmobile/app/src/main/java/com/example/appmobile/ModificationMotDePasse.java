@@ -1,4 +1,4 @@
-package PagesProfil;
+package com.example.appmobile;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -69,7 +69,7 @@ public class ModificationMotDePasse extends AppCompatActivity {
             data.put("NOUVEAU_MOT_DE_PASSE", nouveau);
 
             ApiService apiService = ApiClient.getApiService();
-            Call<Void> call = apiService.updatePassword(data);
+            Call<Void> call = apiService.updatePatient(data);
 
             call.enqueue(new Callback<Void>() {
                 @Override
