@@ -41,8 +41,6 @@ Call<Void> putAnnulerRdv(@Path("numRdv") int idRdv);
 
     @PUT("patient_put.php")
     Call<Void> updatePatient(@Body Map<String, String> data);
-    @PUT("api/patient_put.php")
-    Call<Void> updatePassword(@Body Map<String, String> data);
 
 }
 
