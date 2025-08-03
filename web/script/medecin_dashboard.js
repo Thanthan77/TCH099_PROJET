@@ -69,7 +69,7 @@ async function chargerAfficherRendezVous() {
               '${escapeHtml(pat.DATE_NAISSANCE)}',
               '${escapeHtml(pat.NO_ASSURANCE_MALADIE)}',
               ${rdv.num_rdv},
-              '${escapeHtml(rdv.note || '')}'
+              '${escapeHtml(rdv.noteConsult || '')}'
             )">Voir dossier</button>
         </td>
       </tr>
@@ -88,7 +88,9 @@ function afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, note) {
   sec.querySelectorAll('textarea, button.js-save').forEach(el => el.remove());
 
   const ta = document.createElement('textarea');
-  ta.placeholder = 'Écrire une note de consultation…';
+  
+    ta.placeholder = 'Écrire une note de consultation…';
+  
   ta.value = note;
   sec.appendChild(ta);
   
@@ -107,7 +109,6 @@ function afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, note) {
     if (r.ok && j.status === 'success') {
       alert('Note mise à jour avec succès !');
       chargerAfficherRendezVous();
-      const rdv = await fetch(`${API_URL}rdv/${numrdv}`).then(r => r.json());
       afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, rdv.noteConsult);
       showTab('rdv');
     } else {
