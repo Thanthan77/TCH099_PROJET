@@ -1,4 +1,4 @@
-package PagesProfil;
+package com.example.appmobile;
 
 import android.content.Intent;
 import android.os.Bundle;
