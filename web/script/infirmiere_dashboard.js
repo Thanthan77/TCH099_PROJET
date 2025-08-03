@@ -176,6 +176,7 @@ let demandeEnvoyee = false;
 document.addEventListener('DOMContentLoaded', () => {
   chargerAfficherRendezVous();
   chargerAfficherHoraires();
+  chargerDemandesVacances();
 
   const btnVacances = document.querySelector("#vacances button");
 
@@ -262,6 +263,37 @@ window.addEventListener("click", function (event) {
     menu.style.display = "none";
   }
 });
+
+
+async function chargerDemandesVacances() {
+  try {
+    const res = await fetch(`${API_URL}conge/${codeEmploye}`);
+    const data = await res.json();
+
+    const tbody = document.querySelector('#table-vacances tbody');
+
+    if (!Array.isArray(data) || !data.length) {
+      tbody.innerHTML = '<tr><td colspan="4">Aucune demande de vacances</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.map(item => `
+      <tr>
+        <td>${escapeHtml(item.PRENOM_EMPLOYE || '')} ${escapeHtml(item.NOM_EMPLOYE || '')}</td>
+        <td>${escapeHtml(item.DATE_DEBUT)}</td>
+        <td>${escapeHtml(item.DATE_FIN)}</td>
+        <td>${escapeHtml(item.STATUS)}</td>
+      </tr>
+    `).join('');
+  } catch (error) {
+    console.error("Erreur lors du chargement des vacances :", error);
+    const tbody = document.querySelector('#table-vacances tbody');
+    tbody.innerHTML = '<tr><td colspan="4">Erreur de chargement des vacances</td></tr>';
+  }
+}
+
+
+
 
 document.addEventListener("DOMContentLoaded", function () {
   const logoutBtn = document.getElementById("btn-logout");

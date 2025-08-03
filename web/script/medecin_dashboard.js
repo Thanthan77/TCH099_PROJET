@@ -9,7 +9,7 @@ if (!codeSession || (!sessionStorage.getItem("isConnected") && !localStorage.get
   window.location.replace("index.html");
 }
 
-// 🔐 Empêche d'accéder à un autre dashboard via URL
+// Empêche d'accéder à un autre dashboard via URL
 if (codeInUrl && codeInUrl !== codeSession) {
   alert("Accès interdit : vous ne pouvez consulter que votre propre tableau de bord.");
   const url = new URL(window.location.href);
@@ -119,17 +119,6 @@ function afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, note) {
   sec.appendChild(btn);
 }
 
-
-
-
-
-
-
-
-
-
-
-
 async function chargerAfficherHoraires() {
   try {
     const res = await fetch(`${API_URL}horaires`);
@@ -138,7 +127,7 @@ async function chargerAfficherHoraires() {
     const tbody = document.querySelector('#horaire table tbody');
 
     if (!Array.isArray(data) || !data.length) {
-      tbody.innerHTML = '<tr><td colspan="3">Aucun horaire disponible</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="4">Aucun horaire disponible</td></tr>';
       return;
     }
 
@@ -269,12 +258,19 @@ async function chargerDemandesVacances() {
     const data = await res.json();
     console.log("Données reçues :", data);
 
+<<<<<<< Updated upstream
     const tbody = document.querySelector('table tbody');
     console.log("Élément <tbody> sélectionné :", tbody);
 
     if (!Array.isArray(data) || !data.length) {
       console.log("Aucune donnée valide trouvée");
       tbody.innerHTML = '<tr><td colspan="3">Aucune demande de vacances</td></tr>';
+=======
+    const tbody = document.querySelector('#table-vacances tbody');
+
+    if (!Array.isArray(data) || !data.length) {
+      tbody.innerHTML = '<tr><td colspan="4">Aucune demande de vacances</td></tr>';
+>>>>>>> Stashed changes
       return;
     }
 
@@ -294,7 +290,7 @@ async function chargerDemandesVacances() {
     console.log("Table remplie avec succès");
   } catch (error) {
     console.error("Erreur lors du chargement des vacances :", error);
-    const tbody = document.querySelector('table tbody');
+    const tbody = document.querySelector('#table-vacances tbody');
     tbody.innerHTML = '<tr><td colspan="3">Erreur de chargement des vacances</td></tr>';
   }
 }
