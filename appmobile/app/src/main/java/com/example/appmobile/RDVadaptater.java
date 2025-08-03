@@ -49,7 +49,7 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
 
         RdvInfo rdv = getItem(position);
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.texteadaptater, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.text_adapter, parent, false);
         }
 
 
