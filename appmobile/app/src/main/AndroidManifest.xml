@@ -24,6 +24,12 @@
         </activity>
         <activity android:name=".PageInscription" />
         <activity android:name=".ModificationMotDePasse" />
+        <activity android:name=".PageMesRDV" />
+        <activity android:name=".PagesRDV.pagePriseConfirmation" />
+        <activity android:name=".PagesRDV.pagePriseMoment" />
+        <activity android:name=".PagesRDV.pagePriseService" />
+        <activity android:name=".pageConfirmation" />
+        
 
     </application>
 
