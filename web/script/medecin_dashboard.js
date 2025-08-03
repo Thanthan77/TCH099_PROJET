@@ -19,14 +19,9 @@ if (codeInUrl && codeInUrl !== codeSession) {
   window.codeEmploye = codeInUrl || codeSession;
 }
 
-function showTab(id) {
-  document.querySelectorAll('.tab-content')
-          .forEach(sec => sec.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
-}
-
 function escapeHtml(str) {
-  return (str ?? '').toString()
+  if (!str) return '';
+  return str.toString()
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
@@ -34,47 +29,58 @@ function escapeHtml(str) {
     .replace(/'/g, "&#039;");
 }
 
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(sec => sec.classList.add('hidden'));
+  const target = document.getElementById(id);
+  if (target) target.classList.remove('hidden');
+}
+
 async function chargerAfficherRendezVous() {
   if (!codeEmploye) return;
 
-  const res = await fetch(`${API_URL}rendezvous/${codeEmploye}`);
-  const data = await res.json();
+  try {
+    const res = await fetch(`${API_URL}rendezvous/${codeEmploye}`);
+    const data = await res.json();
 
-  const patientsRes = await fetch(`${API_URL}patients`);
-  const listePatients = await patientsRes.json();
+    const patientsRes = await fetch(`${API_URL}patients`);
+    const listePatients = await patientsRes.json();
 
-  const servicesMap = {};
-  data.services.forEach(s => servicesMap[s.id] = s.nom);
+    const servicesMap = {};
+    data.services.forEach(s => servicesMap[s.id] = s.nom);
 
-  const tbody = document.querySelector('#rdv tbody');
-  if (!data.rendezvous.length) {
-    tbody.innerHTML = '<tr><td colspan="5">Aucun rendez-vous prévu</td></tr>';
-    return;
+    const tbody = document.querySelector('#rdv tbody');
+    if (!data.rendezvous.length) {
+      tbody.innerHTML = '<tr><td colspan="5">Aucun rendez-vous prévu</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.rendezvous.map(rdv => {
+      const pat = listePatients.find(p => p.COURRIEL === rdv.email) || {};
+      const nomSvc = servicesMap[rdv.service_id] || 'Service inconnu';
+
+      return `
+        <tr>
+          <td>${rdv.date}</td>
+          <td>${rdv.heure} (${rdv.duree} min)</td>
+          <td>${pat.PRENOM_PATIENT || ''} ${pat.NOM_PATIENT || ''}</td>
+          <td>${nomSvc}</td>
+          <td>
+            <button onclick="
+              afficherDossier(
+                '${escapeHtml(pat.PRENOM_PATIENT)}',
+                '${escapeHtml(pat.NOM_PATIENT)}',
+                '${escapeHtml(pat.DATE_NAISSANCE)}',
+                '${escapeHtml(pat.NO_ASSURANCE_MALADIE)}',
+                ${rdv.num_rdv},
+                '${escapeHtml(rdv.note_consult || '')}'
+              )">Voir dossier</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  } catch (error) {
+    console.error("Erreur lors du chargement des rendez-vous :", error);
   }
-
-  tbody.innerHTML = data.rendezvous.map(rdv => {
-    const pat = listePatients.find(p => p.COURRIEL === rdv.email) || {};
-    const nomSvc = servicesMap[rdv.service_id] || 'Service inconnu';
-    return `
-      <tr>
-        <td>${rdv.date}</td>
-        <td>${rdv.heure} (${rdv.duree} min)</td>
-        <td>${pat.PRENOM_PATIENT || ''} ${pat.NOM_PATIENT || ''}</td>
-        <td>${nomSvc}</td>
-        <td>
-          <button onclick="
-            afficherDossier(
-              '${escapeHtml(pat.PRENOM_PATIENT)}',
-              '${escapeHtml(pat.NOM_PATIENT)}',
-              '${escapeHtml(pat.DATE_NAISSANCE)}',
-              '${escapeHtml(pat.NO_ASSURANCE_MALADIE)}',
-              ${rdv.num_rdv},
-              '${(rdv.note_consult || '')}'
-            )">Voir dossier</button>
-        </td>
-      </tr>
-    `;
-  }).join('');
 }
 
 function afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, note) {
@@ -88,13 +94,9 @@ function afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, note) {
   sec.querySelectorAll('textarea, button.js-save').forEach(el => el.remove());
 
   const ta = document.createElement('textarea');
-  
-    ta.placeholder = 'Écrire une note de consultation…';
-  
+  ta.placeholder = 'Écrire une note de consultation…';
   ta.value = note;
-  console.log("noteConsult:"+note);
   sec.appendChild(ta);
-  
 
   const btn = document.createElement('button');
   btn.textContent = 'Enregistrer';
@@ -110,7 +112,6 @@ function afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, note) {
     if (r.ok && j.status === 'success') {
       alert('Note mise à jour avec succès !');
       chargerAfficherRendezVous();
-      afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, rdv.noteConsult);
       showTab('rdv');
     } else {
       alert(`Erreur: ${j.error || r.statusText}`);
@@ -125,9 +126,8 @@ async function chargerAfficherHoraires() {
     const data = await res.json();
 
     const tbody = document.querySelector('#horaire table tbody');
-
     if (!Array.isArray(data) || !data.length) {
-      tbody.innerHTML = '<tr><td colspan="4">Aucun horaire disponible</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="3">Aucun horaire disponible</td></tr>';
       return;
     }
 
@@ -140,49 +140,48 @@ async function chargerAfficherHoraires() {
     `).join('');
   } catch (error) {
     console.error("Erreur lors du chargement des horaires :", error);
-    const tbody = document.querySelector('#horaire table tbody');
-    tbody.innerHTML = '<tr><td colspan="3">Erreur de chargement des horaires</td></tr>';
+  }
+}
+
+async function chargerDemandesVacances() {
+  try {
+    const res = await fetch(`${API_URL}conge/${codeEmploye}`);
+    const data = await res.json();
+
+    const tbody = document.querySelector('#table-vacances tbody');
+
+    if (!Array.isArray(data) || !data.length) {
+      tbody.innerHTML = '<tr><td colspan="4">Aucune demande de vacances</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.map(item => `
+      <tr>
+        <td>${escapeHtml(item.PRENOM_EMPLOYE || '')} ${escapeHtml(item.NOM_EMPLOYE || '')}</td>
+        <td>${escapeHtml(item.DATE_DEBUT)}</td>
+        <td>${escapeHtml(item.DATE_FIN)}</td>
+        <td>${escapeHtml(item.STATUS)}</td>
+      </tr>
+    `).join('');
+  } catch (error) {
+    console.error("Erreur lors du chargement des vacances :", error);
+    const tbody = document.querySelector('#table-vacances tbody');
+    tbody.innerHTML = '<tr><td colspan="4">Erreur de chargement des vacances</td></tr>';
   }
 }
 
 let demandeEnvoyee = false;
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('button[data-tab]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id = btn.getAttribute('data-tab');
-      showTab(id);
-    });
-  });
-
   chargerAfficherRendezVous();
   chargerAfficherHoraires();
-  chargerDemandesVacances();
-
-  window.showTab = showTab;
-  window.afficherDossier = afficherDossier;
-});
-
-window.toggleUserMenu = function () {
-  const menu = document.getElementById("userDropdown");
-  menu.style.display = (menu.style.display === "block") ? "none" : "block";
-};
-
-window.addEventListener("click", function (event) {
-  const icon = document.querySelector(".user-menu-icon");
-  const menu = document.getElementById("userDropdown");
-
-  if (!menu.contains(event.target) && event.target !== icon) {
-    menu.style.display = "none";
-  }
-
+  chargerDemandesVacances(); // ✅ appel ajouté
 
   const btnVacances = document.querySelector("#vacances button");
-
   if (btnVacances) {
     btnVacances.addEventListener("click", async function (e) {
-      if (demandeEnvoyee) return; 
-      
+      if (demandeEnvoyee) return;
+
       e.preventDefault();
       demandeEnvoyee = true;
       btnVacances.disabled = true;
@@ -213,33 +212,20 @@ window.addEventListener("click", function (event) {
         const rawText = await response.text();
         const json = JSON.parse(rawText);
 
-        if (!response.ok) {
-          throw new Error(json.error || "Erreur inconnue");
-        }
+        if (!response.ok) throw new Error(json.error || "Erreur inconnue");
 
         if (json.status === "OK") {
           errDiv.style.color = "green";
           errDiv.innerText = json.message || "Demande envoyée avec succès.";
+          chargerDemandesVacances(); // ✅ recharge après ajout
         } else {
           errDiv.style.color = "red";
-          if (data.error && data.error.includes("SQLSTATE[23000]") && data.error.includes("Duplicate entry")) {
-            errDiv.innerText = " Cette date a deja été prise";
-          } else {
-            errDiv.innerText = data.error || "Une erreur s'est produite lors de la demande.";
-          } 
+          errDiv.innerText = json.error || "Une erreur s'est produite lors de la demande.";
         }
-
       } catch (error) {
         console.error("Erreur lors de la demande :", error);
         errDiv.style.color = "red";
-
-        if (error.message.includes("SQLSTATE[23000]") && error.message.includes("Duplicate entry")) {
-          errDiv.innerText = " Cette date a deja été prise";
-        } else{
-          errDiv.innerText = error.message || "Réponse du serveur invalide.";
-        }
-
-        
+        errDiv.innerText = error.message || "Réponse du serveur invalide.";
       } finally {
         btnVacances.disabled = false;
         demandeEnvoyee = false;
@@ -248,55 +234,21 @@ window.addEventListener("click", function (event) {
   }
 });
 
-async function chargerDemandesVacances() {
-  try {
-    console.log("Début de la fonction chargerDemandesVacances");
+window.showTab = showTab;
+window.afficherDossier = afficherDossier;
 
-    const res = await fetch(`${API_URL}conge/${codeEmploye}`);
-    console.log("Requête envoyée à l'API :", `${API_URL}conge/${codeEmploye}`);
+window.toggleUserMenu = function () {
+  const menu = document.getElementById("userDropdown");
+  menu.style.display = (menu.style.display === "block") ? "none" : "block";
+};
 
-    const data = await res.json();
-    console.log("Données reçues :", data);
-
-<<<<<<< Updated upstream
-    const tbody = document.querySelector('table tbody');
-    console.log("Élément <tbody> sélectionné :", tbody);
-
-    if (!Array.isArray(data) || !data.length) {
-      console.log("Aucune donnée valide trouvée");
-      tbody.innerHTML = '<tr><td colspan="3">Aucune demande de vacances</td></tr>';
-=======
-    const tbody = document.querySelector('#table-vacances tbody');
-
-    if (!Array.isArray(data) || !data.length) {
-      tbody.innerHTML = '<tr><td colspan="4">Aucune demande de vacances</td></tr>';
->>>>>>> Stashed changes
-      return;
-    }
-
-    tbody.innerHTML = data.map(item => {
-      const ligne = `
-        <tr>
-          <td>${escapeHtml(item.PRENOM_EMPLOYE || '')} ${escapeHtml(item.NOM_EMPLOYE || '')}</td>
-          <td>${escapeHtml(item.DATE_DEBUT)}</td>
-          <td>${escapeHtml(item.DATE_FIN)}</td>
-          <td>${escapeHtml(item.STATUS)}</td>
-        </tr>
-      `;
-      console.log("Ligne générée :", ligne);
-      return ligne;
-    }).join('');
-    
-    console.log("Table remplie avec succès");
-  } catch (error) {
-    console.error("Erreur lors du chargement des vacances :", error);
-    const tbody = document.querySelector('#table-vacances tbody');
-    tbody.innerHTML = '<tr><td colspan="3">Erreur de chargement des vacances</td></tr>';
+window.addEventListener("click", function (event) {
+  const icon = document.querySelector(".user-menu-icon");
+  const menu = document.getElementById("userDropdown");
+  if (!menu.contains(event.target) && event.target !== icon) {
+    menu.style.display = "none";
   }
-}
-
-
-
+});
 
 document.addEventListener("DOMContentLoaded", function () {
   const logoutBtn = document.getElementById("btn-logout");
@@ -309,8 +261,3 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
-
-
-
-
-
