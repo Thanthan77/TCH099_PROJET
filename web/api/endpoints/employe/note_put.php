@@ -14,10 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'PUT') {
     exit();
 }
 
-if (
-    !isset($input['numRdv']) ||
-    !isset($input['noteConsult'])
-) {
+if ( !isset($input['noteConsult'])) {
     http_response_code(400);
     echo json_encode([
         'error' => 'Les paramètres numRdv et noteConsult sont requis'
@@ -25,10 +22,9 @@ if (
     exit();
 }
 
-$numRdv = filter_var($input['numRdv'], FILTER_VALIDATE_INT);
-$note   = trim($input['noteConsult']);
+$note = trim($input['noteConsult']);
 
-if ($numRdv === false || $note === '') {
+if ( $note === '') {
     http_response_code(400);
     echo json_encode([
         'error' => 'numRdv doit être un entier valide et noteConsult ne peut pas être vide'

@@ -91,6 +91,7 @@ function afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, note) {
   ta.placeholder = 'Écrire une note de consultation…';
   ta.value = note;
   sec.appendChild(ta);
+  
 
   const btn = document.createElement('button');
   btn.textContent = 'Enregistrer';
@@ -106,6 +107,8 @@ function afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, note) {
     if (r.ok && j.status === 'success') {
       alert('Note mise à jour avec succès !');
       chargerAfficherRendezVous();
+      const rdv = await fetch(`${API_URL}rdv/${numrdv}`).then(r => r.json());
+      afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, rdv.noteConsult);
       showTab('rdv');
     } else {
       alert(`Erreur: ${j.error || r.statusText}`);
@@ -113,6 +116,17 @@ function afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, note) {
   });
   sec.appendChild(btn);
 }
+
+
+
+
+
+
+
+
+
+
+
 
 async function chargerAfficherHoraires() {
   try {
@@ -255,3 +269,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+
+
+
+
+
