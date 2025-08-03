@@ -64,7 +64,7 @@ async function chargerAfficherRendezVous() {
               '${escapeHtml(patient.DATE_NAISSANCE || '')}',
               '${escapeHtml(patient.NO_ASSURANCE_MALADIE || '')}',
               ${rdv.num_rdv},
-              '${escapeHtml(rdv.note || '')}'
+              '${escapeHtml(rdv.note_consult || '')}'
             )">Voir dossier</button>
           </td>
         </tr>

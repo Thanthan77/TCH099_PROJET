@@ -68,6 +68,7 @@ try {
                 'heure' => $row['HEURE'],
                 'duree' => $row['DUREE'],
                 'email' => $row['COURRIEL'],
+                'note_consult' => $row['NOTE_CONSULT'], 
                 'service_id' => $row['ID_SERVICE']
             ];
 

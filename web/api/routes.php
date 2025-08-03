@@ -49,6 +49,8 @@ get($URL.'/disponibilites/$codeEmploye/$heureActuelle/$date', 'endpoints/employe
 // GET pour récupérer les disponibilités d’un employé à une date précise
 get($URL.'/disponibilites/$codeEmploye/$date', 'endpoints/employe/disponibilite_jour_get.php');
 
+// GET pour récupérer les vacances d'un certain employe
+get($URL.'/conge/$codeEmploye','endpoints/employe/conge_employe_get.php');
 
 //POST--
 

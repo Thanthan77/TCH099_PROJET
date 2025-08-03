@@ -69,7 +69,7 @@ async function chargerAfficherRendezVous() {
               '${escapeHtml(pat.DATE_NAISSANCE)}',
               '${escapeHtml(pat.NO_ASSURANCE_MALADIE)}',
               ${rdv.num_rdv},
-              '${escapeHtml(rdv.noteConsult || '')}'
+              '${(rdv.note_consult || '')}'
             )">Voir dossier</button>
         </td>
       </tr>
@@ -92,6 +92,7 @@ function afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, note) {
     ta.placeholder = 'Écrire une note de consultation…';
   
   ta.value = note;
+  console.log("noteConsult:"+note);
   sec.appendChild(ta);
   
 
@@ -167,6 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   chargerAfficherRendezVous();
   chargerAfficherHoraires();
+  chargerDemandesVacances(codeInUrl);
 
   window.showTab = showTab;
   window.afficherDossier = afficherDossier;
@@ -190,7 +192,7 @@ window.addEventListener("click", function (event) {
 
   if (btnVacances) {
     btnVacances.addEventListener("click", async function (e) {
-      if (demandeEnvoyee) return; // protection double-clic
+      if (demandeEnvoyee) return; 
       
       e.preventDefault();
       demandeEnvoyee = true;
@@ -257,6 +259,26 @@ window.addEventListener("click", function (event) {
   }
 });
 
+async function chargerDemandesVacances(codeEmploye) {
+  const res = await fetch(`http://localhost/api/conge/${codeEmploye}`);
+  const data = await res.json();
+
+  const tbody = document.querySelector("table tbody");
+
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="3">Aucune demande de vacances</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = data.map(vacance => `
+    <tr>
+      <td>${vacance.PRENOM_EMPLOYE || ''} ${vacance.NOM_EMPLOYE || ''}</td>
+      <td>${vacance.DATE_DEBUT}</td>
+      <td>${vacance.DATE_FIN}</td>
+      <td>${vacance.STATUS}</td>
+    </tr>
+  `).join('');
+}
 
 
 document.addEventListener("DOMContentLoaded", function () {
