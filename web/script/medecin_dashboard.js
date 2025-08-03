@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   chargerAfficherRendezVous();
   chargerAfficherHoraires();
-  chargerDemandesVacances(codeInUrl);
+  chargerDemandesVacances();
 
   window.showTab = showTab;
   window.afficherDossier = afficherDossier;
@@ -259,7 +259,7 @@ window.addEventListener("click", function (event) {
   }
 });
 
-async function chargerDemandesVacances(codeEmploye) {
+async function chargerDemandesVacances() {
   const res = await fetch(`http://localhost/api/conge/${codeEmploye}`);
   const data = await res.json();
 
