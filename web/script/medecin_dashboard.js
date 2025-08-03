@@ -260,25 +260,32 @@ window.addEventListener("click", function (event) {
 });
 
 async function chargerDemandesVacances() {
-  const res = await fetch(`http://localhost/api/conge/${codeEmploye}`);
-  const data = await res.json();
+  try {
+    const res = await fetch(`${API_URL}conge/${codeEmploye}`);
+    const data = await res.json();
 
-  const tbody = document.querySelector("table tbody");
+    const tbody = document.querySelector('table tbody');
 
-  if (!data.length) {
-    tbody.innerHTML = '<tr><td colspan="3">Aucune demande de vacances</td></tr>';
-    return;
+    if (!Array.isArray(data) || !data.length) {
+      tbody.innerHTML = '<tr><td colspan="3">Aucune demande de vacances</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.map(item => `
+      <tr>
+        <td>${escapeHtml(item.PRENOM_EMPLOYE || '')} ${escapeHtml(item.NOM_EMPLOYE || '')}</td>
+        <td>${escapeHtml(item.DATE_DEBUT)}</td>
+        <td>${escapeHtml(item.DATE_FIN)}</td>
+        <td>${escapeHtml(item.STATUS)}</td>
+      </tr>
+    `).join('');
+  } catch (error) {
+    console.error("Erreur lors du chargement des vacances :", error);
+    const tbody = document.querySelector('table tbody');
+    tbody.innerHTML = '<tr><td colspan="3">Erreur de chargement des vacances</td></tr>';
   }
-
-  tbody.innerHTML = data.map(vacance => `
-    <tr>
-      <td>${vacance.PRENOM_EMPLOYE || ''} ${vacance.NOM_EMPLOYE || ''}</td>
-      <td>${vacance.DATE_DEBUT}</td>
-      <td>${vacance.DATE_FIN}</td>
-      <td>${vacance.STATUS}</td>
-    </tr>
-  `).join('');
 }
+
 
 
 document.addEventListener("DOMContentLoaded", function () {
