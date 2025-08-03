@@ -24,7 +24,8 @@ public class ModificationInfo extends AppCompatActivity {
 
     private EditText prenom, nom, naissance, nam;
     private EditText email, emailConfirme, tel, civique, rue, ville, postal;
-    private Button btnRetour, btnAppliquer;
+    private TextView retour ;
+    private Button  btnAppliquer;
     private String courrielPatient, token;
 
     @Override
@@ -48,8 +49,8 @@ public class ModificationInfo extends AppCompatActivity {
         postal = findViewById(R.id.profil_postal);
 
         // Boutons
-        btnRetour = findViewById(R.id.btn_retour_profil);
-        btnAppliquer = findViewById(R.id.btn_appliquer_changement);
+        retour = findViewById(R.id.btn_retour_profil);
+        btnAppliquer = findViewById(R.id.btn_appliquer_changements);
 
         // Récupérer infos du patient
         courrielPatient = getIntent().getStringExtra("courriel");
@@ -58,7 +59,7 @@ public class ModificationInfo extends AppCompatActivity {
         disableUneditableFields();
         chargerInfosPatient(courrielPatient);
 
-        btnRetour.setOnClickListener(v -> {
+        retour.setOnClickListener(v -> {
             Intent intent = new Intent(ModificationInfo.this, PageProfil.class);
             intent.putExtra("courriel", courrielPatient);
             intent.putExtra("token", token);
