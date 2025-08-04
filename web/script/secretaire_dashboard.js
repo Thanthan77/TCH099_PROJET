@@ -26,46 +26,105 @@ let rdvAvantChangement = [];
 let demandeEnvoyee = false;
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("service").addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
-  document.getElementById("professionnel").addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
-  document.getElementById("date").addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
- 
-  // ⬇️ Chargement initial
-  chargerRendezVous();
+  const codeEmploye = new URLSearchParams(window.location.search).get('codeEmploye');
+
+  // ... tes appels initiaux
+  chargerAfficherRendezVous();
+  chargerAfficherHoraires();
+  chargerDemandesVacances();
   chargerPatients();
   chargerPatientsPourListe();
   chargerServicesPourCreation();
   mettreAJourProfessionnelsSuivi();
-  chargerAfficherHoraires();
-  chargerDemandesVacances();
   showTab("rdv");
 
+  // écouteurs pour les filtres
+  document.getElementById("service").addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
+  document.getElementById("professionnel").addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
+  document.getElementById("date").addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
+
+  // bouton logout
+  const logoutBtn = document.getElementById("logout-btn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      window.location.href = "login.html";
+    });
+  }
+
+  // ✅ CORRECTEMENT DANS LE DOMContentLoaded
+  const btnVacances = document.getElementById("btn-demande-vacances");
+  if (btnVacances) {
+    btnVacances.addEventListener("click", async (e) => {
+      e.preventDefault();
+
+      const errDiv = document.getElementById("erreur-vacances");
+      errDiv.innerText = "";
+
+      const dateDebut = document.getElementById("date-debut").value;
+      const dateFin = document.getElementById("date-fin").value;
+
+      if (!codeEmploye || !dateDebut || !dateFin) {
+        errDiv.style.color = "red";
+        errDiv.innerText = "Veuillez remplir toutes les informations.";
+        return;
+      }
+
+      const data = { dateDebut, dateFin };
+
+      try {
+        const response = await fetch(`${API_URL}conge/employe/${codeEmploye}`, {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const json = await response.json();
+
+        if (!response.ok || json.status !== "OK") {
+          throw new Error(json.error || "Erreur inconnue");
+        }
+
+        errDiv.style.color = "green";
+        errDiv.innerText = json.message || "Demande envoyée avec succès.";
+        chargerDemandesVacances();
+
+      } catch (error) {
+        console.error("Erreur lors de la demande :", error);
+        errDiv.style.color = "red";
+        errDiv.innerText = error.message || "Réponse du serveur invalide.";
+      }
+    });
+  }
+});
 
 
 
-  // ✅ Filtres dynamiques patients
+
+
+
+  // Filtres dynamiques patients
   ["filtrePrenom", "filtreNom", "filtreDateNaissance", "filtreAssurance"].forEach(id => {
     const champ = document.getElementById(id);
     if (champ) champ.addEventListener("input", filtrerPatients);
   });
 
-  // ✅ Filtres dynamiques rendez-vous
+  // Filtres dynamiques rendez-vous
   ["filtreDateRdv", "filtreNomPatientRdv", "filtreNomProRdv", "filtreServiceRdv"].forEach(id => {
     const champ = document.getElementById(id);
     if (champ) champ.addEventListener("input", filtrerRendezVous);
   });
 
-  // ✅ Toggle affichage filtre patients
+  // Toggle affichage filtre patients
   document.querySelector("#patients .filtre-icon")?.addEventListener("click", () => {
     document.getElementById("filtreSection")?.classList.toggle("hidden");
   });
 
-  // ✅ Toggle affichage filtre rendez-vous
+  // Toggle affichage filtre rendez-vous
   document.querySelector("#rdv .filtre-icon")?.addEventListener("click", () => {
     document.getElementById("filtreSectionRdv")?.classList.toggle("hidden");
   });
 
-  // ✅ Déconnexion
+  // Déconnexion
   document.getElementById("btn-logout")?.addEventListener("click", e => {
     e.preventDefault();
     sessionStorage.clear();
@@ -73,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.href = "index.html";
   });
 
-  // ✅ Liste déroulante du nom du patient (form création)
+  // Liste déroulante du nom du patient (form création)
   const champNomPatient = document.getElementById("nomPatient");
   champNomPatient?.addEventListener("input", () => {
     afficherPatientsFiltres(champNomPatient.value.trim());
@@ -82,10 +141,10 @@ document.addEventListener("DOMContentLoaded", () => {
     afficherPatientsFiltres(champNomPatient.value.trim());
   });
 
-  // ✅ Remplir automatiquement nom si on tape l’assurance maladie
+  // Remplir automatiquement nom si on tape l’assurance maladie
   document.getElementById("assurancePatient")?.addEventListener("input", rechercherPatientParAssurance);
 
-  // ✅ Fermer la liste déroulante si clic à l’extérieur
+  // Fermer la liste déroulante si clic à l’extérieur
   document.addEventListener("click", (e) => {
     const champ = document.getElementById("nomPatient");
     const liste = document.getElementById("listeDeroulantePatients");
@@ -94,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // ✅ Mettre à jour les heures disponibles quand le service, le pro ou la date change (popup modification)
+  // Mettre à jour les heures disponibles quand le service, le pro ou la date change (popup modification)
   ["popupService", "popupProfessionnel", "popupDate"].forEach(id => {
     const champ = document.getElementById(id);
     if (champ) champ.addEventListener("change", mettreAJourHeuresDisponibles);
@@ -156,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
       selectPro.disabled = true;
     }
   }
-});
+
 
 
 function showTab(id) {
@@ -186,13 +245,13 @@ async function chargerRendezVous() {
     rendezvous.forEach(rdv => {
       const row = document.createElement("tr");
 
-      // ✅ Afficher le nom complet du patient au lieu du courriel
+      // Afficher le nom complet du patient au lieu du courriel
       const patient = tousLesPatients.find(p => p.COURRIEL === rdv.COURRIEL);
       const nomPatient = patient
         ? `${patient.PRENOM_PATIENT} ${patient.NOM_PATIENT}`
         : rdv.COURRIEL; // fallback
 
-      // ✅ Affichage du nom complet du professionnel
+      // Affichage du nom complet du professionnel
       const nomAffiche = rdv.POSTE === "Médecin" 
         ? `Dr. ${rdv.PRENOM_EMPLOYE} ${rdv.NOM_EMPLOYE}` // Prénom + Nom pour un médecin
         : `${rdv.PRENOM_EMPLOYE} ${rdv.NOM_EMPLOYE}`; // Prénom + Nom pour un autre professionnel
@@ -210,7 +269,7 @@ async function chargerRendezVous() {
       `;
       tbody.appendChild(row);
 
-      // 🧠 Mise à jour du dictionnaire des professionnels par service
+      // Mise à jour du dictionnaire des professionnels par service
       const nomService = rdv.NOM_SERVICE;
       if (!professionnelsParService[nomService]) {
         professionnelsParService[nomService] = new Set();
@@ -218,7 +277,7 @@ async function chargerRendezVous() {
       professionnelsParService[nomService].add(nomAffiche);
     });
 
-    filtrerRendezVous(); // 🟢 Appliquer le filtre actif après chargement
+    filtrerRendezVous(); // Appliquer le filtre actif après chargement
   } catch (err) {
     console.error("Erreur lors du chargement des RDV :", err);
   }
@@ -285,7 +344,7 @@ async function modifierRdv(numRdv) {
   proSelect.appendChild(option);
   proSelect.value = rdv.CODE_EMPLOYE;
 
-  // ⏱️ Remplir le menu déroulant des heures à partir du tableau global optionHeure
+  // Remplir le menu déroulant des heures à partir du tableau global optionHeure
   heureSelect = document.getElementById("popupHour");
   heureSelect.innerHTML = ""; // Vider les anciennes options
 
@@ -584,7 +643,7 @@ async function validerModification() {
       : `${r.PRENOM_EMPLOYE} ${r.NOM_EMPLOYE}`;
 
     if (nomAffiche.trim() === popupNom) {
-      rdv = r; // ✅ Stocke le bon rendez-vous
+      rdv = r; // Stocke le bon rendez-vous
     }
   });
   console.log('rdv trouver test 2');
@@ -613,7 +672,7 @@ console.log(rdv);
   // Récupérer l'heure actuelle du rendez-vous
   const heureActuelle = document.getElementById("popupHour").value;  // Par exemple : Heure actuelle sélectionnée dans le formulaire
 
-    // 3️⃣ Envoyer la mise à jour avec la bonne durée, en incluant l'heure actuelle du RDV
+    // 3️Envoyer la mise à jour avec la bonne durée, en incluant l'heure actuelle du RDV
   const res = await fetch(`${API_URL}rendezvous`, {
     method: "PUT",
     headers: {
@@ -722,8 +781,8 @@ async function mettreAJourHeuresDisponibles() {
       const toutesDisponibles = bloc.length === blocRequis && bloc.every(p => p.STATUT === "DISPONIBLE"); // Vérifie si toutes les plages du bloc sont disponibles
 
       if (toutesDisponibles) {
-        optionHeure.push(plages[i].HEURE); // ✅ Ajouter au tableau global
-        console.log(`✅ Option ajoutée :` + plages[i].HEURE);
+        optionHeure.push(plages[i].HEURE); // Ajouter au tableau global
+        console.log(` Option ajoutée :` + plages[i].HEURE);
       }
     }
 
@@ -747,7 +806,7 @@ heureSelect.innerHTML = ""; // Vider l'ancien contenu
     option.value = h;
     option.textContent = h;
 
-    // ⚠️ Désactiver si la date choisie est aujourd'hui et que l'heure est dans le passé
+    // Désactiver si la date choisie est aujourd'hui et que l'heure est dans le passé
     if (selectedDate.toDateString() === now.toDateString()) {
       const [hours, minutes] = h.split(":").map(Number);
       const heureCandidate = new Date(selectedDate);
@@ -779,7 +838,7 @@ async function mettreAJourHeuresDisponiblesNewRdv() {
     const heureSelect = document.getElementById("heure");
 
     if (!date || !serviceNom || !heureSelect) {
-      console.warn("⏳ Champs requis manquants.");
+      console.warn("Champs requis manquants.");
       return;
     }
 
@@ -804,7 +863,7 @@ async function mettreAJourHeuresDisponiblesNewRdv() {
     });
 
     if (!correspondant) {
-      console.warn("❌ Aucun professionnel ne correspond à :", nomSelectionne);
+      console.warn(" Aucun professionnel ne correspond à :", nomSelectionne);
       return;
     }
 
@@ -893,7 +952,7 @@ async function mettreAJourHeuresDisponiblesNewRdv() {
 
 
 async function attendreEtEnvoyer() {
-  // ⏳ Attendre que les champs existent dans le DOM
+  // Attendre que les champs existent dans le DOM
   while (
     !document.getElementById("date") ||
     !document.getElementById("service") ||
@@ -903,12 +962,12 @@ async function attendreEtEnvoyer() {
     await new Promise(resolve => setTimeout(resolve, 100));
   }
 
-  // ✅ Ajouter des écouteurs pour relancer dynamiquement la mise à jour
+  // Ajouter des écouteurs pour relancer dynamiquement la mise à jour
   document.getElementById("date").addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
   document.getElementById("service").addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
   document.getElementById("professionnel").addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
 
-  // 🟡 Premier appel si tous les champs sont déjà remplis
+  // Premier appel si tous les champs sont déjà remplis
   const date = document.getElementById("date").value;
   const serviceNom = document.getElementById("service").value;
   const codeEmploye = document.getElementById("professionnel").value;
@@ -956,7 +1015,7 @@ async function creerRendezVous() {
     if (!patient) throw new Error("Patient introuvable.");
     const courrielPatient = patient.COURRIEL;
 
-    // ✅ Création du rendez-vous
+    // Création du rendez-vous
     const body = {
       CODE_EMPLOYE: codeEmploye,
       COURRIEL: courrielPatient,
@@ -984,17 +1043,17 @@ async function creerRendezVous() {
       throw new Error(json?.error || "Erreur serveur");
     }
 
-    console.log("✅ POST réussi :", json);
+    console.log("POST réussi :", json);
     console.log('testdure:' + duree);
     alert("Le rendez-vous a été ajouté avec succès");
 
-    // ✅ Mise à jour directe de la disponibilité
+    // Mise à jour directe de la disponibilité
     //await changerDisponibilite(codeEmploye, jour, heure,courrielPatient, duree, "OCCUPÉ");
     
     reinitialiserFormulaireRdv();
 
   } catch (err) {
-    console.error("❌ Erreur :", err);
+    console.error("Erreur :", err);
     alert("Erreur : " + err.message);
   }
 }
@@ -1004,10 +1063,10 @@ async function creerRendezVous() {
 
 async function chargerDemandesVacances() {
   try {
-    const res = await fetch(`${API_URL}conge/${codeInUrl}`);
+    const res = await fetch(`${API_URL}conge/${codeEmploye}`);
     const data = await res.json();
-    const tbody = document.querySelector('#table-vacances tbody');
 
+    const tbody = document.querySelector('#table-vacances tbody');
     if (!Array.isArray(data) || !data.length) {
       tbody.innerHTML = '<tr><td colspan="4">Aucune demande de vacances</td></tr>';
       return;
@@ -1015,18 +1074,19 @@ async function chargerDemandesVacances() {
 
     tbody.innerHTML = data.map(item => `
       <tr>
-        <td>${escapeHtml(item.PRENOM_EMPLOYE || '')} ${escapeHtml(item.NOM_EMPLOYE || '')}</td>
-        <td>${escapeHtml(item.DATE_DEBUT)}</td>
-        <td>${escapeHtml(item.DATE_FIN)}</td>
-        <td>${escapeHtml(item.STATUS)}</td>
+        <td>${item.PRENOM_EMPLOYE || ''} ${item.NOM_EMPLOYE || ''}</td>
+        <td>${item.DATE_DEBUT}</td>
+        <td>${item.DATE_FIN}</td>
+        <td>${item.STATUS}</td>
       </tr>
     `).join('');
   } catch (error) {
     console.error("Erreur lors du chargement des vacances :", error);
     const tbody = document.querySelector('#table-vacances tbody');
-    tbody.innerHTML = '<tr><td colspan="4">Erreur de chargement des vacances</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4">Erreur de chargement</td></tr>';
   }
 }
+
 
 
 async function chargerAfficherHoraires() {
@@ -1069,10 +1129,10 @@ async function chargerAfficherHoraires() {
   const rdvs = await resultat.json();
 
   rdvs.forEach(r => {
-    console.log(`📌 RDV : courriel=${r.COURRIEL}, jour=${r.JOUR}, heure=${r.HEURE}`);
+    console.log(` RDV : courriel=${r.COURRIEL}, jour=${r.JOUR}, heure=${r.HEURE}`);
   });
 
-  console.log(`🔍 Recherché : courriel=${courrielPatient}, jour=${jour}, heure=${heure}`);
+  console.log(` Recherché : courriel=${courrielPatient}, jour=${jour}, heure=${heure}`);
 
   const rdv = rdvs.find(r =>
     r.COURRIEL === courrielPatient &&
@@ -1080,7 +1140,7 @@ async function chargerAfficherHoraires() {
     r.HEURE === heure
   );
 
-  console.log('✅ rdv trouvé :', rdv);
+  console.log(' rdv trouvé :', rdv);
 
   if (!rdv) {
     console.warn("Aucun rendez-vous trouvé pour :", courrielPatient, jour, heure);
@@ -1108,9 +1168,9 @@ async function chargerAfficherHoraires() {
       throw new Error(`Erreur API: ${erreur}`);
     }
 
-    console.log(`✅ Disponibilité changée à ${statut} pour ${codeEmploye} le ${jour} à ${heure}`);
+    console.log(`Disponibilité changée à ${statut} pour ${codeEmploye} le ${jour} à ${heure}`);
   } catch (err) {
-    console.error("❌ Erreur lors de la mise à jour de la disponibilité :", err.message);
+    console.error(" Erreur lors de la mise à jour de la disponibilité :", err.message);
     alert("Erreur changement disponibilité : " + err.message);
   }
 }
@@ -1144,9 +1204,9 @@ async function changerStatutDisponibilite(codeEmploye, jour, heure, duree, statu
       throw new Error(`Erreur API: ${erreur}`);
     }
 
-    console.log(`✅ Disponibilité changée à ${statut} pour ${codeEmploye} le ${jour} à ${heure}`);
+    console.log(` Disponibilité changée à ${statut} pour ${codeEmploye} le ${jour} à ${heure}`);
   } catch (err) {
-    console.error("❌ Erreur lors de la mise à jour de la disponibilité :", err.message);
+    console.error(" Erreur lors de la mise à jour de la disponibilité :", err.message);
     alert("Erreur changement disponibilité : " + err.message);
   }
 }*/

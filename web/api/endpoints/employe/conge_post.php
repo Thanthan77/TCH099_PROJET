@@ -4,6 +4,15 @@ header('Content-Type: application/json');
 
 $data = json_decode(file_get_contents('php://input'), true);
 
+$codeEmploye = null;
+if (isset($_SERVER['REQUEST_URI'])) {
+    $parts = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
+    $dernier = end($parts);
+    if (is_numeric($dernier)) {
+        $codeEmploye = intval($dernier);
+    }
+}
+
 try {
     $dateDebut = $data['dateDebut'] ?? null;
     $dateFin = $data['dateFin'] ?? null;
@@ -22,6 +31,7 @@ try {
 
     $cnx = Database::getInstance();
 
+    // Vérifier s'il existe déjà un congé à la même date
     $checkSql = "SELECT COUNT(*) FROM Exception_horaire 
                  WHERE CODE_EMPLOYE = :code 
                  AND DATE_DEBUT = :debut";
@@ -36,6 +46,7 @@ try {
         exit;
     }
 
+    // Insérer le congé
     $sql = "INSERT INTO Exception_horaire (CODE_EMPLOYE, DATE_DEBUT, DATE_FIN, TYPE_CONGE, STATUS)
             VALUES (:code, :debut, :fin, 'CONGÉ', 'EN ATTENTE')";
     $stmt = $cnx->prepare($sql);
