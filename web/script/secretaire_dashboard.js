@@ -990,6 +990,8 @@ async function creerRendezVous() {
 
     // ✅ Mise à jour directe de la disponibilité
     //await changerDisponibilite(codeEmploye, jour, heure,courrielPatient, duree, "OCCUPÉ");
+    
+    reinitialiserFormulaireRdv();
 
   } catch (err) {
     console.error("❌ Erreur :", err);
@@ -1148,3 +1150,13 @@ async function changerStatutDisponibilite(codeEmploye, jour, heure, duree, statu
     alert("Erreur changement disponibilité : " + err.message);
   }
 }*/
+
+function reinitialiserFormulaireRdv() {
+  document.getElementById("nomPatient").value = "";
+  document.getElementById("assurancePatient").value = "";
+  document.getElementById("service").value = "";
+  document.getElementById("professionnel").innerHTML = `<option value="">-- Sélectionnez un professionnel --</option>`;
+  document.getElementById("professionnel").disabled = true;
+  document.getElementById("date").value = "";
+  document.getElementById("heure").innerHTML = `<option value="">Heure du Rendez-Vous</option>`;
+}
