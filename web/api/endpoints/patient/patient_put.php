@@ -3,15 +3,15 @@ require_once(__DIR__.'/../../db/Database.php');
 
 header('Content-Type: application/json');
 
-
-
 $data = json_decode(file_get_contents('php://input'), true);
-$courriel = $data['COURRIEL'];
-if (!$data || !isset($data['NUM_TEL'], $data['NUM_CIVIQUE'], $data['RUE'], $data['VILLE'], $data['CODE_POSTAL'])) {
+
+if (!$data || !isset($data['COURRIEL'], $data['NUM_TEL'], $data['NUM_CIVIQUE'], $data['RUE'], $data['VILLE'], $data['CODE_POSTAL'])) {
     http_response_code(400);
     echo json_encode(['error' => 'Champs manquants']);
     exit();
 }
+
+$courriel = $data['COURRIEL'];
 
 try {
     $cnx = Database::getInstance();
@@ -36,7 +36,12 @@ try {
 
     $stmt->execute();
 
-    echo json_encode(['message' => 'Profil mis à jour avec succès']);
+    if ($stmt->rowCount() > 0) {
+        echo json_encode(['message' => 'Profil mis à jour avec succès']);
+    } else {
+        http_response_code(404);
+        echo json_encode(['error' => 'Aucun patient trouvé avec ce courriel']);
+    }
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['error' => 'Erreur serveur']);
