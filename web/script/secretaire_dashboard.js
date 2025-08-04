@@ -23,7 +23,7 @@ let heureSelect;
 let rdvAvantChangement = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-   document.getElementById("service").addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
+  document.getElementById("service").addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
   document.getElementById("professionnel").addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
   document.getElementById("date").addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
  
@@ -92,9 +92,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (champ) champ.addEventListener("change", mettreAJourHeuresDisponibles);
   });
 
-  const today = new Date().toISOString().split("T")[0]; // 'YYYY-MM-DD'
-  document.getElementById("date").setAttribute("min", today);
-  document.getElementById("popupDate").setAttribute("min", today);
+  //const today = new Date().toISOString().split("T")[0]; // 'YYYY-MM-DD'
+  //document.getElementById("date").setAttribute("min", today);
+  //document.getElementById("popupDate").setAttribute("min", today);
 
 
   async function chargerServicesPourCreation() {
