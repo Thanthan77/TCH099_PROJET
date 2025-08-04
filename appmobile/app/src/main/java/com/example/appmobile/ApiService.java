@@ -23,9 +23,8 @@ public interface ApiService {
     @GET("services")
     Call<List<ServiceRequest>> getServices();
 
-   @GET ("disponibilité")
-    Call<List<HoraireRequest>> getHoraire () ;
-
+    @GET("disponibilitees/services/id/{id_service}")
+    Call<List<HoraireRequest>> getHoraire(@Path("id_service") int idService);
     @GET("rendezvous/patient/{courriel}")
     Call<RdvResponse> getRDV(@Path("courriel") String courriel);
 

@@ -67,8 +67,7 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
     }
 
     private void chargerHoraires() {
-        Call<List<HoraireRequest>> call = apiService.getHoraire();
-
+        Call<List<HoraireRequest>> call = apiService.getHoraire(idService);
         call.enqueue(new Callback<List<HoraireRequest>>() {
             @Override
             public void onResponse(Call<List<HoraireRequest>> call, Response<List<HoraireRequest>> response) {

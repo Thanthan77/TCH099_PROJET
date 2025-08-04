@@ -13,7 +13,7 @@ public class RdvInfo {
 
 
 
-    public RdvInfo(int idRdv,String jourRdv, String heureRdv, int typeRdv, int numRdv) {
+    public RdvInfo(int idRdv,String jourRdv, String heureRdv, int typeRdv) {
 
         this.idRdv = idRdv;
         this.jourRdv = jourRdv;
