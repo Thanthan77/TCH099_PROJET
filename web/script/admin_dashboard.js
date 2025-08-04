@@ -197,7 +197,6 @@ async function chargerEmployes() {
         <td class="col-poste">${emp.POSTE}</td>
         <td>
           <button onclick="ouvrirProfil('${emp.CODE_EMPLOYE}')">Profil</button>
-          <button class="danger" onclick="supprimerEmploye('${emp.CODE_EMPLOYE}')">Supprimer</button>
         </td>
       `;
       tbody.appendChild(row);
@@ -206,6 +205,9 @@ async function chargerEmployes() {
     console.error("Erreur lors du chargement des employés :", err);
   }
 }
+
+// A remettre en dessous du bouton profile
+//<button class="danger" onclick="supprimerEmploye('${emp.CODE_EMPLOYE}')">Supprimer</button>
 
 function ouvrirProfil(code) {
   window.location.href = `profile.html?codeEmploye=${code}`;
