@@ -29,6 +29,9 @@
         <activity android:name=".PagesRDV.pagePriseMoment" />
         <activity android:name=".PagesRDV.pagePriseService" />
         <activity android:name=".pageConfirmation" />
+        <activity android:name=".PageProfil" />
+        <activity android:name=".ModificationInfo" />
+
         
 
     </application>
