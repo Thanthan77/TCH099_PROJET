@@ -1,6 +1,7 @@
 package com.example.appmobile;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.*;
 
@@ -27,6 +28,17 @@ public class PageProfil extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profil);
 
+        // Ajout discret pour session persistante
+        SharedPreferences prefs = getSharedPreferences("session", MODE_PRIVATE);
+        if (prefs != null) {
+            String savedToken = prefs.getString("token", null);
+            String savedCourriel = prefs.getString("courriel", null);
+            if (savedToken != null && savedCourriel != null) {
+                token = savedToken;
+                courrielPatient = savedCourriel;
+            }
+        }
+
         // Champs
         prenom = findViewById(R.id.profil_prenom);
         nom = findViewById(R.id.profil_nom);
@@ -47,10 +59,6 @@ public class PageProfil extends AppCompatActivity {
 
         // Désactiver modification
         disableAllFields();
-
-        // Récupérer token + courriel
-        token = getIntent().getStringExtra("token");
-        courrielPatient = getIntent().getStringExtra("courriel");
 
         // Charger les infos
         chargerProfil(courrielPatient);
@@ -75,6 +83,7 @@ public class PageProfil extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
+
         lienProfil.setOnClickListener(v -> {
             Intent intent = new Intent(PageProfil.this, ModificationInfo.class);
             intent.putExtra("token", token);
@@ -88,7 +97,6 @@ public class PageProfil extends AppCompatActivity {
             intent.putExtra("courriel", courrielPatient);
             startActivity(intent);
         });
-
     }
 
     private void disableAllFields() {

@@ -1,6 +1,7 @@
 package com.example.appmobile.PagesRDV;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
@@ -20,28 +21,37 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class pagePriseMoment extends AppCompatActivity  implements View.OnClickListener{
+public class pagePriseMoment extends AppCompatActivity implements View.OnClickListener {
 
     private ListView listView;
     private ApiService apiService;
     private int idService;
     private String nomService;
-    private TextView messagePrAcuneDispo ;
-    private TextView retour ;
+    private TextView messagePrAcuneDispo;
+    private TextView retour;
+
+    // Ajout discret pour session utilisateur
+    private String token;
+    private String courriel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prise_moment);
 
+        // Lecture des SharedPreferences pour récupérer les infos de session
+        SharedPreferences prefs = getSharedPreferences("session", MODE_PRIVATE);
+        token = prefs.getString("token", null);
+        courriel = prefs.getString("courriel", null);
+        // Tu peux utiliser ces variables plus tard si besoin pour personnalisation ou sécurité
+
         listView = findViewById(R.id.listeHoraire);
-        retour= findViewById(R.id.retourPageMoment);
-        messagePrAcuneDispo= findViewById(R.id.messageAucuneDispo) ;
+        retour = findViewById(R.id.retourPageMoment);
+        messagePrAcuneDispo = findViewById(R.id.messageAucuneDispo);
 
         apiService = ApiClient.getApiService();
 
         retour.setOnClickListener(this);
-
 
         idService = getIntent().getIntExtra("id_service", -1);
         nomService = getIntent().getStringExtra("nom_service");
@@ -64,10 +74,10 @@ public class pagePriseMoment extends AppCompatActivity  implements View.OnClickL
                 if (response.isSuccessful() && response.body() != null) {
                     List<HoraireRequest> horaires = response.body();
 
-                    if(horaires.isEmpty()) {
+                    if (horaires.isEmpty()) {
                         messagePrAcuneDispo.setVisibility(View.VISIBLE);
                         listView.setVisibility(View.GONE);
-                        return ;
+                        return;
                     }
                     messagePrAcuneDispo.setVisibility(View.GONE);
                     listView.setVisibility(View.VISIBLE);
@@ -80,7 +90,6 @@ public class pagePriseMoment extends AppCompatActivity  implements View.OnClickL
                             pagePriseMoment.this,
                             rdvItems,
                             horaire -> {
-
                                 Intent intent = new Intent(pagePriseMoment.this, pagePriseConfirmation.class);
                                 intent.putExtra("nom_service", horaire.getNomService());
                                 intent.putExtra("jour", horaire.getJourRdv());
@@ -95,6 +104,7 @@ public class pagePriseMoment extends AppCompatActivity  implements View.OnClickL
                     Toast.makeText(pagePriseMoment.this, "Erreur de chargement des horaires", Toast.LENGTH_SHORT).show();
                 }
             }
+
             @Override
             public void onFailure(Call<List<HoraireRequest>> call, Throwable t) {
                 Toast.makeText(pagePriseMoment.this, "Erreur réseau : " + t.getMessage(), Toast.LENGTH_SHORT).show();
@@ -104,7 +114,7 @@ public class pagePriseMoment extends AppCompatActivity  implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        if (v==retour) {
+        if (v == retour) {
             finish();
         }
     }
