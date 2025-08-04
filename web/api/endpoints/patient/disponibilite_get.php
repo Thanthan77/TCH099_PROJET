@@ -3,7 +3,6 @@ header('Content-Type: application/json');
 require_once(__DIR__ . '/../../db/Database.php');
 
 try {
-     $id_service = isset($_GET['id_service']) ? $_GET['id_service'] : null;
      
     if (!isset($id_service) || !is_numeric($id_service)) {
         http_response_code(400);

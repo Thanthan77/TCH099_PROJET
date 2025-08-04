@@ -60,10 +60,7 @@ function route($route, $path_to_include)
 			call_user_func_array($callback, []);
 			exit();
 		}
-		foreach ($parameters as $index => $value) {
-    $varName = ltrim($route_parts[$index], '$');
-    $GLOBALS[$varName] = $value;
-}
+		
 		include_once __DIR__ . "/$path_to_include";
 		exit();
 	}
@@ -72,17 +69,15 @@ function route($route, $path_to_include)
 	}
 	$parameters = [];
 	for ($__i__ = 0; $__i__ < count($route_parts); $__i__++) {
-    $route_part = $route_parts[$__i__];
-    if (preg_match('/^\$/', $route_part)) {
-        $varName = ltrim($route_part, '$');
-        $value = $request_url_parts[$__i__];
-        $parameters[] = $value;
-        
-        $GLOBALS[$varName] = $value;
-    } else if ($route_parts[$__i__] != $request_url_parts[$__i__]) {
-        return;
-    }
-}
+    	$route_part = $route_parts[$__i__];
+   		if (preg_match('/^\$/', $route_part)) { 
+			$route_part = ltrim($route_part, '$');
+			array_push($parameters, $request_url_parts[$__i__]);
+			$$route_part = $request_url_parts[$__i__];
+		} else if ($route_parts[$__i__] != $request_url_parts[$__i__]) {
+			return;
+		}
+	}
 	// Callback function
 	if (is_callable($callback)) {
 		call_user_func_array($callback, $parameters);
