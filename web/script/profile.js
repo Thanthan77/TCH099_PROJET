@@ -1,4 +1,8 @@
-const API_URL = 'http://localhost/api/';
+const API_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost/api/"
+    : "http://20.116.216.218/api/";
+
 
 const codeInUrl = new URLSearchParams(window.location.search).get("codeEmploye");
 const codeSession = sessionStorage.getItem("codeEmploye") || localStorage.getItem("codeEmploye");

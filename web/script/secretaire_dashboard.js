@@ -1,4 +1,8 @@
-const API_URL = "http://localhost/api/";
+const API_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost/api/"
+    : "http://20.116.216.218/api/";
+
 
 const codeEmploye = new URLSearchParams(window.location.search).get('codeEmploye');
 const codeInUrl = new URLSearchParams(window.location.search).get("codeEmploye");
@@ -51,7 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ✅ CORRECTEMENT DANS LE DOMContentLoaded
   const btnVacances = document.getElementById("btn-demande-vacances");
   if (btnVacances) {
     btnVacances.addEventListener("click", async (e) => {
@@ -761,7 +764,7 @@ async function mettreAJourHeuresDisponibles() {
     
     console.log(typeof(heureActuelle));
 
-    // 🔹 4. Remplir les options du menu déroulant avec les heures valides
+    // Remplir les options du menu déroulant avec les heures valides
     optionHeure = []; // Réinitialiser le tableau avant de le remplir
 
     for (let i = 0; i < plages.length; i++) {
@@ -786,7 +789,7 @@ async function mettreAJourHeuresDisponibles() {
       }
     }
 
-    // 🔍 Debug : Affiche tout le tableau des heures valides
+    // Debug : Affiche tout le tableau des heures valides
     console.log("🟦 optionHeure contient :", optionHeure);
 
 
@@ -990,7 +993,7 @@ async function creerRendezVous() {
       return;
     }
 
-    // 🔹 Chargement et recherche du professionnel
+    // Chargement et recherche du professionnel
     const professionnels = await (await fetch(`${API_URL}professionnels`)).json();
     const professionnel = professionnels.find(p => {
       const nom = `${p.POSTE === 'Médecin' ? 'Dr. ' : ''}${p.PRENOM_EMPLOYE} ${p.NOM_EMPLOYE}`.trim();
@@ -999,7 +1002,7 @@ async function creerRendezVous() {
     if (!professionnel) throw new Error("Professionnel introuvable.");
     const codeEmploye = professionnel.CODE_EMPLOYE;
 
-    // 🔹 Chargement et recherche du service
+    // Chargement et recherche du service
     const services = await (await fetch(`${API_URL}services`)).json();
     const service = services.find(s => s.NOM === nomService);
     if (!service) throw new Error("Service introuvable.");
@@ -1009,7 +1012,7 @@ async function creerRendezVous() {
     console.log(duree);
     console.log(service.DUREE);
 
-    // 🔹 Chargement et recherche du patient
+    // Chargement et recherche du patient
     const patients = await (await fetch(`${API_URL}patients`)).json();
     const patient = patients.find(p => `${p.PRENOM_PATIENT} ${p.NOM_PATIENT}`.trim() === nomPatient);
     if (!patient) throw new Error("Patient introuvable.");

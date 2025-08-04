@@ -1,4 +1,8 @@
-const API_URL = "http://localhost/api/";
+const API_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost/api/"
+    : "http://20.116.216.218/api/";
+
 
 // Vérifie la session
 const codeInUrl = new URLSearchParams(window.location.search).get("codeEmploye");
@@ -22,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
   chargerDemandesVacances();
   chargerAssignationsServices();
 
-  // 🔐 Déconnexion
+  // Déconnexion
   const logoutBtn = document.getElementById("btn-logout");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", (e) => {
@@ -33,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 🔍 Filtres dynamiques
+  // Filtres dynamiques
   const filtreIcone = document.querySelector(".filtre-icon");
   if (filtreIcone) filtreIcone.addEventListener("click", toggleFiltres);
 
@@ -45,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (champ) champ.addEventListener("input", filtrerEmployes);
   });
 
-  // 👤 Création de compte
+  // Création de compte
   const btnOuvrir = document.getElementById("btn-creer-compte");
   const modal = document.getElementById("modal-creer-compte");
   const modalContent = document.querySelector(".modal-content");
@@ -107,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 📅 Génération des disponibilités
+  // Génération des disponibilités
   const btnCharger = document.getElementById("btn-charger-disponibilites");
   const popupDispo = document.getElementById("popup-disponibilites");
   const formDispo = document.getElementById("form-disponibilites");
@@ -128,13 +132,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       try {
-        // 1️⃣ GET des horaires et vacances
+        // GET des horaires et vacances
         const resInfos = await fetch(`${API_URL}disponibilites/generation`);
         const infos = await resInfos.json();
 
         if (!resInfos.ok) throw new Error(infos.error || "Erreur lors du chargement des données");
 
-        // 2️⃣ POST pour générer les disponibilités
+        // POST pour générer les disponibilités
         const resGen = await fetch(`${API_URL}disponibilites/generation`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -148,19 +152,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const result = await resGen.json();
         if (resGen.ok) {
-          alert(`✅ ${result.message}\nTotal créés : ${result.total_insertions}`);
+          alert(`${result.message}\nTotal créés : ${result.total_insertions}`);
           fermerPopupDisponibilites();
         } else {
           throw new Error(result.error || "Erreur inconnue");
         }
       } catch (err) {
-        alert("❌ Erreur : " + err.message);
+        alert("Erreur : " + err.message);
       }
     });
   }
 });
 
-// 🔚 Fermer le popup
+// Fermer le popup
 function fermerPopupDisponibilites() {
   const popup = document.getElementById("popup-disponibilites");
   if (popup) popup.classList.add("hidden");

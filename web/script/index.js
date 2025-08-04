@@ -1,4 +1,8 @@
-const API_URL = 'http://localhost/api/';
+const API_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost/api/"
+    : "http://20.116.216.218/api/";
+
 
 const codeEmploye = localStorage.getItem("codeEmploye");
 const isConnected = localStorage.getItem("isConnected");

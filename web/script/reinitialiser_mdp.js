@@ -1,4 +1,8 @@
-const API_URL = "http://localhost/api/";
+const API_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost/api/"
+    : "http://20.116.216.218/api/";
+
 
 function verifierMotDePasse(motDePasse) {
   const erreurs = [];
@@ -75,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
         alert(data.message || "Mot de passe réinitialisé avec succès !");
         form.reset();
 
-        // 🔐 Redirection après changement du mot de passe
+        // Redirection après changement du mot de passe
         sessionStorage.clear();
         localStorage.clear();
         window.location.href = "index.html";
@@ -87,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // 🔐 Gestion du menu utilisateur
+  // Gestion du menu utilisateur
   const logoutBtn = document.getElementById("btn-logout");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", function (e) {

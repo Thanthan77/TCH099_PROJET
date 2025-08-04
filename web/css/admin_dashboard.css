@@ -1,4 +1,4 @@
-/* ✅ Structure pour maintenir le footer en bas */
+/* Structure pour maintenir le footer en bas */
 html, body {
   height: 100%;
   margin: 0;
@@ -9,7 +9,7 @@ html, body {
   background-color: #eef4ff;
 }
 
-/* ===================== 🌐 GÉNÉRAL ===================== */
+/* ===================== GÉNÉRAL ===================== */
 
 main {
   flex: 1;
@@ -76,7 +76,7 @@ header h1 {
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-/* ===================== 📋 TABLEAUX ===================== */
+/* ===================== TABLEAUX ===================== */
 
 table {
   width: 100%;
@@ -90,7 +90,7 @@ th, td {
   text-align: left;
 }
 
-/* ===================== 🧾 FORMULAIRES ===================== */
+/* ===================== FORMULAIRES ===================== */
 
 input, select {
   width: 100%;
@@ -122,7 +122,7 @@ button.danger:hover {
   background-color: #a0031e;
 }
 
-/* ===================== 👤 MENU UTILISATEUR ===================== */
+/* ===================== MENU UTILISATEUR ===================== */
 
 .user-menu-container {
   position: absolute;
@@ -160,7 +160,7 @@ button.danger:hover {
   background-color: #f1f1f1;
 }
 
-/* ===================== ➕ MODAL CRÉATION COMPTE ===================== */
+/* ===================== MODAL CRÉATION COMPTE ===================== */
 
 .modal {
   position: fixed;
@@ -233,7 +233,7 @@ button.danger:hover {
   margin-top: 10px;
 }
 
-/* ===================== 🔎 FILTRES ===================== */
+/* ===================== FILTRES ===================== */
 
 .rdv-header {
   display: flex;
@@ -283,7 +283,7 @@ button.danger:hover {
   background-color: #005f99;
 }
 
-/* ===================== 📞 PIED DE PAGE ===================== */
+/* ===================== PIED DE PAGE ===================== */
 
 .footer-clinique {
   background-color: #0077b6;
@@ -328,7 +328,7 @@ td ul li {
 }
 
 
-/* ❌ Bouton de fermeture */
+/* Bouton de fermeture */
 .close-button {
   position: absolute;
   top: 10px;
@@ -338,7 +338,7 @@ td ul li {
   color: #000;
 }
 
-/* ✅ Formulaire d’assignation : 2 colonnes de 3 éléments */
+/* Formulaire d’assignation : 2 colonnes de 3 éléments */
 #form-modifier-assignation {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -356,7 +356,7 @@ td ul li {
   gap: 8px;
 }
 
-/* ✅ Bouton Enregistrer */
+/* Bouton Enregistrer */
 #form-modifier-assignation button {
   grid-column: span 2;
   margin-top: 20px;
@@ -373,7 +373,7 @@ td ul li {
   background-color: #023e8a;
 }
 
-/* ✅ Conteneur grille des services */
+/* Conteneur grille des services */
 #liste-services-checkboxes {
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 3 colonnes fixes */
@@ -381,7 +381,7 @@ td ul li {
   margin-top: 25px;
 }
 
-/* ✅ Carte stylée pour chaque service */
+/* Carte stylée pour chaque service */
 .service-card {
   background-color: #f1f9ff;
   border: 1px solid #b6d9f5;
@@ -398,7 +398,7 @@ td ul li {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center; /* ✅ centre aussi les longs textes */
+  text-align: center; /* centre aussi les longs textes */
   gap: 8px;
 }
 
@@ -408,14 +408,14 @@ td ul li {
 }
 
 
-/* ✅ Masque la checkbox par défaut */
+/* Masque la checkbox par défaut */
 .service-card input[type="checkbox"] {
   accent-color: #0077b6;
   width: 18px;
   height: 18px;
 }
 
-/* ✅ Zone des boutons en bas */
+/* Zone des boutons en bas */
 #form-modifier-assignation {
   display: flex;
   flex-direction: column;
@@ -457,7 +457,7 @@ td ul li {
   background-color: #b2b2b2;
 }
 
-/* ✅ Style pour le nom complet */
+/* Style pour le nom complet */
 .label-assignation {
   font-size: 14px;
   font-weight: bold;
@@ -590,7 +590,7 @@ td ul li {
 #assignation-services table {
   width: 100%;
   border-collapse: separate;
-  border-spacing: 40px 15px; /* 🔁 espace horizontal entre colonnes + vertical entre lignes */
+  border-spacing: 40px 15px; /* espace horizontal entre colonnes + vertical entre lignes */
 }
 
 #assignation-services th,
