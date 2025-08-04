@@ -119,7 +119,9 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
         } else if (view == btnUrgencePasOuf) {
             nomService = "Urgence mineure";
         } else if (view == lienDeco) {
-            startActivity(new Intent(this, MainActivity.class));
+            Intent intent = new Intent(pagePriseService.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
             finish();
             return;
         } else if (view == lienMesRdv) {

@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.appmobile.PagesRDV.pagePriseService;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,11 +121,13 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onClick(View v) {
         if (v == lienDeco) {
-            startActivity(new Intent(this, MainActivity.class));
+            Intent intent = new Intent(PageMesRDV.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
             finish();
 
         } else if (v == lienMesRdv) {
-            startActivity(new Intent(this, PageMesRDV.class));
+            startActivity(new Intent(this, pagePriseService.class));
             finish();
 
         } else if (v == lienProfil) {
