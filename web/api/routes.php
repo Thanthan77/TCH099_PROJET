@@ -124,6 +124,10 @@ get($URL.'/patient/$courriel','endpoints/patient/patient_get');
 // GET pour avoir toutes les disponibilites
 get($URL. '/disponibilites/services/$id_service', 'endpoints/patient/disponibilite_get.php');
 
+// PUT pour changer le mot de passe
+put($URL . '/mdp_put', 'endpoints/patient/mdp_put.php');
+
+
 
 
 
