@@ -22,7 +22,7 @@ if (
     )
 ) {
     http_response_code(400);
-    echo json_encode(['error' => 'Champs requis manquants']);
+    echo json_encode(['error' => 'Champs requs manquants']);
     exit();
 }
 
