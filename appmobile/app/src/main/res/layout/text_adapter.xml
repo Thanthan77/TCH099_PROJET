@@ -23,14 +23,6 @@
             android:textColor="#000000"
             android:paddingBottom="8dp" />
 
-        <TextView
-            android:id="@+id/emailPatient"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/adresse_courriel_du_client"
-            android:textSize="16sp"
-            android:textColor="#333333"
-            android:paddingBottom="8dp" />
 
         <TextView
             android:id="@+id/dateRdv2"
@@ -55,7 +47,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:backgroundTint="#FF4444"
+        android:backgroundTint="#0077CB"
         android:padding="8dp"
         android:text="@string/annuler_le_rdv"
         android:textColor="#FFFFFF" />

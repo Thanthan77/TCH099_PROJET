@@ -108,7 +108,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/aucun_rendez_vous_pour_le_patient"
                 android:textSize="16sp"
-                android:textColor="#FF0000"
+                android:textColor="#666666"
                 android:gravity="center"
                 android:visibility="gone"
                 android:padding="16dp" />

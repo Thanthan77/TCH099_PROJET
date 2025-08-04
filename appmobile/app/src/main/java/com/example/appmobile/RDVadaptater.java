@@ -22,7 +22,6 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
     private TextView serviceRdv;
     private TextView daterdv;
     private TextView timeRdv;
-    private TextView emailRdv;
     private Button annulerRdv;
 
     private int idService  ;
@@ -58,13 +57,11 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
         serviceRdv = convertView.findViewById(R.id.nomService2);
         daterdv = convertView.findViewById(R.id.dateRdv2);
         timeRdv = convertView.findViewById(R.id.heureRdv2);
-        emailRdv = convertView.findViewById(R.id.emailPatient);
         annulerRdv = convertView.findViewById(R.id.buttonAnnulerRdv);
 
 
         daterdv.setText(rdv.getJourRdv());
         timeRdv.setText(rdv.getHeureRdv());
-        emailRdv.setText(rdv.getCourriel());
 
         idService = rdv.getTypeRdv() ;
         nomService(idService) ;
