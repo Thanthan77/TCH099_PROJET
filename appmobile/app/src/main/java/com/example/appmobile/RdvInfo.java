@@ -11,12 +11,15 @@ public class RdvInfo {
     private String courriel;
 
 
-    public RdvInfo(int idRdv,String jourRdv, String heureRdv, int typeRdv) {
+
+
+    public RdvInfo(int idRdv,String jourRdv, String heureRdv, int typeRdv, int numRdv) {
 
         this.idRdv = idRdv;
         this.jourRdv = jourRdv;
         this.heureRdv = heureRdv;
         this.typeRdv = typeRdv;
+
 
     }
     public String getHeureRdv() {
@@ -35,6 +38,8 @@ public class RdvInfo {
         return courriel;
     }
     public int getIdRdv() {return idRdv;}
+
+
 
 
     public void setCourriel(String courriel) {

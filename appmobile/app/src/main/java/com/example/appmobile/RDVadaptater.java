@@ -10,7 +10,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,6 +27,8 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
     private Button annulerRdv;
 
     private int idService  ;
+
+    
 
 
 
@@ -76,27 +80,32 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
     private void annulerRdv(RdvInfo rdv) {
         ApiService apiService = ApiClient.getApiService();
 
-        int id = rdv.getIdRdv();
+        int idRdv = rdv.getIdRdv();
+        Map<String, String> jsonBody = new HashMap<>();
+        jsonBody.put("action", "cancel");
 
-        Call<Void> call = apiService.putAnnulerRdv(id);
+        Log.d("API_REQUEST", "Annulation du RDV id=" + idRdv + " avec body=" + jsonBody);
+
+        Call<Void> call = apiService.putAnnulerRdv(idRdv, jsonBody);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-
                     remove(rdv);
                     notifyDataSetChanged();
                     Log.d("API", "RDV annulé avec succès");
                 } else {
-                    Log.e("API", "Erreur d'annulation : " + response.code());
+                    Log.e("API", "Erreur d'annulation : code " + response.code());
                 }
             }
+
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.e("API", "Erreur réseau : " + t.getMessage());
             }
         });
     }
+
 
     private void nomService (int idService) {
         String serviceNom ;
