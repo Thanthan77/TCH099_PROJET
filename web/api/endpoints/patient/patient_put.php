@@ -11,7 +11,6 @@ if (
         $data['COURRIEL'], 
         $data['PRENOM_PATIENT'], 
         $data['NOM_PATIENT'], 
-        $data['MOT_DE_PASSE'], 
         $data['NUM_TEL'], 
         $data['NUM_CIVIQUE'], 
         $data['RUE'], 
@@ -37,7 +36,6 @@ try {
         SET 
             PRENOM_PATIENT = :prenom,
             NOM_PATIENT = :nom,
-            MOT_DE_PASSE = :mdp,
             NUM_TEL = :tel,
             NUM_CIVIQUE = :civique,
             RUE = :rue,
@@ -50,7 +48,6 @@ try {
 
     $stmt->bindParam(':prenom', $data['PRENOM_PATIENT']);
     $stmt->bindParam(':nom', $data['NOM_PATIENT']);
-    $stmt->bindParam(':mdp', $data['MOT_DE_PASSE']);
     $stmt->bindParam(':tel', $data['NUM_TEL']);
     $stmt->bindParam(':civique', $data['NUM_CIVIQUE']);
     $stmt->bindParam(':rue', $data['RUE']);
