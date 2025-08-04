@@ -140,24 +140,28 @@ async function chargerAfficherHoraires() {
     const data = await res.json();
 
     const tbody = document.querySelector('#horaire table tbody');
-
     if (!Array.isArray(data) || !data.length) {
       tbody.innerHTML = '<tr><td colspan="3">Aucun horaire disponible</td></tr>';
       return;
     }
 
-    tbody.innerHTML = data.map(h => `
-      <tr>
-        <td>${escapeHtml(h.NOM_EMPLOYE)}</td>
-        <td>${escapeHtml(h.JOURS)}</td>
-        <td>${escapeHtml(h.HEURE)}</td>
-      </tr>
-    `).join('');
+    console.log("Code employé actuel :", codeEmploye);
+    tbody.innerHTML = data.map(h => {
+    const isCurrentUser = parseInt(h.CODE_EMPLOYE) === parseInt(codeEmploye);
+
+    console.log("Employé JSON :", h.CODE_EMPLOYE, " Comparé avec :", codeEmploye);
+
+    return `
+    <tr ${isCurrentUser ? 'class="surbrillance-row"' : ''}>
+      <td>${escapeHtml(h.NOM_EMPLOYE)}</td>
+      <td>${escapeHtml(h.JOURS)}</td>
+      <td>${escapeHtml(h.HEURE)}</td>
+    </tr>
+  `;
+  }).join('');
 
   } catch (error) {
     console.error("Erreur lors du chargement des horaires :", error);
-    const tbody = document.querySelector('#horaire table tbody');
-    tbody.innerHTML = '<tr><td colspan="3">Erreur de chargement des horaires</td></tr>';
   }
 }
 
@@ -205,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = { dateDebut, dateFin };
 
       try {
-        const response = await fetch(`${API_URL}vacance/employe/${codeEmploye}`, {
+        const response = await fetch(`${API_URL}conge/employe/${codeEmploye}`, {
           method: "POST",
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
@@ -224,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           errDiv.style.color = "red";
           if (data.error && data.error.includes("SQLSTATE[23000]") && data.error.includes("Duplicate entry")) {
-            errDiv.innerText = " Cette date a deja été prise";
+            errDiv.innerText = " Des vacances ont déjà été prises durant ces dates";
           } else {
             errDiv.innerText = data.error || "Une erreur s'est produite lors de la demande.";
           } 

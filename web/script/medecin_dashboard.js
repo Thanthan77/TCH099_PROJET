@@ -131,23 +131,32 @@ async function chargerAfficherHoraires() {
       return;
     }
 
-    tbody.innerHTML = data.map(h => `
-      <tr>
-        <td>${escapeHtml(h.NOM_EMPLOYE)}</td>
-        <td>${escapeHtml(h.JOURS)}</td>
-        <td>${escapeHtml(h.HEURE)}</td>
-      </tr>
-    `).join('');
+    console.log("Code employé actuel :", codeEmploye);
+    tbody.innerHTML = data.map(h => {
+    const isCurrentUser = parseInt(h.CODE_EMPLOYE) === parseInt(codeEmploye);
+
+    console.log("Employé JSON :", h.CODE_EMPLOYE, " Comparé avec :", codeEmploye);
+
+    return `
+    <tr ${isCurrentUser ? 'class="surbrillance-row"' : ''}>
+      <td>${escapeHtml(h.NOM_EMPLOYE)}</td>
+      <td>${escapeHtml(h.JOURS)}</td>
+      <td>${escapeHtml(h.HEURE)}</td>
+    </tr>
+  `;
+  }).join('');
+
   } catch (error) {
     console.error("Erreur lors du chargement des horaires :", error);
   }
 }
 
+
+
 async function chargerDemandesVacances() {
   try {
     const res = await fetch(`${API_URL}conge/${codeEmploye}`);
     const data = await res.json();
-
     const tbody = document.querySelector('#table-vacances tbody');
 
     if (!Array.isArray(data) || !data.length) {
@@ -221,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
           chargerDemandesVacances(); 
         } else {
           errDiv.style.color = "red";
-          errDiv.innerText = json.error || "Une erreur s'est produite lors de la demande.";
+          errDiv.innerText = json.error || "Des vacances ont déjà été prises durant ces dates";
         }
       } catch (error) {
         console.error("Erreur lors de la demande :", error);

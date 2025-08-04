@@ -33,14 +33,12 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
     private TextView messagePrAcunRdv;
     private String courrielPatient;
 
-
     private String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mes_rdv);
-
 
         SharedPreferences prefs = getSharedPreferences("session", MODE_PRIVATE);
         token = prefs.getString("token", null);
@@ -73,12 +71,12 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
     }
 
     public void chargerRdv() {
-        Call<List<RdvRequest>> call = apiService.getRDV(courrielPatient);
-        call.enqueue(new Callback<List<RdvRequest>>() {
+        Call<RdvResponse> call = apiService.getRDV(courrielPatient);
+        call.enqueue(new Callback<RdvResponse>() {
             @Override
-            public void onResponse(Call<List<RdvRequest>> call, Response<List<RdvRequest>> response) {
+            public void onResponse(Call<RdvResponse> call, Response<RdvResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<RdvRequest> rdvList = response.body();
+                    List<RdvRequest> rdvList = response.body().getRendezvous();
                     afficherRdv(rdvList);
                 } else {
                     Toast.makeText(PageMesRDV.this, "Aucun rendez-vous trouvé", Toast.LENGTH_SHORT).show();
@@ -86,7 +84,7 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
             }
 
             @Override
-            public void onFailure(Call<List<RdvRequest>> call, Throwable t) {
+            public void onFailure(Call<RdvResponse> call, Throwable t) {
                 Log.e("API", "Erreur : " + t.getMessage());
                 Toast.makeText(PageMesRDV.this, "Erreur de connexion", Toast.LENGTH_SHORT).show();
             }
@@ -124,13 +122,13 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
             startActivity(intent);
             finish();
         } else if (v == lienRdv) {
-            Intent intent = new Intent(PageMesRDV.this, pagePriseService.class) ;
+            Intent intent = new Intent(PageMesRDV.this, pagePriseService.class);
             intent.putExtra("token", token);
             intent.putExtra("courriel", courrielPatient);
             startActivity(intent);
             finish();
         } else if (v == lienProfil) {
-            Intent intent = new Intent(PageMesRDV.this, PageProfil.class) ;
+            Intent intent = new Intent(PageMesRDV.this, PageProfil.class);
             intent.putExtra("token", token);
             intent.putExtra("courriel", courrielPatient);
             startActivity(intent);
