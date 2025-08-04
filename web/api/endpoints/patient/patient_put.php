@@ -1,20 +1,37 @@
 <?php
-require_once(__DIR__.'/../../db/Database.php');
+require_once(__DIR__ . '/../../db/Database.php');
 
 header('Content-Type: application/json');
-
+header('Cache-Control: no-cache');
 
 $data = json_decode(file_get_contents('php://input'), true);
-$courriel = $data['COURRIEL'];
-if (!$data || !isset($data['NUM_TEL'], $data['NUM_CIVIQUE'], $data['RUE'], $data['VILLE'], $data['CODE_POSTAL'])) {
+
+
+if (
+    !$data ||
+    !isset($data['COURRIEL'], $data['NUM_TEL'], $data['NUM_CIVIQUE'], $data['RUE'], $data['VILLE'], $data['CODE_POSTAL'])
+) {
     http_response_code(400);
-    echo json_encode(['error' => 'Champs manquants']);
+    echo json_encode(['error' => 'Champs requis manquants']);
     exit();
 }
+
+$courriel = $data['COURRIEL'];
 
 try {
     $cnx = Database::getInstance();
     $cnx->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Vérifier que le patient existe
+    $check = $cnx->prepare("SELECT 1 FROM Patient WHERE COURRIEL = :courriel");
+    $check->bindParam(':courriel', $courriel);
+    $check->execute();
+
+    if ($check->rowCount() === 0) {
+        http_response_code(404);
+        echo json_encode(['error' => 'Courriel introuvable']);
+        exit();
+    }
 
     $stmt = $cnx->prepare("
         UPDATE Patient
@@ -38,5 +55,8 @@ try {
     echo json_encode(['message' => 'Profil mis à jour avec succès']);
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['error' => 'Erreur serveur']);
+    echo json_encode([
+        'error' => 'Erreur serveur',
+        'details' => $e->getMessage() 
+    ]);
 }
