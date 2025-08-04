@@ -6,12 +6,14 @@ try {
     $cnx = Database::getInstance();
 
     $query = "
-        SELECT h.JOURS, 
-               CONCAT(h.HEURE_DEBUT, ' - ', h.HEURE_FIN) AS HEURE,
-               e.NOM_EMPLOYE
-        FROM Horaire h
-        JOIN Employe e ON h.CODE_EMPLOYE = e.CODE_EMPLOYE
+    SELECT h.CODE_EMPLOYE,
+           h.JOURS, 
+           CONCAT(h.HEURE_DEBUT, ' - ', h.HEURE_FIN) AS HEURE,
+           e.NOM_EMPLOYE
+    FROM Horaire h
+    JOIN Employe e ON h.CODE_EMPLOYE = e.CODE_EMPLOYE
     ";
+
 
     $stmt = $cnx->prepare($query);
     $stmt->execute();

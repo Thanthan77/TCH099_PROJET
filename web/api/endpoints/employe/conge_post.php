@@ -8,7 +8,7 @@ try {
     $dateDebut = $data['dateDebut'] ?? null;
     $dateFin = $data['dateFin'] ?? null;
 
-    if (!isset($codeEmploye) || !$dateDebut || !$dateFin) {
+    if (!$codeEmploye || !$dateDebut || !$dateFin) {
         http_response_code(400);
         echo json_encode(['error' => 'Données manquantes ou invalides']);
         exit;
@@ -22,9 +22,22 @@ try {
 
     $cnx = Database::getInstance();
 
+    $checkSql = "SELECT COUNT(*) FROM Exception_horaire 
+                 WHERE CODE_EMPLOYE = :code 
+                 AND DATE_DEBUT = :debut";
+    $checkStmt = $cnx->prepare($checkSql);
+    $checkStmt->bindValue(':code', $codeEmploye, PDO::PARAM_INT);
+    $checkStmt->bindValue(':debut', $dateDebut);
+    $checkStmt->execute();
+
+    if ($checkStmt->fetchColumn() > 0) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Des vacances ont déjà été prises durant ces dates.']);
+        exit;
+    }
+
     $sql = "INSERT INTO Exception_horaire (CODE_EMPLOYE, DATE_DEBUT, DATE_FIN, TYPE_CONGE, STATUS)
             VALUES (:code, :debut, :fin, 'CONGÉ', 'EN ATTENTE')";
-
     $stmt = $cnx->prepare($sql);
     $stmt->bindValue(':code', $codeEmploye, PDO::PARAM_INT);
     $stmt->bindValue(':debut', $dateDebut);
@@ -39,5 +52,5 @@ try {
 
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(["error" => $e->getMessage()]);
+    echo json_encode(["error" => "Erreur serveur : " . $e->getMessage()]);
 }
