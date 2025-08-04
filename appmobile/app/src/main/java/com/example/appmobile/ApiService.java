@@ -42,7 +42,7 @@ Call<Void> putAnnulerRdv(@Path("numRdv") int idRdv);
     Call<Patient> getPatient(@Path("courriel") String courriel);
 
 
-    @PUT("patient_put")
+    @PUT("modifier_patient")
     Call<Void> updatePatient(@Body Map<String, String> data);
 
     @PUT("mdp_put")
