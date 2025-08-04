@@ -82,6 +82,8 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
 
         apiService = ApiClient.getApiService();
 
+        setButtonsEnabled(false);
+
         loadServices();
     }
 
@@ -92,11 +94,12 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
             @Override
             public void onResponse(Call<List<ServiceRequest>> call, Response<List<ServiceRequest>> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    setButtonsEnabled(true);
                     for (ServiceRequest service : response.body()) {
                         serviceMap.put(service.getNomService(), service.getIdService());
                     }
                 } else {
-                    Toast.makeText(pagePriseService.this, "Erreur chargement des services", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(pagePriseService.this, "Erreur chargement services (code: " + response.code() + ")", Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -148,11 +151,11 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
 
         if (nomService != null) {
             idService = serviceMap.getOrDefault(nomService, -1);
-            pageSuivante(nomService);
+            pageSuivante(nomService,idService);
         }
     }
 
-    private void pageSuivante(String nomService) {
+    private void pageSuivante(String nomService, int idService) {
         if (idService == -1) {
             Toast.makeText(this, "Service non disponible", Toast.LENGTH_SHORT).show();
             return;
@@ -163,5 +166,14 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
         intent.putExtra("token", token);
         intent.putExtra("courriel", courriel);
         startActivity(intent);
+    }
+    private void setButtonsEnabled(boolean enabled) {
+        btnGenerale.setEnabled(enabled);
+        btnGrossesse.setEnabled(enabled);
+        btnMaladieChronique.setEnabled(enabled);
+        btnDepistage.setEnabled(enabled);
+        btnVaccin.setEnabled(enabled);
+        btnLiquideCorps.setEnabled(enabled);
+        btnUrgencePasOuf.setEnabled(enabled);
     }
 }
