@@ -27,6 +27,7 @@ public class PageProfil extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profil);
+        courrielPatient = getIntent().getStringExtra("courriel");
 
         // Ajout discret pour session persistante
         SharedPreferences prefs = getSharedPreferences("session", MODE_PRIVATE);
@@ -113,13 +114,13 @@ public class PageProfil extends AppCompatActivity {
 
     private void chargerProfil(String courriel) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        Call<java.util.List<Patient>> call = apiService.getPatient(courriel);
+        Call<Patient> call = apiService.getPatient(courrielPatient);
 
-        call.enqueue(new Callback<java.util.List<Patient>>() {
+        call.enqueue(new Callback<Patient>() {
             @Override
-            public void onResponse(Call<java.util.List<Patient>> call, Response<java.util.List<Patient>> response) {
-                if (response.isSuccessful() && !response.body().isEmpty()) {
-                    Patient patient = response.body().get(0);
+            public void onResponse(Call<Patient> call, Response<Patient> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Patient patient = response.body();
 
                     prenom.setText(patient.getPrenom());
                     nom.setText(patient.getNom());
@@ -136,9 +137,10 @@ public class PageProfil extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<java.util.List<Patient>> call, Throwable t) {
+            public void onFailure(Call<Patient> call, Throwable t) {
                 Toast.makeText(PageProfil.this, "Erreur réseau : " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 }

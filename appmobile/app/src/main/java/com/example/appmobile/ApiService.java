@@ -37,8 +37,10 @@ Call<Void> putAnnulerRdv(@Path("numRdv") int idRdv);
 
     @POST("inscription_patient")
     Call<ResponseBody> inscrirePatient(@Body RequestBody body);
-    @GET("patient_get")
-    Call<List<Patient>> getPatient(@Query("courriel") String courriel);
+
+    @GET("patient/{courriel}")
+    Call<Patient> getPatient(@Path("courriel") String courriel);
+
 
     @PUT("patient_put")
     Call<Void> updatePatient(@Body Map<String, String> data);

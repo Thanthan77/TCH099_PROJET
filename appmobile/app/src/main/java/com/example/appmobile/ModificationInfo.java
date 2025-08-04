@@ -118,13 +118,13 @@ public class ModificationInfo extends AppCompatActivity {
 
     private void chargerInfosPatient(String courriel) {
         ApiService apiService = ApiClient.getApiService();
-        Call<List<Patient>> call = apiService.getPatient(courriel);
+        Call<Patient> call = apiService.getPatient(courriel);
 
-        call.enqueue(new Callback<List<Patient>>() {
+        call.enqueue(new Callback<Patient>() {
             @Override
-            public void onResponse(Call<List<Patient>> call, Response<List<Patient>> response) {
-                if (response.isSuccessful() && !response.body().isEmpty()) {
-                    Patient p = response.body().get(0);
+            public void onResponse(Call<Patient> call, Response<Patient> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Patient p = response.body();
                     prenom.setText(p.getPrenom());
                     nom.setText(p.getNom());
                     naissance.setText(p.getDateNaissance());
@@ -142,7 +142,7 @@ public class ModificationInfo extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<Patient>> call, Throwable t) {
+            public void onFailure(Call<Patient> call, Throwable t) {
                 Toast.makeText(ModificationInfo.this, "Erreur : " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
