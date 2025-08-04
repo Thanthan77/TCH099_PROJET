@@ -1,5 +1,6 @@
 const API_URL = "http://localhost/api/";
 
+const codeEmploye = new URLSearchParams(window.location.search).get('codeEmploye');
 const codeInUrl = new URLSearchParams(window.location.search).get("codeEmploye");
 const codeSession = sessionStorage.getItem("codeEmploye") || localStorage.getItem("codeEmploye");
 
@@ -22,6 +23,8 @@ let optionHeure = [];
 let heureSelect;
 let rdvAvantChangement = [];
 
+let demandeEnvoyee = false;
+
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("service").addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
   document.getElementById("professionnel").addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
@@ -33,7 +36,12 @@ document.addEventListener("DOMContentLoaded", () => {
   chargerPatientsPourListe();
   chargerServicesPourCreation();
   mettreAJourProfessionnelsSuivi();
+  chargerAfficherHoraires();
+  chargerDemandesVacances();
   showTab("rdv");
+
+
+
 
   // ✅ Filtres dynamiques patients
   ["filtrePrenom", "filtreNom", "filtreDateNaissance", "filtreAssurance"].forEach(id => {
@@ -988,6 +996,68 @@ async function creerRendezVous() {
     alert("Erreur : " + err.message);
   }
 }
+
+
+
+
+async function chargerDemandesVacances() {
+  try {
+    const res = await fetch(`${API_URL}conge/${codeInUrl}`);
+    const data = await res.json();
+    const tbody = document.querySelector('#table-vacances tbody');
+
+    if (!Array.isArray(data) || !data.length) {
+      tbody.innerHTML = '<tr><td colspan="4">Aucune demande de vacances</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.map(item => `
+      <tr>
+        <td>${escapeHtml(item.PRENOM_EMPLOYE || '')} ${escapeHtml(item.NOM_EMPLOYE || '')}</td>
+        <td>${escapeHtml(item.DATE_DEBUT)}</td>
+        <td>${escapeHtml(item.DATE_FIN)}</td>
+        <td>${escapeHtml(item.STATUS)}</td>
+      </tr>
+    `).join('');
+  } catch (error) {
+    console.error("Erreur lors du chargement des vacances :", error);
+    const tbody = document.querySelector('#table-vacances tbody');
+    tbody.innerHTML = '<tr><td colspan="4">Erreur de chargement des vacances</td></tr>';
+  }
+}
+
+
+async function chargerAfficherHoraires() {
+  try {
+    const res = await fetch(`${API_URL}horaires`);
+    const data = await res.json();
+
+    const tbody = document.querySelector('#horaire table tbody');
+    if (!Array.isArray(data) || !data.length) {
+      tbody.innerHTML = '<tr><td colspan="3">Aucun horaire disponible</td></tr>';
+      return;
+    }
+
+    console.log("Code employé actuel :", codeEmploye);
+    tbody.innerHTML = data.map(h => {
+    const isCurrentUser = parseInt(h.CODE_EMPLOYE) === parseInt(codeEmploye);
+
+    console.log("Employé JSON :", h.CODE_EMPLOYE, " Comparé avec :", codeEmploye);
+
+    return `
+    <tr ${isCurrentUser ? 'class="surbrillance-row"' : ''}>
+      <td>${escapeHtml(h.NOM_EMPLOYE)}</td>
+      <td>${escapeHtml(h.JOURS)}</td>
+      <td>${escapeHtml(h.HEURE)}</td>
+    </tr>
+  `;
+  }).join('');
+
+  } catch (error) {
+    console.error("Erreur lors du chargement des horaires :", error);
+  }
+}
+
 
 
 
