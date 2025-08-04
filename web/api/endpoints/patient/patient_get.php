@@ -9,7 +9,7 @@ try {
    
     if (!$courriel) {
         http_response_code(400);
-        echo json_encode(["error" => "Le paramètre codeEmploye est requis"]);
+        echo json_encode(["error" => "Le paramètre courriel est requis"]);
         exit();
     }
 
@@ -19,14 +19,14 @@ try {
     $pstmt->execute();
 
     $pstmt->setFetchMode(PDO::FETCH_ASSOC);
-    $resultats = $pstmt->fetchAll();
+    $patient = $pstmt->fetch();
 
-if (empty($resultats)) {
-        http_response_code(404);
-        echo json_encode(["message" => "Aucun patient trouvé avec ce courriel"]);
-    } else {
-        echo json_encode($resultats);
-    }
+if (!$patient) {
+    http_response_code(404);
+    echo json_encode(["message" => "Aucun patient trouvé avec ce courriel"]);
+} else {
+    echo json_encode($patient);
+}
 
 } catch(PDOException $e) {
     http_response_code(500);
