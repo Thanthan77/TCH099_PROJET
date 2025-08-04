@@ -1,25 +1,25 @@
 package com.example.appmobile.PagesRDV;
 
 public class HoraireRdv {
-    public String nomService ;
-    public String jourRdv ;
-    public String heureRdv ;
+    private String nomService;
+    private String jourRdv;
+    private String heureRdv;
 
     public HoraireRdv(String nomService, String jourRdv, String heureRdv) {
+        this.nomService = nomService;
+        this.jourRdv = jourRdv;
         this.heureRdv = heureRdv;
-        this.jourRdv = jourRdv ;
-        this.nomService = nomService ;
     }
 
-    public String getHeureRdv() {
-        return heureRdv;
+    public String getNomService() {
+        return nomService;
     }
 
     public String getJourRdv() {
         return jourRdv;
     }
 
-    public String getNomService() {
-        return nomService;
+    public String getHeureRdv() {
+        return heureRdv;
     }
 }

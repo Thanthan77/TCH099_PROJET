@@ -106,11 +106,7 @@ public class pagePriseConfirmation extends AppCompatActivity implements View.OnC
             finish();
         } else if (v == btnConfirme) {
             confirmeRDV();
-            Intent intent = new Intent(pagePriseConfirmation.this, pagePriseService.class) ;
-            intent.putExtra("token", token);
-            intent.putExtra("courriel", courriel);
-            startActivity(intent);
-            finish();
+
         } else if (v == btnAnnuler) {
             Intent intent = new Intent(pagePriseConfirmation.this, pagePriseMoment.class) ;
             intent.putExtra("token", token);
@@ -128,20 +124,24 @@ public class pagePriseConfirmation extends AppCompatActivity implements View.OnC
             @Override
             public void onResponse(Call<List<RdvRequest>> call, Response<List<RdvRequest>> response) {
                 if (response.isSuccessful()) {
-                    List<RdvRequest> rdvList = response.body();
-                    Log.d("API", "Succès : " + rdvList.size() + " rendez-vous reçus.");
-                    Intent intent = new Intent(getApplicationContext(), PageMesRDV.class);
+
+                    Intent intent = new Intent(pagePriseConfirmation.this, PageMesRDV.class);
+                    intent.putExtra("token", token);
+                    intent.putExtra("courriel", courriel);
                     startActivity(intent);
                     finish();
                 } else {
                     Log.e("API", "Erreur dans la réponse : " + response.code());
+
                 }
             }
 
             @Override
             public void onFailure(Call<List<RdvRequest>> call, Throwable t) {
                 Log.e("API", "Erreur : " + t.getMessage());
+
             }
         });
     }
+
 }

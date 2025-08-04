@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.appmobile.ApiClient;
 import com.example.appmobile.ApiService;
-import com.example.appmobile.PageMesRDV;
 import com.example.appmobile.R;
 
 import java.util.ArrayList;
@@ -31,7 +30,6 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
     private TextView messagePrAcuneDispo;
     private TextView retour;
 
-
     private String token;
     private String courriel;
 
@@ -45,7 +43,6 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
         token = prefs.getString("token", null);
         courriel = prefs.getString("courriel", null);
 
-
         listView = findViewById(R.id.listeHoraire);
         retour = findViewById(R.id.retourPageMoment);
         messagePrAcuneDispo = findViewById(R.id.messageAucuneDispo);
@@ -53,6 +50,7 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
         apiService = ApiClient.getApiService();
 
         retour.setOnClickListener(this);
+
 
         idService = getIntent().getIntExtra("id_service", -1);
         nomService = getIntent().getStringExtra("nom_service");
@@ -79,17 +77,24 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
                         listView.setVisibility(View.GONE);
                         return;
                     }
+
                     messagePrAcuneDispo.setVisibility(View.GONE);
                     listView.setVisibility(View.VISIBLE);
 
                     List<HoraireRdv> rdvItems = new ArrayList<>();
                     for (HoraireRequest h : horaires) {
-                        rdvItems.add(new HoraireRdv(nomService, h.getJourRdv(), h.getHeureRdv()));
+                        rdvItems.add(new HoraireRdv(
+                                nomService,      // nom du service
+                                h.getJourRdv(),  // jour
+                                h.getHeureRdv()  // heure
+                        ));
                     }
+
                     HoraireAdapter adapter = new HoraireAdapter(
                             pagePriseMoment.this,
                             rdvItems,
                             horaire -> {
+                                // Lancer page de confirmation avec les infos sélectionnées
                                 Intent intent = new Intent(pagePriseMoment.this, pagePriseConfirmation.class);
                                 intent.putExtra("nom_service", horaire.getNomService());
                                 intent.putExtra("jour", horaire.getJourRdv());
@@ -117,7 +122,8 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         if (v == retour) {
-            Intent intent = new Intent(pagePriseMoment.this, pagePriseService.class) ;
+
+            Intent intent = new Intent(pagePriseMoment.this, pagePriseService.class);
             intent.putExtra("token", token);
             intent.putExtra("courriel", courriel);
             startActivity(intent);
