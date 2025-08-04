@@ -57,46 +57,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const btnVacances = document.getElementById("btn-demande-vacances");
   if (btnVacances) {
-    btnVacances.addEventListener("click", async (e) => {
-      e.preventDefault();
+  btnVacances.addEventListener("click", async (e) => {
+    e.preventDefault();
 
-      const errDiv = document.getElementById("erreur-vacances");
-      errDiv.innerText = "";
+    const errDiv = document.getElementById("erreur-vacances");
+    errDiv.innerText = "";
 
-      const dateDebut = document.getElementById("date-debut").value;
-      const dateFin = document.getElementById("date-fin").value;
+    const dateDebut = document.getElementById("date-debut").value;
+    const dateFin = document.getElementById("date-fin").value;
 
-      if (!codeEmploye || !dateDebut || !dateFin) {
-        errDiv.style.color = "red";
-        errDiv.innerText = "Veuillez remplir toutes les informations.";
-        return;
+    if (!codeEmploye || !dateDebut || !dateFin) {
+      errDiv.style.color = "red";
+      errDiv.innerText = "Veuillez remplir toutes les informations.";
+      return;
+    }
+
+    const data = { dateDebut, dateFin };
+
+    try {
+      const response = await fetch(`${API_URL}conge/employe/${codeEmploye}`, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      const json = await response.json();
+
+      if (!response.ok || json.status !== "OK") {
+        throw new Error(json.error || "Erreur inconnue");
       }
 
-      const data = { dateDebut, dateFin };
+      errDiv.style.color = "green";
+      errDiv.innerText = json.message || "Demande envoyée avec succès.";
+      chargerDemandesVacances();
 
-      try {
-        const response = await fetch(`${API_URL}conge/employe/${codeEmploye}`, {
-          method: "POST",
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
+      // ✅ Réinitialiser les champs du formulaire après succès
+      document.getElementById("date-debut").value = "";
+      document.getElementById("date-fin").value = "";
 
-        const json = await response.json();
-
-        if (!response.ok || json.status !== "OK") {
-          throw new Error(json.error || "Erreur inconnue");
-        }
-
-        errDiv.style.color = "green";
-        errDiv.innerText = json.message || "Demande envoyée avec succès.";
-        chargerDemandesVacances();
-
-      } catch (error) {
-        console.error("Erreur lors de la demande :", error);
-        errDiv.style.color = "red";
-        errDiv.innerText = error.message || "Réponse du serveur invalide.";
-      }
-    });
+    } catch (error) {
+      console.error("Erreur lors de la demande :", error);
+      errDiv.style.color = "red";
+      errDiv.innerText = error.message || "Réponse du serveur invalide.";
+    }
+  });
   }
 });
 
@@ -228,7 +232,7 @@ function showTab(id) {
 
 let professionnelsParService = {}; // Déclaration globale (à mettre en haut du fichier JS)
 
-async function chargerRendezVous() {
+async function chargerAfficherRendezVous() {
   try {
     const response = await fetch(`${API_URL}rendezvous`);
     if (!response.ok) throw new Error("Échec du chargement des rendez-vous");
@@ -393,7 +397,7 @@ function annulerRdv(numRdv) {
 
       alert(data.message || "Rendez-vous annulé avec succès.");
       console.log(`RDV ${numRdv} annulé.`);
-      chargerRendezVous();
+      chargerAfficherRendezVous();
     })
     .catch(err => alert("Erreur : " + err.message));
   }
@@ -616,7 +620,15 @@ function filtrerRendezVous() {
   });
 }
 
-
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.toString()
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
 function reinitialiserFiltreRdv() {
   document.getElementById("filtreDateRdv").value = '';
@@ -706,7 +718,7 @@ console.log(rdv);
     //changerDisponibilite(rdv.CODE_EMPLOYE, rdv.JOUR, rdv.HEURE, rdv.COURRIEL, rdv.DUREE,'DISPONIBLE');
 
     fermerPopup();
-    chargerRendezVous();
+    chargerAfficherRendezVous();
 }
 
 
