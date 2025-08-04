@@ -27,7 +27,7 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
 
     private TextView lienDeco;
     private TextView lienProfil;
-    private TextView lienMesRdv;
+    private TextView lienRdv;
     private ListView listRdv;
     private ApiService apiService;
     private TextView messagePrAcunRdv;
@@ -48,10 +48,10 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
         listRdv = findViewById(R.id.listRdv);
         lienDeco = findViewById(R.id.lienDeconnexion);
         lienProfil = findViewById(R.id.lienProfil);
-        lienMesRdv = findViewById(R.id.lienMesRdv);
+        lienRdv = findViewById(R.id.lienRdv);
         messagePrAcunRdv = findViewById(R.id.messageAucunRdv);
 
-        lienMesRdv.setOnClickListener(this);
+        lienRdv.setOnClickListener(this);
         lienProfil.setOnClickListener(this);
         lienDeco.setOnClickListener(this);
 
@@ -123,8 +123,8 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
-        } else if (v == lienMesRdv) {
-            Intent intent = new Intent(PageMesRDV.this, PageMesRDV.class) ;
+        } else if (v == lienRdv) {
+            Intent intent = new Intent(PageMesRDV.this, pagePriseService.class) ;
             intent.putExtra("token", token);
             intent.putExtra("courriel", courrielPatient);
             startActivity(intent);
