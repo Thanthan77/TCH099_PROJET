@@ -103,7 +103,19 @@ put($URL.'/motdepasse', 'endpoints/employe/changermotdepasse_put.php');
 
 // Section Patients
 
-// POST
+// GET--
+
+// GET pour avoir les rendezvous d'un patient
+get($URL.'/rendezvous/patient/$courriel','endpoints/patient/rendezVous_patient_get.php');
+
+// GET pour avoir toutes les informations d'un patient 
+get($URL.'/patient/$courriel','endpoints/patient/patient_get');
+
+// GET pour avoir toutes les disponibilites en fonction d'un service
+get($URL. '/disponibilitees/services/id/$id_service', 'endpoints/patient/disponibilite_get.php');
+
+
+// POST--
 
 // POST pour le login de patient (génération du token JWT)
 post($URL.'/login_patient', 'endpoints/patient/login_patient.php'); 
@@ -114,7 +126,7 @@ post($URL.'/inscription_patient', 'endpoints/patient/inscription_patient.php');
 // POST pour prendre un rendezvous en tant que pâtient
 post($URL.'/rendezvous/patient', 'endpoints/patient/rendezVous_post.php'); 
 
-// PUT
+// PUT--
 
 // PUT modifie les informations des patients 
 put($URL. '/modifier_patient', 'endpoints/patient/patient_put.php');
@@ -125,16 +137,6 @@ put($URL.'/rendezVous/id/patient/$numRdv','endpoints/patient/rendezVous_put.php'
 // PUT pour changer le mot de passe
 put($URL . '/mdp_put', 'endpoints/patient/mdp_put.php');
 
-// GET
-
-// GET pour avoir les rendezvous d'un patient
-get($URL.'/rendezvous/patient/$courriel','endpoints/patient/rendezVous_patient_get.php');
-
-// GET pour avoir toutes les informations d'un patient 
-get($URL.'/patient/$courriel','endpoints/patient/patient_get');
-
-// GET pour avoir toutes les disponibilites en fonction d'un service
-get($URL. '/disponibilitees/services/id/$id_service', 'endpoints/patient/disponibilite_get.php');
 
 
 
