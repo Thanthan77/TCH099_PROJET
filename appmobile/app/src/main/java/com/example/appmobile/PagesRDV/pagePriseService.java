@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.appmobile.ApiClient;
 import com.example.appmobile.ApiService;
 import com.example.appmobile.MainActivity;
+import com.example.appmobile.ModificationInfo;
 import com.example.appmobile.PageMesRDV;
 import com.example.appmobile.PageProfil;
 import com.example.appmobile.R;
@@ -42,7 +43,7 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
     private Map<String, Integer> serviceMap = new HashMap<>();
     private ApiService apiService;
 
-    // Ajout discret pour session
+
     private String token;
     private String courriel;
 
@@ -51,11 +52,11 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prise_service);
 
-        // Récupérer les données de session de manière silencieuse
+
         SharedPreferences prefs = getSharedPreferences("session", MODE_PRIVATE);
         token = prefs.getString("token", null);
         courriel = prefs.getString("courriel", null);
-        // (facultatif) Utilisation possible pour passer à la page suivante ou API sécurisée
+
 
         btnGenerale = findViewById(R.id.btn_rdv1);
         btnGrossesse = findViewById(R.id.btn_rdv2);
@@ -130,11 +131,17 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
             finish();
             return;
         } else if (view == lienMesRdv) {
-            startActivity(new Intent(this, PageMesRDV.class));
+            Intent intent = new Intent(pagePriseService.this, PageMesRDV.class);
+            intent.putExtra("token", token);
+            intent.putExtra("courriel", courriel);
+            startActivity(intent);
             finish();
             return;
         } else if (view == lienProfil) {
-            startActivity(new Intent(this, PageProfil.class));
+            Intent intent = new Intent(pagePriseService.this, PageProfil.class);
+            intent.putExtra("token", token);
+            intent.putExtra("courriel", courriel);
+            startActivity(intent);
             finish();
             return;
         }
@@ -150,10 +157,11 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
             Toast.makeText(this, "Service non disponible", Toast.LENGTH_SHORT).show();
             return;
         }
-        Intent intent = new Intent(this, pagePriseMoment.class);
+        Intent intent = new Intent(pagePriseService.this, pagePriseMoment.class);
         intent.putExtra("id_service", idService);
         intent.putExtra("nom_service", nomService);
-        // Tu pourrais aussi ajouter ici token/courriel si besoin
+        intent.putExtra("token", token);
+        intent.putExtra("courriel", courriel);
         startActivity(intent);
     }
 }

@@ -30,7 +30,7 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
     private TextView messagePrAcunRdv;
     private String courrielPatient;
 
-    // Ajout discret pour récupérer le token sans interférer
+
     private String token;
 
     @Override
@@ -38,9 +38,9 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mes_rdv);
 
-        // Lecture des SharedPreferences pour récupérer le token
+
         SharedPreferences prefs = getSharedPreferences("session", MODE_PRIVATE);
-        token = prefs.getString("token", null); // Peut être utilisé plus tard si besoin
+        token = prefs.getString("token", null);
 
         listRdv = findViewById(R.id.listRdv);
         lienDeco = findViewById(R.id.lienDeconnexion);
@@ -117,10 +117,16 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
             startActivity(intent);
             finish();
         } else if (v == lienMesRdv) {
-            startActivity(new Intent(this, pagePriseService.class));
+            Intent intent = new Intent(PageMesRDV.this, PageMesRDV.class) ;
+            intent.putExtra("token", token);
+            intent.putExtra("courriel", courrielPatient);
+            startActivity(intent);
             finish();
         } else if (v == lienProfil) {
-            startActivity(new Intent(this, PageProfil.class));
+            Intent intent = new Intent(PageMesRDV.this, PageProfil.class) ;
+            intent.putExtra("token", token);
+            intent.putExtra("courriel", courrielPatient);
+            startActivity(intent);
             finish();
         }
     }

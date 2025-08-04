@@ -36,7 +36,7 @@ public class pagePriseConfirmation extends AppCompatActivity implements View.OnC
     private TextView lienProfil;
     private TextView lienMesRdv;
 
-    // Ajout discret des données de session
+
     private String token;
     private String courriel;
 
@@ -45,11 +45,11 @@ public class pagePriseConfirmation extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prise_confirmation);
 
-        // Récupération silencieuse de la session utilisateur
+
         SharedPreferences prefs = getSharedPreferences("session", MODE_PRIVATE);
         token = prefs.getString("token", null);
         courriel = prefs.getString("courriel", null);
-        // Utilisation possible ultérieurement dans la requête ou interface
+
 
         lienDeco = findViewById(R.id.lienDeconnexion);
         lienProfil = findViewById(R.id.lienProfil);
@@ -93,14 +93,29 @@ public class pagePriseConfirmation extends AppCompatActivity implements View.OnC
             startActivity(intent);
             finish();
         } else if (v == lienMesRdv) {
-            startActivity(new Intent(this, PageMesRDV.class));
+            Intent intent = new Intent(pagePriseConfirmation.this, PageMesRDV.class) ;
+            intent.putExtra("token", token);
+            intent.putExtra("courriel", courriel);
+            startActivity(intent);
             finish();
         } else if (v == lienProfil) {
-            startActivity(new Intent(this, PageProfil.class));
+            Intent intent = new Intent(pagePriseConfirmation.this, PageProfil.class) ;
+            intent.putExtra("token", token);
+            intent.putExtra("courriel", courriel);
+            startActivity(intent);
             finish();
         } else if (v == btnConfirme) {
             confirmeRDV();
+            Intent intent = new Intent(pagePriseConfirmation.this, pagePriseService.class) ;
+            intent.putExtra("token", token);
+            intent.putExtra("courriel", courriel);
+            startActivity(intent);
+            finish();
         } else if (v == btnAnnuler) {
+            Intent intent = new Intent(pagePriseConfirmation.this, pagePriseMoment.class) ;
+            intent.putExtra("token", token);
+            intent.putExtra("courriel", courriel);
+            startActivity(intent);
             finish();
         }
     }

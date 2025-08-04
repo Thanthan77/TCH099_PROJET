@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.appmobile.ApiClient;
 import com.example.appmobile.ApiService;
+import com.example.appmobile.PageMesRDV;
 import com.example.appmobile.R;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
     private TextView messagePrAcuneDispo;
     private TextView retour;
 
-    // Ajout discret pour session utilisateur
+
     private String token;
     private String courriel;
 
@@ -39,11 +40,11 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prise_moment);
 
-        // Lecture des SharedPreferences pour récupérer les infos de session
+
         SharedPreferences prefs = getSharedPreferences("session", MODE_PRIVATE);
         token = prefs.getString("token", null);
         courriel = prefs.getString("courriel", null);
-        // Tu peux utiliser ces variables plus tard si besoin pour personnalisation ou sécurité
+
 
         listView = findViewById(R.id.listeHoraire);
         retour = findViewById(R.id.retourPageMoment);
@@ -94,6 +95,8 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
                                 intent.putExtra("nom_service", horaire.getNomService());
                                 intent.putExtra("jour", horaire.getJourRdv());
                                 intent.putExtra("heure", horaire.getHeureRdv());
+                                intent.putExtra("token", token);
+                                intent.putExtra("courriel", courriel);
                                 startActivity(intent);
                             }
                     );
@@ -115,6 +118,10 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         if (v == retour) {
+            Intent intent = new Intent(pagePriseMoment.this, pagePriseService.class) ;
+            intent.putExtra("token", token);
+            intent.putExtra("courriel", courriel);
+            startActivity(intent);
             finish();
         }
     }
