@@ -27,7 +27,7 @@ public interface ApiService {
     Call<List<HoraireRequest>> getHoraire () ;
 
     @GET("rendezvous/patient/{courriel}")
-    Call<RdvResponse> getRDV(String s);
+    Call<RdvResponse> getRDV(@Path("courriel") String courriel);
 
    @POST("rendez_vous")
    Call<List<RdvRequest>> postModifRdv();
