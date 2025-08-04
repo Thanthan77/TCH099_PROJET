@@ -95,7 +95,7 @@ put($URL.'/service_employe', 'endpoints/employe/service_employe_put.php');
 put($URL.'/disponibilites', 'endpoints/employe/disponibilite_put.php');
 
 // PUT pour remettre à NULL le NUM_RDV d’une disponibilité (libération de plages après annulation)
-put($URL.'/disponibilites/annulation', 'endpoints/employe/disponibilite_annulation_put.php');
+//put($URL.'/disponibilites/annulation', 'endpoints/employe/disponibilite_annulation_put.php');
 
 // PUT pour Réinitialisation du mot de passe d’un employé (avec hachage sécurisé)
 put($URL.'/motdepasse', 'endpoints/employe/changermotdepasse_put.php');
@@ -125,7 +125,7 @@ get($URL.'/rendezvous/patient/$courriel','endpoints/patient/rendezVous_patient_g
 get($URL.'/patient/$courriel','endpoints/patient/patient_get');
 
 // GET pour avoir toutes les disponibilites
-get($URL. '/disponibilites/services/$id_service', 'endpoints/patient/disponibilite_get.php');
+get($URL. '/disponibilitees/services/id/$id_service', 'endpoints/patient/disponibilite_get.php');
 
 // PUT pour changer le mot de passe
 put($URL . '/mdp_put', 'endpoints/patient/mdp_put.php');

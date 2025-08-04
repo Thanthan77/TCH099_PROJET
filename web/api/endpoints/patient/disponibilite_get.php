@@ -3,21 +3,20 @@ header('Content-Type: application/json');
 require_once(__DIR__ . '/../../db/Database.php');
 
 try {
-     
-    if (!isset($id_service) || !is_numeric($id_service)) {
+    if (!is_numeric($id_service)) {
         http_response_code(400);
         echo json_encode(["error" => "Paramètre id_service invalide"]);
         exit;
-    }
+}
 
     $cnx = Database::getInstance();
 
     $query = "
         SELECT s.NOM AS NOM_SERVICE,
-               d.JOUR,
-               d.HEURE,
-               e.NOM_EMPLOYE,
-               e.PRENOM_EMPLOYE
+            d.JOUR,
+            d.HEURE,
+            e.NOM_EMPLOYE,
+            e.PRENOM_EMPLOYE
         FROM Service s
         JOIN ServiceEmploye se ON s.ID_SERVICE = se.ID_SERVICE
         JOIN Disponibilite d ON se.CODE_EMPLOYE = d.CODE_EMPLOYE
@@ -27,7 +26,7 @@ try {
     ";
 
     $stmt = $cnx->prepare($query);
-    $stmt->bindValue(':id_service', $id_service, PDO::PARAM_INT);
+    $stmt->bindValue(':id_service', $id_service);
     $stmt->execute();
 
     $resultats = $stmt->fetchAll(PDO::FETCH_ASSOC);
