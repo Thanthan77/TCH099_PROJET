@@ -4,9 +4,9 @@ require_once(__DIR__.'/../../db/Database.php');
 header('Content-Type: application/json');
 
 
-$courriel = $data['COURRIEL'];
 
 $data = json_decode(file_get_contents('php://input'), true);
+$courriel = $data['COURRIEL'];
 if (!$data || !isset($data['NUM_TEL'], $data['NUM_CIVIQUE'], $data['RUE'], $data['VILLE'], $data['CODE_POSTAL'])) {
     http_response_code(400);
     echo json_encode(['error' => 'Champs manquants']);
