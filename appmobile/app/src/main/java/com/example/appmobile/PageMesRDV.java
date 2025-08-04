@@ -20,9 +20,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import java.net.URLEncoder;
-import java.io.UnsupportedEncodingException;
-
 public class PageMesRDV extends AppCompatActivity implements View.OnClickListener {
 
     private TextView lienDeco;
@@ -32,15 +29,12 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
     private ApiService apiService;
     private TextView messagePrAcunRdv;
     private String courrielPatient;
-
-
     private String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mes_rdv);
-
 
         SharedPreferences prefs = getSharedPreferences("session", MODE_PRIVATE);
         token = prefs.getString("token", null);
@@ -55,13 +49,7 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
         lienProfil.setOnClickListener(this);
         lienDeco.setOnClickListener(this);
 
-        apiService = ApiClient.getApiService();
-
-        try {
-            courrielPatient = URLEncoder.encode(getIntent().getStringExtra("courriel"), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        courrielPatient = getIntent().getStringExtra("courriel");
 
         if (courrielPatient == null || courrielPatient.isEmpty()) {
             Toast.makeText(this, "Erreur : courriel manquant", Toast.LENGTH_SHORT).show();
@@ -69,12 +57,13 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
             return;
         }
 
+        apiService = ApiClient.getApiService();
         chargerRdv();
     }
 
     public void chargerRdv() {
-        Call<RdvResponse> call = apiService.getRDV(courrielPatient);
-        call.enqueue(new Callback<RdvResponse>() {
+        Call<RdvResponse> call = apiService.getRDV("Bearer " + token, courrielPatient);
+        call.enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<RdvResponse> call, Response<RdvResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -92,7 +81,6 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
             }
         });
     }
-
 
     private void afficherRdv(List<RdvRequest> rdvRequests) {
         if (rdvRequests == null || rdvRequests.isEmpty()) {
@@ -125,13 +113,13 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
             startActivity(intent);
             finish();
         } else if (v == lienRdv) {
-            Intent intent = new Intent(PageMesRDV.this, pagePriseService.class) ;
+            Intent intent = new Intent(PageMesRDV.this, pagePriseService.class);
             intent.putExtra("token", token);
             intent.putExtra("courriel", courrielPatient);
             startActivity(intent);
             finish();
         } else if (v == lienProfil) {
-            Intent intent = new Intent(PageMesRDV.this, PageProfil.class) ;
+            Intent intent = new Intent(PageMesRDV.this, PageProfil.class);
             intent.putExtra("token", token);
             intent.putExtra("courriel", courrielPatient);
             startActivity(intent);
