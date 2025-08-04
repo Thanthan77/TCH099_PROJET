@@ -1,6 +1,7 @@
 package com.example.appmobile.PagesRDV;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -20,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -34,22 +34,29 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
     private Button btnVaccin;
     private Button btnLiquideCorps;
     private Button btnUrgencePasOuf;
-    private TextView lienDeco ;
-    private TextView lienProfil ;
-    private TextView lienMesRdv ;
+    private TextView lienDeco;
+    private TextView lienProfil;
+    private TextView lienMesRdv;
 
-    private int idService ;
-
-
+    private int idService;
     private Map<String, Integer> serviceMap = new HashMap<>();
     private ApiService apiService;
 
+    // Ajout discret pour session
+    private String token;
+    private String courriel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_prise_service);
+
+        // Récupérer les données de session de manière silencieuse
+        SharedPreferences prefs = getSharedPreferences("session", MODE_PRIVATE);
+        token = prefs.getString("token", null);
+        courriel = prefs.getString("courriel", null);
+        // (facultatif) Utilisation possible pour passer à la page suivante ou API sécurisée
+
         btnGenerale = findViewById(R.id.btn_rdv1);
         btnGrossesse = findViewById(R.id.btn_rdv2);
         btnMaladieChronique = findViewById(R.id.btn_rdv3);
@@ -57,9 +64,9 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
         btnVaccin = findViewById(R.id.btn_rdv5);
         btnLiquideCorps = findViewById(R.id.btn_rdv6);
         btnUrgencePasOuf = findViewById(R.id.btn_rdv7);
-        lienDeco= findViewById(R.id.lienDeconnexion) ;
-        lienProfil=findViewById(R.id.lienProfil) ;
-        lienMesRdv=findViewById(R.id.lienMesRdv) ;
+        lienDeco = findViewById(R.id.lienDeconnexion);
+        lienProfil = findViewById(R.id.lienProfil);
+        lienMesRdv = findViewById(R.id.lienMesRdv);
 
         btnGenerale.setOnClickListener(this);
         btnGrossesse.setOnClickListener(this);
@@ -75,8 +82,6 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
         apiService = ApiClient.getApiService();
 
         loadServices();
-
-
     }
 
     private void loadServices() {
@@ -93,6 +98,7 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
                     Toast.makeText(pagePriseService.this, "Erreur chargement des services", Toast.LENGTH_SHORT).show();
                 }
             }
+
             @Override
             public void onFailure(Call<List<ServiceRequest>> call, Throwable t) {
                 Toast.makeText(pagePriseService.this, "Erreur API : " + t.getMessage(), Toast.LENGTH_SHORT).show();
@@ -100,10 +106,9 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
         });
     }
 
-
     @Override
     public void onClick(View view) {
-        String nomService = null ;
+        String nomService = null;
         if (view == btnGenerale) {
             nomService = "Consultation générale";
         } else if (view == btnGrossesse) {
@@ -129,36 +134,26 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
             finish();
             return;
         } else if (view == lienProfil) {
-
             startActivity(new Intent(this, PageProfil.class));
             finish();
             return;
         }
 
-
         if (nomService != null) {
             idService = serviceMap.getOrDefault(nomService, -1);
             pageSuivante(nomService);
-    }
+        }
     }
 
-        private void pageSuivante (String nomService) {
-        if(idService == -1)  {
-            Toast.makeText(this,"Service non disponible", Toast.LENGTH_SHORT).show();
+    private void pageSuivante(String nomService) {
+        if (idService == -1) {
+            Toast.makeText(this, "Service non disponible", Toast.LENGTH_SHORT).show();
             return;
         }
-        Intent intent = new Intent (this,pagePriseMoment.class) ;
-            intent.putExtra("id_service", idService);
-            intent.putExtra("nom_service", nomService);
-            startActivity(intent);
-        }
+        Intent intent = new Intent(this, pagePriseMoment.class);
+        intent.putExtra("id_service", idService);
+        intent.putExtra("nom_service", nomService);
+        // Tu pourrais aussi ajouter ici token/courriel si besoin
+        startActivity(intent);
     }
-
-
-
-
-
-
-
-
-
+}
