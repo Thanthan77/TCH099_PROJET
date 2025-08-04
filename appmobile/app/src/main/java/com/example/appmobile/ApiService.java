@@ -42,6 +42,9 @@ Call<Void> putAnnulerRdv(@Path("numRdv") int idRdv);
     @PUT("patient_put")
     Call<Void> updatePatient(@Body Map<String, String> data);
 
+    @PUT("mdp_put")
+    Call<ResponseBody> changerMotDePasse(@Body Map<String, String> data);
+
 }
 
 

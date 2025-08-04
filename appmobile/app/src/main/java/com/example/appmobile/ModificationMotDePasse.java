@@ -14,6 +14,7 @@ import com.example.appmobile.R;
 import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -25,6 +26,7 @@ public class ModificationMotDePasse extends AppCompatActivity {
     private Button btnAppliquer;
 
     private String courrielPatient, token;
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,8 @@ public class ModificationMotDePasse extends AppCompatActivity {
         confirmerMdp = findViewById(R.id.confirmer_mdp);
         btnRetour = findViewById(R.id.btn_retour_profile);
         btnAppliquer = findViewById(R.id.btn_appliquer_changement);
+
+        apiService = ApiClient.getApiService();
 
         courrielPatient = getIntent().getStringExtra("courriel");
         token = getIntent().getStringExtra("token");
@@ -49,9 +53,9 @@ public class ModificationMotDePasse extends AppCompatActivity {
         });
 
         btnAppliquer.setOnClickListener(v -> {
-            String ancien = ancienMdp.getText().toString().trim();
-            String nouveau = nouveauMdp.getText().toString().trim();
-            String confirmation = confirmerMdp.getText().toString().trim();
+            String ancien = ancienMdp.getText().toString();
+            String nouveau = nouveauMdp.getText().toString();
+            String confirmation = confirmerMdp.getText().toString();
 
             if (ancien.isEmpty() || nouveau.isEmpty() || confirmation.isEmpty()) {
                 Toast.makeText(this, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show();
@@ -63,17 +67,15 @@ public class ModificationMotDePasse extends AppCompatActivity {
                 return;
             }
 
-            Map<String, String> data = new HashMap<>();
-            data.put("COURRIEL", courrielPatient);
-            data.put("ANCIEN_MOT_DE_PASSE", ancien);
-            data.put("NOUVEAU_MOT_DE_PASSE", nouveau);
+            Map<String, String> body = new HashMap<>();
+            body.put("COURRIEL", courrielPatient);
+            body.put("ANCIEN_MDP", ancien);
+            body.put("NOUVEAU_MDP", nouveau);
 
-            ApiService apiService = ApiClient.getApiService();
-            Call<Void> call = apiService.updatePatient(data);
-
-            call.enqueue(new Callback<Void>() {
+            Call<ResponseBody> call = apiService.changerMotDePasse(body);
+            call.enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
                         Toast.makeText(ModificationMotDePasse.this, "Mot de passe changé avec succès", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(ModificationMotDePasse.this, PageProfil.class);
@@ -81,13 +83,15 @@ public class ModificationMotDePasse extends AppCompatActivity {
                         intent.putExtra("token", token);
                         startActivity(intent);
                         finish();
+                    } else if (response.code() == 401) {
+                        Toast.makeText(ModificationMotDePasse.this, "Ancien mot de passe incorrect", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(ModificationMotDePasse.this, "Erreur de mise à jour", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ModificationMotDePasse.this, "Erreur lors de la modification", Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
-                public void onFailure(Call<Void> call, Throwable t) {
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
                     Toast.makeText(ModificationMotDePasse.this, "Erreur réseau : " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
