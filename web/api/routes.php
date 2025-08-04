@@ -127,9 +127,6 @@ get($URL. '/disponibilites/services/$id_service', 'endpoints/patient/disponibili
 // PUT pour changer le mot de passe
 put($URL . '/mdp_put', 'endpoints/patient/mdp_put.php');
 
-//GET pour avoir lal iste des serivces 
-get($URL . '/services', 'endpoints/patient/services_get.php');
-
 
 
 
