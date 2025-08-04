@@ -122,6 +122,9 @@ put($URL. '/modifier_patient', 'endpoints/patient/patient_put.php');
 // PUT annulation de rendezVous
 put($URL.'/rendezVous/id/patient/$numRdv','endpoints/patient/rendezVous_put.php');
 
+// PUT pour changer le mot de passe
+put($URL . '/mdp_put', 'endpoints/patient/mdp_put.php');
+
 // GET
 
 // GET pour avoir les rendezvous d'un patient
@@ -133,8 +136,7 @@ get($URL.'/patient/$courriel','endpoints/patient/patient_get');
 // GET pour avoir toutes les disponibilites en fonction d'un service
 get($URL. '/disponibilitees/services/id/$id_service', 'endpoints/patient/disponibilite_get.php');
 
-// PUT pour changer le mot de passe
-put($URL . '/mdp_put', 'endpoints/patient/mdp_put.php');
+
 
 
 
