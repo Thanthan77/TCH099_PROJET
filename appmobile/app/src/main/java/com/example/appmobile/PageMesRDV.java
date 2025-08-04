@@ -20,19 +20,16 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import java.net.URLEncoder;
-import java.io.UnsupportedEncodingException;
-
 public class PageMesRDV extends AppCompatActivity implements View.OnClickListener {
 
     private TextView lienDeco;
     private TextView lienProfil;
     private TextView lienRdv;
     private ListView listRdv;
-    private ApiService apiService;
     private TextView messagePrAcunRdv;
-    private String courrielPatient;
+    private ApiService apiService;
 
+    private String courrielPatient;
     private String token;
 
     @Override
@@ -40,9 +37,12 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mes_rdv);
 
+        // Récupérer la session
         SharedPreferences prefs = getSharedPreferences("session", MODE_PRIVATE);
         token = prefs.getString("token", null);
+        courrielPatient = getIntent().getStringExtra("courriel"); // PAS encodé
 
+        // Initialiser les vues
         listRdv = findViewById(R.id.listRdv);
         lienDeco = findViewById(R.id.lienDeconnexion);
         lienProfil = findViewById(R.id.lienProfil);
@@ -53,30 +53,25 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
         lienProfil.setOnClickListener(this);
         lienDeco.setOnClickListener(this);
 
-        apiService = ApiClient.getApiService();
-
-        try {
-            courrielPatient = URLEncoder.encode(getIntent().getStringExtra("courriel"), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
         if (courrielPatient == null || courrielPatient.isEmpty()) {
             Toast.makeText(this, "Erreur : courriel manquant", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
+        apiService = ApiClient.getApiService();
+
         chargerRdv();
     }
 
-    public void chargerRdv() {
+    private void chargerRdv() {
+        // Appel Retrofit selon ApiService que tu m’as envoyé
         Call<RdvResponse> call = apiService.getRDV(courrielPatient);
         call.enqueue(new Callback<RdvResponse>() {
             @Override
             public void onResponse(Call<RdvResponse> call, Response<RdvResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<RdvRequest> rdvList = response.body().getRendezvous();
+                    List<RdvRequest> rdvList = response.body().getRendezvous(); // Assure-toi que getRendezvous() existe
                     afficherRdv(rdvList);
                 } else {
                     Toast.makeText(PageMesRDV.this, "Aucun rendez-vous trouvé", Toast.LENGTH_SHORT).show();
@@ -116,19 +111,18 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
+        Intent intent = null;
+
         if (v == lienDeco) {
-            Intent intent = new Intent(PageMesRDV.this, MainActivity.class);
+            intent = new Intent(PageMesRDV.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
         } else if (v == lienRdv) {
-            Intent intent = new Intent(PageMesRDV.this, pagePriseService.class);
-            intent.putExtra("token", token);
-            intent.putExtra("courriel", courrielPatient);
-            startActivity(intent);
-            finish();
+            intent = new Intent(PageMesRDV.this, pagePriseService.class);
         } else if (v == lienProfil) {
-            Intent intent = new Intent(PageMesRDV.this, PageProfil.class);
+            intent = new Intent(PageMesRDV.this, PageProfil.class);
+        }
+
+        if (intent != null) {
             intent.putExtra("token", token);
             intent.putExtra("courriel", courrielPatient);
             startActivity(intent);
