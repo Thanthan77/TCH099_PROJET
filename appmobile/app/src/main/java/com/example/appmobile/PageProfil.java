@@ -18,7 +18,7 @@ import retrofit2.Response;
 public class PageProfil extends AppCompatActivity {
 
     private EditText prenom, nom, dateNaissance, noAssurance, email;
-    private EditText numCivique, rue, ville, codePostal;
+    private EditText numCivique, rue, ville, codePostal, tel;
     private TextView lienAccueil, lienRDV, lienProfil, lienModif, lienDeconnexion;
 
     private String token, courrielPatient;
@@ -50,6 +50,8 @@ public class PageProfil extends AppCompatActivity {
         rue = findViewById(R.id.profil_rue);
         ville = findViewById(R.id.profil_ville);
         codePostal = findViewById(R.id.profil_postal);
+        tel = findViewById(R.id.profil_tel);
+
 
         // Lien navigation
         lienAccueil = findViewById(R.id.lienMesRdv);
@@ -110,6 +112,7 @@ public class PageProfil extends AppCompatActivity {
         rue.setEnabled(false);
         ville.setEnabled(false);
         codePostal.setEnabled(false);
+        tel.setEnabled(false);
     }
 
     private void chargerProfil(String courriel) {
@@ -131,6 +134,8 @@ public class PageProfil extends AppCompatActivity {
                     rue.setText(patient.getRue());
                     ville.setText(patient.getVille());
                     codePostal.setText(patient.getCodePostal());
+                    tel.setText(patient.getNoTel());
+
                 } else {
                     Toast.makeText(PageProfil.this, "Profil introuvable", Toast.LENGTH_SHORT).show();
                 }

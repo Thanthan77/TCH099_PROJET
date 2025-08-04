@@ -68,6 +68,8 @@ public class ModificationInfo extends AppCompatActivity {
         });
 
         btnAppliquer.setOnClickListener(v -> {
+            if (!champsModifiablesNonVides()) return;
+
             if (!email.getText().toString().equals(emailConfirme.getText().toString())) {
                 Toast.makeText(this, "Les courriels ne correspondent pas", Toast.LENGTH_SHORT).show();
                 return;
@@ -76,11 +78,15 @@ public class ModificationInfo extends AppCompatActivity {
             // Construire les données à envoyer
             Map<String, String> data = new HashMap<>();
             data.put("COURRIEL", email.getText().toString());
+            data.put("PRENOM", prenom.getText().toString());
+            data.put("NOM", nom.getText().toString());
+            data.put("DATE_NAISSANCE", naissance.getText().toString());
+            data.put("NO_ASSURANCE", nam.getText().toString());
             data.put("NUM_CIVIQUE", civique.getText().toString());
             data.put("RUE", rue.getText().toString());
             data.put("VILLE", ville.getText().toString());
             data.put("CODE_POSTAL", postal.getText().toString());
-            data.put("TELEPHONE", tel.getText().toString());
+            data.put("NUM_TEL", tel.getText().toString());
 
             ApiService apiService = ApiClient.getApiService();
             Call<Void> call = apiService.updatePatient(data);
@@ -114,6 +120,22 @@ public class ModificationInfo extends AppCompatActivity {
         nom.setEnabled(false);
         naissance.setEnabled(false);
         nam.setEnabled(false);
+    }
+
+    private boolean champsModifiablesNonVides() {
+        if (email.getText().toString().trim().isEmpty() ||
+                emailConfirme.getText().toString().trim().isEmpty() ||
+                tel.getText().toString().trim().isEmpty() ||
+                civique.getText().toString().trim().isEmpty() ||
+                rue.getText().toString().trim().isEmpty() ||
+                ville.getText().toString().trim().isEmpty() ||
+                postal.getText().toString().trim().isEmpty()) {
+
+            Toast.makeText(this, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
     }
 
     private void chargerInfosPatient(String courriel) {
