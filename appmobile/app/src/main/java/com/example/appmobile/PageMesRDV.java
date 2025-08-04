@@ -20,6 +20,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import java.net.URLEncoder;
+import java.io.UnsupportedEncodingException;
+
 public class PageMesRDV extends AppCompatActivity implements View.OnClickListener {
 
     private TextView lienDeco;
@@ -29,6 +32,7 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
     private ApiService apiService;
     private TextView messagePrAcunRdv;
     private String courrielPatient;
+
     private String token;
 
     @Override
@@ -49,7 +53,13 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
         lienProfil.setOnClickListener(this);
         lienDeco.setOnClickListener(this);
 
-        courrielPatient = getIntent().getStringExtra("courriel");
+        apiService = ApiClient.getApiService();
+
+        try {
+            courrielPatient = URLEncoder.encode(getIntent().getStringExtra("courriel"), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
         if (courrielPatient == null || courrielPatient.isEmpty()) {
             Toast.makeText(this, "Erreur : courriel manquant", Toast.LENGTH_SHORT).show();
@@ -57,13 +67,12 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
             return;
         }
 
-        apiService = ApiClient.getApiService();
         chargerRdv();
     }
 
     public void chargerRdv() {
-        Call<RdvResponse> call = apiService.getRDV("Bearer " + token, courrielPatient);
-        call.enqueue(new Callback<>() {
+        Call<RdvResponse> call = apiService.getRDV(courrielPatient);
+        call.enqueue(new Callback<RdvResponse>() {
             @Override
             public void onResponse(Call<RdvResponse> call, Response<RdvResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
