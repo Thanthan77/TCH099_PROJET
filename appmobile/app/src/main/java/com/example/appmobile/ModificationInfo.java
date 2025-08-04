@@ -33,13 +33,11 @@ public class ModificationInfo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modification_profil);
 
-        // Champs non modifiables
         prenom = findViewById(R.id.profil_prenom);
         nom = findViewById(R.id.profil_nom);
         naissance = findViewById(R.id.profil_naissance);
         nam = findViewById(R.id.profil_nam);
 
-        // Champs modifiables
         email = findViewById(R.id.profil_email);
         emailConfirme = findViewById(R.id.profil_email_confirme);
         tel = findViewById(R.id.profil_tel);
@@ -48,11 +46,9 @@ public class ModificationInfo extends AppCompatActivity {
         ville = findViewById(R.id.profil_ville);
         postal = findViewById(R.id.profil_postal);
 
-        // Boutons
         retour = findViewById(R.id.btn_retour_profil);
         btnAppliquer = findViewById(R.id.btn_appliquer_changements);
 
-        // Récupérer infos du patient
         courrielPatient = getIntent().getStringExtra("courriel");
         token = getIntent().getStringExtra("token");
 
@@ -78,15 +74,16 @@ public class ModificationInfo extends AppCompatActivity {
             // Construire les données à envoyer
             Map<String, String> data = new HashMap<>();
             data.put("COURRIEL", email.getText().toString());
-            data.put("PRENOM", prenom.getText().toString());
-            data.put("NOM", nom.getText().toString());
+            data.put("PRENOM_PATIENT", prenom.getText().toString());
+            data.put("NOM_PATIENT", nom.getText().toString());
             data.put("DATE_NAISSANCE", naissance.getText().toString());
-            data.put("NO_ASSURANCE", nam.getText().toString());
+            data.put("NO_ASSURANCE_MALADIE", nam.getText().toString());
             data.put("NUM_CIVIQUE", civique.getText().toString());
             data.put("RUE", rue.getText().toString());
             data.put("VILLE", ville.getText().toString());
             data.put("CODE_POSTAL", postal.getText().toString());
             data.put("NUM_TEL", tel.getText().toString());
+
 
             ApiService apiService = ApiClient.getApiService();
             Call<Void> call = apiService.updatePatient(data);
