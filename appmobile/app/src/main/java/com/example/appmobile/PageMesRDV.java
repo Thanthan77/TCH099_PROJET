@@ -20,6 +20,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import java.net.URLEncoder;
+import java.io.UnsupportedEncodingException;
+
 public class PageMesRDV extends AppCompatActivity implements View.OnClickListener {
 
     private TextView lienDeco;
@@ -54,7 +57,11 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
 
         apiService = ApiClient.getApiService();
 
-        courrielPatient = getIntent().getStringExtra("courriel");
+        try {
+            courrielPatient = URLEncoder.encode(getIntent().getStringExtra("courriel"), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
         if (courrielPatient == null || courrielPatient.isEmpty()) {
             Toast.makeText(this, "Erreur : courriel manquant", Toast.LENGTH_SHORT).show();
