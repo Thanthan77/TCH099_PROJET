@@ -97,6 +97,9 @@ put($URL.'/disponibilites', 'endpoints/employe/disponibilite_put.php');
 // PUT pour remettre à NULL le NUM_RDV d’une disponibilité (libération de plages après annulation)
 put($URL.'/disponibilites/annulation', 'endpoints/employe/disponibilite_annulation_put.php');
 
+// PUT pour Réinitialisation du mot de passe d’un employé (avec hachage sécurisé)
+put($URL.'/motdepasse', 'endpoints/employe/changermotdepasse_put.php');
+
 
 // Section Patients
 
