@@ -7,21 +7,35 @@
   <script src="script/reinitialiser_mdp.js" defer></script>
 </head>
 <body>
+
+  <!-- Nouveau header inséré -->
   <header>
     <div class="logo-container">
-      <img src="image/logo.png" alt="Logo FIX-SANTÉ" class="logo">
-      <h1>Clinique VITALIS - réinitialisation de mot-de-passe</h1>
+      <img src="image/logo.png" alt="Logo" class="logo" />
+    </div>
+    <h1>Clinique VITALIS – Profil</h1>
+
+    <div class="user-menu-container">
+      <img src="image/menu.png" alt="Menu utilisateur" class="user-menu-icon" onclick="toggleUserMenu()" />
+      <div class="user-dropdown" id="userDropdown">
+        <a href="#" onclick="retourDashboard()">Dashboard</a>
+        <a href="mot_de_passe.html" id="btn-password">Changer mot de passe</a>
+        <a href="index.html" id="btn-logout">Se déconnecter</a>
+      </div>
     </div>
   </header>
 
   <main>
     <div class="reset-box">
       <h2>Réinitialiser votre mot de passe</h2>
+
+      <p id="message-erreur" class="erreur"></p>
+
       <form id="form-reinitialisation">
-        <label>Nouveau mot de passe :</label>
+        <label for="password">Nouveau mot de passe :</label>
         <input type="password" id="password" required>
 
-        <label>Confirmer le mot de passe :</label>
+        <label for="confirmPassword">Confirmer le mot de passe :</label>
         <input type="password" id="confirmPassword" required>
 
         <ul class="requirements">
@@ -30,13 +44,13 @@
           <li>1 lettre minuscule</li>
           <li>1 lettre majuscule</li>
           <li>1 chiffre (0 - 9)</li>
-          <li>1 caractère spécial : ! @ # $ % ^ & * ( ) , . ? " : { } | < ></li>
+          <li>1 caractère spécial : ! @ # $ % ^ & * ( ) , . ? " : { } | &lt; &gt;</li>
         </ul>
 
         <button type="submit">Réinitialiser</button>
       </form>
-      <p id="message-erreur" class="erreur"></p>
     </div>
   </main>
+
 </body>
 </html>
