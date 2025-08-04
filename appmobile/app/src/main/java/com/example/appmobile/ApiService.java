@@ -33,7 +33,10 @@ public interface ApiService {
    Call<List<RdvRequest>> postModifRdv();
 
     @PUT("rendezVous/id/patient/{numRdv}")
-Call<Void> putAnnulerRdv(@Path("numRdv") int idRdv);
+    Call<Void> putAnnulerRdv(
+            @Path("numRdv") int idRdv,
+            @Body Map<String, String> body
+    );
 
     @POST("inscription_patient")
     Call<ResponseBody> inscrirePatient(@Body RequestBody body);

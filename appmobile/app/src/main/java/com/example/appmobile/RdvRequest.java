@@ -18,6 +18,7 @@ public class RdvRequest {
     private String courriel;
 
 
+
     public int getIdRdv() {
         return idRdv;
     }
@@ -33,6 +34,8 @@ public class RdvRequest {
     public String getCourriel() {
         return courriel;
     }
+
+
 
 
 
