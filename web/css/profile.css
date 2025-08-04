@@ -1,11 +1,11 @@
-/* 🌐 BASE */
+/* BASE */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
   background-color: #e0f2ff;
 }
 
-/* 🧭 ENTÊTE */
+/* ENTÊTE */
 header {
   background-color: #0077b6;
   padding: 20px 40px;
@@ -71,7 +71,7 @@ header h1 {
   background-color: #f1f1f1;
 }
 
-/* 📄 CONTENU */
+/* CONTENU */
 main {
   padding: 30px;
 }
@@ -97,7 +97,7 @@ label {
   color: #333;
 }
 
-/* 🧾 CHAMPS COMMUNS */
+/* CHAMPS COMMUNS */
 input, textarea, select {
   width: 100%;
   padding: 10px;
@@ -109,7 +109,7 @@ input, textarea, select {
   font-size: 14px;
 }
 
-/* 🛑 CHAMPS EN LECTURE SEULE */
+/* CHAMPS EN LECTURE SEULE */
 input[readonly],
 textarea[readonly],
 select:disabled {
@@ -119,7 +119,7 @@ select:disabled {
   cursor: not-allowed;
 }
 
-/* ✅ CHAMPS ÉDITABLES */
+/* CHAMPS ÉDITABLES */
 input.editable,
 textarea.editable,
 select.editable {
@@ -129,7 +129,7 @@ select.editable {
   cursor: text;
 }
 
-/* 🔘 BOUTONS */
+/* BOUTONS */
 button {
   margin-top: 25px;
   width: 100%;
