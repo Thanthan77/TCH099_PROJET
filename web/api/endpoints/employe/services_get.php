@@ -5,7 +5,7 @@ header('Content-Type: application/json');
 try {
     $cnx = Database::getInstance();
     // Modifier la requête SQL pour inclure la durée
-    $pstmt = $cnx->prepare("SELECT NOM, DUREE FROM Service");
+    $pstmt = $cnx->prepare("SELECT NOM, DUREE,ID_SERVICE FROM Service");
     $pstmt->execute();
 
     $pstmt->setFetchMode(PDO::FETCH_ASSOC);
