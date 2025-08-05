@@ -3,6 +3,7 @@ package com.example.appmobile.PagesRDV;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -30,10 +31,12 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
     private Button btnGenerale, btnGrossesse, btnMaladieChronique, btnDepistage, btnVaccin, btnLiquideCorps, btnUrgencePasOuf;
     private TextView lienDeco, lienProfil, lienMesRdv;
 
-    private final Map<String, Integer> serviceMap = new HashMap<>();
+
     private ApiService apiService;
     private String token;
     private String courriel;
+
+    private List<ServiceRequest> services ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,9 +85,7 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
             @Override
             public void onResponse(Call<List<ServiceRequest>> call, Response<List<ServiceRequest>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    for (ServiceRequest service : response.body()) {
-                        serviceMap.put(service.getNomService(), service.getIdService());
-                    }
+                    services=response.body() ;
                     setButtonsEnabled(true);
                 } else {
                     Toast.makeText(pagePriseService.this, "Erreur chargement services (code: " + response.code() + ")", Toast.LENGTH_LONG).show();
@@ -108,9 +109,9 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
             naviguer(PageProfil.class);
         } else {
             String nomService = getNomServicePourBouton(view);
-            if (nomService != null) {
-                Integer idService = serviceMap.get(nomService);
-                if (idService != null) {
+            int idService= getIdService (nomService) ;
+
+                if (idService !=  0) {
                     Intent intent = new Intent(this, pagePriseMoment.class);
                     intent.putExtra("id_service", idService);
                     intent.putExtra("token", token);
@@ -119,7 +120,7 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
                 } else {
                     Toast.makeText(this, "Service non encore chargé", Toast.LENGTH_SHORT).show();
                 }
-            }
+
         }
     }
 
@@ -133,6 +134,17 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
         if (view == btnUrgencePasOuf) return "Urgence mineure";
         return null;
     }
+private int  getIdService (String nomService) {
+    if (services == null || nomService == null) return -1;
+    for (ServiceRequest service : services) {
+        if (nomService.equals(service.getNomService())) {
+
+            return service.getIdService();
+        }
+    }
+    return -1;
+}
+
 
     private void naviguer(Class<?> destination) {
         Intent intent = new Intent(this, destination);
