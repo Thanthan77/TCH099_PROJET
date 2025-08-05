@@ -3,6 +3,7 @@ package com.example.appmobile.PagesRDV;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,10 +27,8 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
     private ListView listView;
     private ApiService apiService;
     private int idService;
-    private String nomService;
     private TextView messagePrAcuneDispo;
     private TextView retour;
-
     private String token;
     private String courriel;
 
@@ -37,7 +36,6 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prise_moment);
-
 
         SharedPreferences prefs = getSharedPreferences("session", MODE_PRIVATE);
         token = prefs.getString("token", null);
@@ -47,19 +45,19 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
         retour = findViewById(R.id.retourPageMoment);
         messagePrAcuneDispo = findViewById(R.id.messageAucuneDispo);
 
-        apiService = ApiClient.getApiService();
+
 
         retour.setOnClickListener(this);
 
-
         idService = getIntent().getIntExtra("id_service", -1);
-        nomService = getIntent().getStringExtra("nom_service");
-
-        if (idService == -1 || nomService == null) {
-            Toast.makeText(this, "Données du service manquantes", Toast.LENGTH_SHORT).show();
+        if (idService == -1) {
+            Toast.makeText(this, "ID du service manquant", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
+
+        Log.d("DEBUG", "id_service reçu : " + idService);
+        apiService = ApiClient.getApiService();
 
         chargerHoraires();
     }
@@ -70,6 +68,8 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onResponse(Call<List<HoraireRequest>> call, Response<List<HoraireRequest>> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    Log.d("API", "Réponse code: " + response.code());
+                    Log.d("API", "Réponse body: " + response.body());
                     List<HoraireRequest> horaires = response.body();
 
                     if (horaires.isEmpty()) {
@@ -84,9 +84,10 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
                     List<HoraireRdv> rdvItems = new ArrayList<>();
                     for (HoraireRequest h : horaires) {
                         rdvItems.add(new HoraireRdv(
-                                nomService,      // nom du service
-                                h.getJourRdv(),  // jour
-                                h.getHeureRdv()  // heure
+                                h.getNomService(),
+                                h.getJourRdv(),
+                                h.getHeureRdv(),
+                                h.getNomEmploye()
                         ));
                     }
 
@@ -94,11 +95,11 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
                             pagePriseMoment.this,
                             rdvItems,
                             horaire -> {
-                                // Lancer page de confirmation avec les infos sélectionnées
                                 Intent intent = new Intent(pagePriseMoment.this, pagePriseConfirmation.class);
                                 intent.putExtra("nom_service", horaire.getNomService());
                                 intent.putExtra("jour", horaire.getJourRdv());
                                 intent.putExtra("heure", horaire.getHeureRdv());
+                                intent.putExtra("nom_employe", horaire.getNomEmploye());
                                 intent.putExtra("token", token);
                                 intent.putExtra("courriel", courriel);
                                 startActivity(intent);
@@ -109,12 +110,15 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
 
                 } else {
                     Toast.makeText(pagePriseMoment.this, "Erreur de chargement des horaires", Toast.LENGTH_SHORT).show();
+                    Log.e("API", "Erreur HTTP: " + response.code());
+                    Log.e("API", "Échec réseau");
                 }
             }
 
             @Override
             public void onFailure(Call<List<HoraireRequest>> call, Throwable t) {
                 Toast.makeText(pagePriseMoment.this, "Erreur réseau : " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e("API", "Erreur réseau", t);
             }
         });
     }
@@ -122,7 +126,6 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         if (v == retour) {
-
             Intent intent = new Intent(pagePriseMoment.this, pagePriseService.class);
             intent.putExtra("token", token);
             intent.putExtra("courriel", courriel);

@@ -16,6 +16,7 @@ import com.example.appmobile.MainActivity;
 import com.example.appmobile.PageMesRDV;
 import com.example.appmobile.PageProfil;
 import com.example.appmobile.R;
+import com.example.appmobile.RdvCreationRequest;
 import com.example.appmobile.RdvRequest;
 
 import java.util.List;
@@ -76,11 +77,7 @@ public class pagePriseConfirmation extends AppCompatActivity implements View.OnC
         heureRdv.setText("Heure : " + heure);
         daterdv.setText("Date : " + jour);
 
-        RdvRequest rdv = (RdvRequest) getIntent().getSerializableExtra("rdv_request");
-        if (rdv != null) {
-            String courrielRdv = rdv.getCourriel();
-            adresseCourriel.setText(courrielRdv);
-        } else if (courriel != null) {
+        if (courriel != null) {
             adresseCourriel.setText(courriel);
         }
     }
@@ -117,31 +114,44 @@ public class pagePriseConfirmation extends AppCompatActivity implements View.OnC
     }
 
     private void confirmeRDV() {
+        String nomServiceStr = getIntent().getStringExtra("nom_service");
+        String jourStr = getIntent().getStringExtra("jour");
+        String heureStr = getIntent().getStringExtra("heure");
+        String nomEmployeStr = getIntent().getStringExtra("nom_employe");
+
+        RdvCreationRequest rdv = new RdvCreationRequest(
+                nomEmployeStr,
+                nomServiceStr,
+                courriel,
+                jourStr,
+                heureStr
+        );
+
         ApiService apiService = ApiClient.getApiService();
-        Call<List<RdvRequest>> call = apiService.postModifRdv();
+        Call<Void> call = apiService.postRdv(rdv);
 
-        call.enqueue(new Callback<List<RdvRequest>>() {
+        call.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<List<RdvRequest>> call, Response<List<RdvRequest>> response) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-
                     Intent intent = new Intent(pagePriseConfirmation.this, PageMesRDV.class);
                     intent.putExtra("token", token);
                     intent.putExtra("courriel", courriel);
                     startActivity(intent);
                     finish();
                 } else {
-                    Log.e("API", "Erreur dans la réponse : " + response.code());
-
+                    Log.e("API", "Erreur réponse: " + response.code());
                 }
             }
 
             @Override
-            public void onFailure(Call<List<RdvRequest>> call, Throwable t) {
-                Log.e("API", "Erreur : " + t.getMessage());
-
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("API", "Erreur réseau: " + t.getMessage());
             }
         });
     }
+
+
+
 
 }

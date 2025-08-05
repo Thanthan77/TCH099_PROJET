@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.appmobile.ApiClient;
 import com.example.appmobile.ApiService;
 import com.example.appmobile.MainActivity;
-import com.example.appmobile.ModificationInfo;
 import com.example.appmobile.PageMesRDV;
 import com.example.appmobile.PageProfil;
 import com.example.appmobile.R;
@@ -28,22 +27,11 @@ import retrofit2.Response;
 
 public class pagePriseService extends AppCompatActivity implements View.OnClickListener {
 
-    private Button btnGenerale;
-    private Button btnGrossesse;
-    private Button btnMaladieChronique;
-    private Button btnDepistage;
-    private Button btnVaccin;
-    private Button btnLiquideCorps;
-    private Button btnUrgencePasOuf;
-    private TextView lienDeco;
-    private TextView lienProfil;
-    private TextView lienMesRdv;
+    private Button btnGenerale, btnGrossesse, btnMaladieChronique, btnDepistage, btnVaccin, btnLiquideCorps, btnUrgencePasOuf;
+    private TextView lienDeco, lienProfil, lienMesRdv;
 
-    private int idService;
-    private Map<String, Integer> serviceMap = new HashMap<>();
+    private final Map<String, Integer> serviceMap = new HashMap<>();
     private ApiService apiService;
-
-
     private String token;
     private String courriel;
 
@@ -51,7 +39,6 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prise_service);
-
 
         SharedPreferences prefs = getSharedPreferences("session", MODE_PRIVATE);
         token = prefs.getString("token", null);
@@ -65,6 +52,8 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
         btnVaccin = findViewById(R.id.btn_rdv5);
         btnLiquideCorps = findViewById(R.id.btn_rdv6);
         btnUrgencePasOuf = findViewById(R.id.btn_rdv7);
+
+
         lienDeco = findViewById(R.id.lienDeconnexion);
         lienProfil = findViewById(R.id.lienProfil);
         lienMesRdv = findViewById(R.id.lienMesRdv);
@@ -76,28 +65,27 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
         btnVaccin.setOnClickListener(this);
         btnLiquideCorps.setOnClickListener(this);
         btnUrgencePasOuf.setOnClickListener(this);
+
         lienMesRdv.setOnClickListener(this);
         lienProfil.setOnClickListener(this);
         lienDeco.setOnClickListener(this);
 
+
         apiService = ApiClient.getApiService();
-
         setButtonsEnabled(false);
-
         loadServices();
     }
 
     private void loadServices() {
         Call<List<ServiceRequest>> call = apiService.getServices();
-
         call.enqueue(new Callback<List<ServiceRequest>>() {
             @Override
             public void onResponse(Call<List<ServiceRequest>> call, Response<List<ServiceRequest>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    setButtonsEnabled(true);
                     for (ServiceRequest service : response.body()) {
                         serviceMap.put(service.getNomService(), service.getIdService());
                     }
+                    setButtonsEnabled(true);
                 } else {
                     Toast.makeText(pagePriseService.this, "Erreur chargement services (code: " + response.code() + ")", Toast.LENGTH_LONG).show();
                 }
@@ -112,61 +100,55 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View view) {
-        String nomService = null;
-        if (view == btnGenerale) {
-            nomService = "Consultation générale";
-        } else if (view == btnGrossesse) {
-            nomService = "Suivi de grossesse";
-        } else if (view == btnMaladieChronique) {
-            nomService = "Suivi de maladies chroniques";
-        } else if (view == btnDepistage) {
-            nomService = "Dépistage ITSS";
-        } else if (view == btnVaccin) {
-            nomService = "Vaccination";
-        } else if (view == btnLiquideCorps) {
-            nomService = "Prélèvement sanguin / test urine";
-        } else if (view == btnUrgencePasOuf) {
-            nomService = "Urgence mineure";
-        } else if (view == lienDeco) {
-            Intent intent = new Intent(pagePriseService.this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
-            return;
+        if (view == lienDeco) {
+            deconnexion();
         } else if (view == lienMesRdv) {
-            Intent intent = new Intent(pagePriseService.this, PageMesRDV.class);
-            intent.putExtra("token", token);
-            intent.putExtra("courriel", courriel);
-            startActivity(intent);
-            finish();
-            return;
+            naviguer(PageMesRDV.class);
         } else if (view == lienProfil) {
-            Intent intent = new Intent(pagePriseService.this, PageProfil.class);
-            intent.putExtra("token", token);
-            intent.putExtra("courriel", courriel);
-            startActivity(intent);
-            finish();
-            return;
-        }
-
-        if (nomService != null) {
-            idService = serviceMap.getOrDefault(nomService, -1);
-            pageSuivante(nomService,idService);
+            naviguer(PageProfil.class);
+        } else {
+            String nomService = getNomServicePourBouton(view);
+            if (nomService != null) {
+                Integer idService = serviceMap.get(nomService);
+                if (idService != null) {
+                    Intent intent = new Intent(this, pagePriseMoment.class);
+                    intent.putExtra("id_service", idService);
+                    intent.putExtra("token", token);
+                    intent.putExtra("courriel", courriel);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(this, "Service non encore chargé", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     }
 
-    private void pageSuivante(String nomService, int idService) {
-        if (idService == -1) {
-            Toast.makeText(this, "Service non disponible", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        Intent intent = new Intent(pagePriseService.this, pagePriseMoment.class);
-        intent.putExtra("id_service", idService);
-        intent.putExtra("nom_service", nomService);
+    private String getNomServicePourBouton(View view) {
+        if (view == btnGenerale) return "Consultation générale";
+        if (view == btnGrossesse) return "Suivi de grossesse";
+        if (view == btnMaladieChronique) return "Suivi de maladies chroniques";
+        if (view == btnDepistage) return "Dépistage ITSS";
+        if (view == btnVaccin) return "Vaccination";
+        if (view == btnLiquideCorps) return "Prélèvement sanguin / test urine";
+        if (view == btnUrgencePasOuf) return "Urgence mineure";
+        return null;
+    }
+
+    private void naviguer(Class<?> destination) {
+        Intent intent = new Intent(this, destination);
         intent.putExtra("token", token);
         intent.putExtra("courriel", courriel);
         startActivity(intent);
+        finish();
     }
+
+    private void deconnexion() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
     private void setButtonsEnabled(boolean enabled) {
         btnGenerale.setEnabled(enabled);
         btnGrossesse.setEnabled(enabled);

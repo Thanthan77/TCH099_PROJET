@@ -116,7 +116,7 @@ public class PageProfil extends AppCompatActivity {
     }
 
     private void chargerProfil(String courriel) {
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        ApiService apiService = ApiClient.getApiService() ;
         Call<Patient> call = apiService.getPatient(courrielPatient);
 
         call.enqueue(new Callback<Patient>() {

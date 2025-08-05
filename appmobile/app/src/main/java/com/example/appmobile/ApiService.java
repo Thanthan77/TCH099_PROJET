@@ -28,8 +28,8 @@ public interface ApiService {
     @GET("rendezvous/patient/{courriel}")
     Call<RdvResponse> getRDV(@Path("courriel") String courriel);
 
-   @POST("rendez_vous")
-   Call<List<RdvRequest>> postModifRdv();
+    @POST("rendezvous/patient")
+    Call<Void> postRdv(@Body com.example.appmobile.RdvCreationRequest rdv);
 
     @PUT("rendezVous/id/patient/{numRdv}")
     Call<Void> putAnnulerRdv(
