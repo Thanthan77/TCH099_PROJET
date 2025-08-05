@@ -183,15 +183,15 @@ ALTER TABLE JourTravail
 
 INSERT INTO Employe (CODE_EMPLOYE, PRENOM_EMPLOYE, NOM_EMPLOYE, ETAT_CIVIL, MOT_DE_PASSE, COURRIEL, TELEPHONE, ADRESSE, DATE_NAISSANCE, SEXE, POSTE) 
 VALUES
-(100, 'Alice', 'Durand', 'Celibataire', '123', 'alice.durand@example.com', '5141234567', '123 rue des Lilas', '1985-03-22', 'Femme', 'Médecin'),
-(101, 'Jean', 'Dupont', NULL, '123', 'jean.dupont@example.com', '5141234568', '456 rue des Érables', '1978-11-10', 'Homme', 'Médecin'),
-(102, 'Monique', 'Jodoin', 'Celibataire', '123', 'monique.jodoin@example.com', '5141234569', '789 rue des Pins', '1990-06-15', 'Femme', 'Médecin'),
-(103, 'Wassim', 'Ouali', 'Celibataire', '$2y$10$j0WYqJd9xsreMleUaCM0teLBLv5ikjea3o1qIecEKL1nUdY1pG11q', 'wassim@exemple.ca', '514 588 88 99', '7979 rue walabi', '2000-01-04', 'Homme', 'Médecin'),
-(200, 'Bruno', 'Martin', NULL, '123', 'bruno.martin@example.com', '5141234570', '321 rue Ontario', '1982-02-05', 'Homme', 'Infirmier'),
-(201, 'Isabelle', 'Langlois', 'Celibataire', '123', 'isabelle.langlois@example.com', '5141234571', '654 rue Mont-Royal', '1992-09-18', 'Femme', 'Infirmier'),
-(202, 'Dominic', 'Dublois', 'Celibataire', '123', 'dominic.dublois@example.com', '5141234572', '987 rue Sherbrooke', '1988-12-03', 'Homme', 'Infirmier'),
-(300, 'Claire', 'Moreau', NULL, '123', 'claire.moreau@example.com', '5141234573', '135 rue Papineau', '1980-07-25', 'Femme', 'Secrétaire'),
-(400, 'George', 'Smith', 'Divorcé', '123', 'george.smith@example.com', '5141234575', '369 rue Berri', '1975-01-30', 'Femme', 'Administrateur');
+(100, 'Alice', 'Durand', 'Celibataire', '$2y$10$3Im0am0udfmf3dCjGlFDt.Jb1x4gDDn9D2sNJ7s29zxmU15Dpfqh2', 'alice.durand@example.com', '5141234567', '123 rue des Lilas', '1985-03-22', 'Femme', 'Médecin'),
+(101, 'Jean', 'Dupont', NULL, '$2y$10$3Im0am0udfmf3dCjGlFDt.Jb1x4gDDn9D2sNJ7s29zxmU15Dpfqh2', 'jean.dupont@example.com', '5141234568', '456 rue des Érables', '1978-11-10', 'Homme', 'Médecin'),
+(102, 'Monique', 'Jodoin', 'Celibataire', '$2y$10$3Im0am0udfmf3dCjGlFDt.Jb1x4gDDn9D2sNJ7s29zxmU15Dpfqh2', 'monique.jodoin@example.com', '5141234569', '789 rue des Pins', '1990-06-15', 'Femme', 'Médecin'),
+(103, 'Wassim', 'Ouali', 'Celibataire', '$2y$10$3Im0am0udfmf3dCjGlFDt.Jb1x4gDDn9D2sNJ7s29zxmU15Dpfqh2', 'wassim@exemple.ca', '514 588 88 99', '7979 rue walabi', '2000-01-04', 'Homme', 'Médecin'),
+(200, 'Bruno', 'Martin', NULL, '$2y$10$3Im0am0udfmf3dCjGlFDt.Jb1x4gDDn9D2sNJ7s29zxmU15Dpfqh2', 'bruno.martin@example.com', '5141234570', '321 rue Ontario', '1982-02-05', 'Homme', 'Infirmier'),
+(201, 'Isabelle', 'Langlois', 'Celibataire', '$2y$10$3Im0am0udfmf3dCjGlFDt.Jb1x4gDDn9D2sNJ7s29zxmU15Dpfqh2', 'isabelle.langlois@example.com', '5141234571', '654 rue Mont-Royal', '1992-09-18', 'Femme', 'Infirmier'),
+(202, 'Dominic', 'Dublois', 'Celibataire', '$2y$10$3Im0am0udfmf3dCjGlFDt.Jb1x4gDDn9D2sNJ7s29zxmU15Dpfqh2', 'dominic.dublois@example.com', '5141234572', '987 rue Sherbrooke', '1988-12-03', 'Homme', 'Infirmier'),
+(300, 'Claire', 'Moreau', NULL, '$2y$10$3Im0am0udfmf3dCjGlFDt.Jb1x4gDDn9D2sNJ7s29zxmU15Dpfqh2', 'claire.moreau@example.com', '5141234573', '135 rue Papineau', '1980-07-25', 'Femme', 'Secrétaire'),
+(400, 'George', 'Smith', 'Divorcé', '$2y$10$3Im0am0udfmf3dCjGlFDt.Jb1x4gDDn9D2sNJ7s29zxmU15Dpfqh2', 'george.smith@example.com', '5141234575', '369 rue Berri', '1975-01-30', 'Femme', 'Administrateur');
 
 
 INSERT INTO Service (ID_SERVICE, NOM, DESCRIPTION, DUREE) 
