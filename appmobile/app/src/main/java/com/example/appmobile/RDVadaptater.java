@@ -80,13 +80,13 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
     private void annulerRdv(RdvInfo rdv) {
         ApiService apiService = ApiClient.getApiService();
 
-        int idRdv = rdv.getIdRdv();
+        int numRdv = rdv.getNumRdv();
         Map<String, String> jsonBody = new HashMap<>();
         jsonBody.put("action", "cancel");
 
-        Log.d("API_REQUEST", "Annulation du RDV id=" + idRdv + " avec body=" + jsonBody);
+        Log.d("API_REQUEST", "Annulation du RDV id=" + numRdv + " avec body=" + jsonBody);
 
-        Call<Void> call = apiService.putAnnulerRdv(idRdv, jsonBody);
+        Call<Void> call = apiService.putAnnulerRdv(numRdv, jsonBody);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {

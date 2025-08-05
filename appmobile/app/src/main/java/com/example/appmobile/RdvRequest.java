@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class RdvRequest {
 
-    @SerializedName("ID_SERVICE")
-    private int idRdv;
+    @SerializedName("NUM_RDV")
+    private int numRdv;
 
     @SerializedName("JOUR")
     private String jourRdv;
@@ -19,8 +19,10 @@ public class RdvRequest {
 
 
 
-    public int getIdRdv() {
-        return idRdv;
+
+
+    public int getNUMRdv() {
+        return numRdv;
     }
 
     public String getJourRdv() {

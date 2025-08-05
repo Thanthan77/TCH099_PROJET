@@ -33,7 +33,7 @@ public interface ApiService {
 
     @PUT("rendezVous/id/patient/{numRdv}")
     Call<Void> putAnnulerRdv(
-            @Path("numRdv") int idRdv,
+            @Path("numRdv") int numRdv,
             @Body Map<String, String> body
     );
 

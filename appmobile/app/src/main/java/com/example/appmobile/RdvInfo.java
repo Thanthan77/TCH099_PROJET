@@ -2,7 +2,7 @@ package com.example.appmobile;
 
 public class RdvInfo {
 
-    private int idRdv;
+    private int numRdv;
     private String jourRdv;
     private String heureRdv;
 
@@ -13,9 +13,9 @@ public class RdvInfo {
 
 
 
-    public RdvInfo(int idRdv,String jourRdv, String heureRdv, int typeRdv) {
+    public RdvInfo(int numRdv,String jourRdv, String heureRdv, int typeRdv) {
 
-        this.idRdv = idRdv;
+        this.numRdv = numRdv;
         this.jourRdv = jourRdv;
         this.heureRdv = heureRdv;
         this.typeRdv = typeRdv;
@@ -37,7 +37,7 @@ public class RdvInfo {
     public String getCourriel() {
         return courriel;
     }
-    public int getIdRdv() {return idRdv;}
+    public int getNumRdv() {return numRdv;}
 
 
 
