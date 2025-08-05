@@ -15,6 +15,8 @@ import com.example.appmobile.PagesRDV.pagePriseService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -37,12 +39,10 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mes_rdv);
 
-        // Récupérer la session
         SharedPreferences prefs = getSharedPreferences("session", MODE_PRIVATE);
         token = prefs.getString("token", null);
-        courrielPatient = getIntent().getStringExtra("courriel"); // PAS encodé
+        courrielPatient = getIntent().getStringExtra("courriel");
 
-        // Initialiser les vues
         listRdv = findViewById(R.id.listRdv);
         lienDeco = findViewById(R.id.lienDeconnexion);
         lienProfil = findViewById(R.id.lienProfil);
@@ -65,13 +65,12 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
     }
 
     private void chargerRdv() {
-        // Appel Retrofit selon ApiService que tu m’as envoyé
         Call<RdvResponse> call = apiService.getRDV(courrielPatient);
         call.enqueue(new Callback<RdvResponse>() {
             @Override
             public void onResponse(Call<RdvResponse> call, Response<RdvResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<RdvRequest> rdvList = response.body().getRendezvous(); // Assure-toi que getRendezvous() existe
+                    List<RdvRequest> rdvList = response.body().getRendezvous();
                     afficherRdv(rdvList);
                 } else {
                     Toast.makeText(PageMesRDV.this, "Aucun rendez-vous trouvé", Toast.LENGTH_SHORT).show();
@@ -101,12 +100,40 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
                 rdvInfos.add(rdv);
             }
 
-            RDVadaptater adapter = new RDVadaptater(rdv -> {}, rdvInfos, this) {
-                public void onClick(RdvInfo rdv) { }
-            };
+            RDVadaptater adapter = new RDVadaptater(new RDVadaptater.AnnulerRdvClickListener() {
+                @Override
+                public void onClick(RdvInfo rdv) {
+                    annulerRdv(rdv);
+                }
+            }, rdvInfos, PageMesRDV.this);
 
             listRdv.setAdapter(adapter);
         }
+    }
+
+    private void annulerRdv(RdvInfo rdv) {
+        int numRdv = rdv.getNumRdv();
+        Map<String, String> body = new HashMap<>();
+        body.put("action", "cancel");
+
+        Call<Void> call = apiService.putAnnulerRdv(numRdv, body);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(PageMesRDV.this, "Rendez-vous annulé", Toast.LENGTH_SHORT).show();
+                    chargerRdv(); // recharge la liste après suppression
+                } else {
+                    Toast.makeText(PageMesRDV.this, "Erreur serveur", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("API", "Erreur réseau : " + t.getMessage());
+                Toast.makeText(PageMesRDV.this, "Échec de la connexion", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
