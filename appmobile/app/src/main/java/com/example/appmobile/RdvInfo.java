@@ -10,15 +10,18 @@ public class RdvInfo {
 
     private String courriel;
 
+    private String nomService;
 
 
 
-    public RdvInfo(int numRdv,String jourRdv, String heureRdv, int typeRdv) {
+
+    public RdvInfo(int numRdv,String jourRdv, String heureRdv, int typeRdv, String nomService) {
 
         this.numRdv = numRdv;
         this.jourRdv = jourRdv;
         this.heureRdv = heureRdv;
         this.typeRdv = typeRdv;
+        this.nomService=nomService ;
 
 
     }
@@ -39,8 +42,9 @@ public class RdvInfo {
     }
     public int getNumRdv() {return numRdv;}
 
-
-
+    public String getNomService() {
+        return nomService;
+    }
 
     public void setCourriel(String courriel) {
         this.courriel = courriel;

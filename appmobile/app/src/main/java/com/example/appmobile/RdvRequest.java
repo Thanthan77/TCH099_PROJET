@@ -17,6 +17,12 @@ public class RdvRequest {
     @SerializedName("COURRIEL")
     private String courriel;
 
+    @SerializedName("NOM_SERVICE")
+    private String nomService;
+
+    @SerializedName("ID_SERVICE")
+    private int idRdv ;
+
 
 
 
@@ -37,8 +43,11 @@ public class RdvRequest {
         return courriel;
     }
 
+    public String getNomService() {
+        return nomService;
+    }
 
-
-
-
+    public int getIdRdv() {
+        return idRdv;
+    }
 }

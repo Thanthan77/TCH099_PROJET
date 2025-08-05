@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -22,11 +21,13 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
 
 
     private TextView serviceRdv;
-    private TextView daterdv;
+    private TextView dateRdv;
     private TextView timeRdv;
+
+    private TextView adresseClient ;
     private Button annulerRdv;
 
-    private int idService  ;
+
 
     
 
@@ -52,23 +53,25 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
 
         RdvInfo rdv = getItem(position);
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.text_adapter, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.texteadaptater, parent, false);
         }
 
 
 
 
         serviceRdv = convertView.findViewById(R.id.nomService2);
-        daterdv = convertView.findViewById(R.id.dateRdv2);
+        dateRdv = convertView.findViewById(R.id.dateRdv2);
         timeRdv = convertView.findViewById(R.id.heureRdv2);
         annulerRdv = convertView.findViewById(R.id.buttonAnnulerRdv);
+        adresseClient=convertView.findViewById(R.id.emailPatient) ;
 
 
-        daterdv.setText(rdv.getJourRdv());
+        assert rdv != null;
+        dateRdv.setText(rdv.getJourRdv());
         timeRdv.setText(rdv.getHeureRdv());
+        adresseClient.setText(rdv.getCourriel());
 
-        idService = rdv.getTypeRdv() ;
-        nomService(idService) ;
+        serviceRdv.setText(rdv.getNomService());
 
 
         annulerRdv.setOnClickListener(v -> annulerRdv(rdv));
@@ -107,37 +110,7 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
     }
 
 
-    private void nomService (int idService) {
-        String serviceNom ;
-        switch (idService){
-            case 1:
-                serviceNom = "Consultation générale";
-                break;
-            case 2:
-                serviceNom = "Suivi de grossesse";
-                break;
-            case 3:
-                serviceNom = "Suivi de maladies chroniques";
-                break;
-            case 4:
-                serviceNom = "Dépistage ITSS";
-                break;
-            case 5:
-                serviceNom = "Vaccination";
-                break;
-            case 6:
-                serviceNom = "Prélèvement sanguin / test urinaire";
-                break;
-            case 7:
-                serviceNom = "Urgence mineure";
-                break;
-            default:
-                serviceNom = "Service inconnu";
-                break;
-        }
-        serviceRdv.setText(serviceNom);
 
-    }
 }
 
 

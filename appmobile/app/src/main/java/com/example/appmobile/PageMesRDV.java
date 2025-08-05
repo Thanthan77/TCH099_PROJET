@@ -96,7 +96,7 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
 
             List<RdvInfo> rdvInfos = new ArrayList<>();
             for (RdvRequest request : rdvRequests) {
-                RdvInfo rdv = new RdvInfo(0, request.getJourRdv(), request.getHeureRdv(), request.getNUMRdv());
+                RdvInfo rdv = new RdvInfo(request.getNUMRdv(), request.getJourRdv(), request.getHeureRdv(), request.getIdRdv(),request.getNomService());
                 rdv.setCourriel(request.getCourriel());
                 rdvInfos.add(rdv);
             }
