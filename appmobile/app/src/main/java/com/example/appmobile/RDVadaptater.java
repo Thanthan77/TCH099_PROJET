@@ -18,26 +18,14 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RDVadaptater extends ArrayAdapter<RdvInfo> {
-
-
     private TextView serviceRdv;
     private TextView dateRdv;
     private TextView timeRdv;
-
     private TextView adresseClient ;
     private Button annulerRdv;
 
-
-
-    
-
-
-
     public interface AnnulerRdvClickListener {
-
         void onClick(RdvInfo rdv);
-
-
     }
 
     private final AnnulerRdvClickListener listener;
@@ -45,19 +33,14 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
     public RDVadaptater(AnnulerRdvClickListener listener, List<RdvInfo> rdvList, Context context) {
         super(context, 0,rdvList);
         this.listener = listener;
-
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
         RdvInfo rdv = getItem(position);
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.texteadaptater, parent, false);
         }
-
-
-
 
         serviceRdv = convertView.findViewById(R.id.nomService2);
         dateRdv = convertView.findViewById(R.id.dateRdv2);
@@ -65,18 +48,14 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
         annulerRdv = convertView.findViewById(R.id.buttonAnnulerRdv);
         adresseClient=convertView.findViewById(R.id.emailPatient) ;
 
-
         assert rdv != null;
+
         dateRdv.setText(rdv.getJourRdv());
         timeRdv.setText(rdv.getHeureRdv());
         adresseClient.setText(rdv.getCourriel());
-
         serviceRdv.setText(rdv.getNomService());
 
-
         annulerRdv.setOnClickListener(v -> annulerRdv(rdv));
-
-
         return convertView;
     }
 
@@ -86,7 +65,6 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
         int numRdv = rdv.getNumRdv();
         Map<String, String> jsonBody = new HashMap<>();
         jsonBody.put("action", "cancel");
-
         Log.d("API_REQUEST", "Annulation du RDV id=" + numRdv + " avec body=" + jsonBody);
 
         Call<Void> call = apiService.putAnnulerRdv(numRdv, jsonBody);
@@ -108,9 +86,6 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
             }
         });
     }
-
-
-
 }
 
 

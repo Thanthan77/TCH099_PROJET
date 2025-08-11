@@ -3,7 +3,6 @@ package com.example.appmobile.PagesRDV;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -18,9 +17,7 @@ import com.example.appmobile.PageMesRDV;
 import com.example.appmobile.PageProfil;
 import com.example.appmobile.R;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,12 +27,9 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
 
     private Button btnGenerale, btnGrossesse, btnMaladieChronique, btnDepistage, btnVaccin, btnLiquideCorps, btnUrgencePasOuf;
     private TextView lienDeco, lienProfil, lienMesRdv;
-
-
     private ApiService apiService;
     private String token;
     private String courriel;
-
     private List<ServiceRequest> services ;
 
     @Override
@@ -47,7 +41,6 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
         token = prefs.getString("token", null);
         courriel = prefs.getString("courriel", null);
 
-
         btnGenerale = findViewById(R.id.btn_rdv1);
         btnGrossesse = findViewById(R.id.btn_rdv2);
         btnMaladieChronique = findViewById(R.id.btn_rdv3);
@@ -55,7 +48,6 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
         btnVaccin = findViewById(R.id.btn_rdv5);
         btnLiquideCorps = findViewById(R.id.btn_rdv6);
         btnUrgencePasOuf = findViewById(R.id.btn_rdv7);
-
 
         lienDeco = findViewById(R.id.lienDeconnexion);
         lienProfil = findViewById(R.id.lienProfil);
@@ -72,7 +64,6 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
         lienMesRdv.setOnClickListener(this);
         lienProfil.setOnClickListener(this);
         lienDeco.setOnClickListener(this);
-
 
         apiService = ApiClient.getApiService();
         setButtonsEnabled(false);
@@ -120,7 +111,6 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
                 } else {
                     Toast.makeText(this, "Service non encore chargé", Toast.LENGTH_SHORT).show();
                 }
-
         }
     }
 
@@ -134,17 +124,15 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
         if (view == btnUrgencePasOuf) return "Urgence mineure";
         return null;
     }
-private int  getIdService (String nomService) {
-    if (services == null || nomService == null) return -1;
-    for (ServiceRequest service : services) {
-        if (nomService.equals(service.getNomService())) {
-
+    private int  getIdService (String nomService) {
+        if (services == null || nomService == null) return -1;
+        for (ServiceRequest service : services) {
+            if (nomService.equals(service.getNomService())) {
             return service.getIdService();
+            }
         }
+        return -1;
     }
-    return -1;
-}
-
 
     private void naviguer(Class<?> destination) {
         Intent intent = new Intent(this, destination);

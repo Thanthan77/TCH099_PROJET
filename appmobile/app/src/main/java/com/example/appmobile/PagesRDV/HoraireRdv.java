@@ -4,7 +4,6 @@ public class HoraireRdv {
     private String nomService;
     private String jourRdv;
     private String heureRdv;
-
     private String nomEmploye;
 
     public HoraireRdv(String nomService, String jourRdv, String heureRdv, String nomEmploye) {
@@ -17,15 +16,12 @@ public class HoraireRdv {
     public String getNomService() {
         return nomService;
     }
-
     public String getJourRdv() {
         return jourRdv;
     }
-
     public String getHeureRdv() {
         return heureRdv;
     }
-
     public String getNomEmploye() { return nomEmploye ;
     }
 }

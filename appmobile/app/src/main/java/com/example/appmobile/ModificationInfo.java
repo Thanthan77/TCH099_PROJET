@@ -6,21 +6,18 @@ import android.widget.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.appmobile.ApiClient;
-import com.example.appmobile.ApiService;
-import com.example.appmobile.PageProfil;
-import com.example.appmobile.R;
-import com.example.appmobile.Patient;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ModificationInfo extends AppCompatActivity {
+    private static final String RX_CIVIQUE = "^\\d+$";
+    private static final String RX_TEL10   = "^\\d{10}$";
+    private static final String RX_VILLE   = "^[\\p{L} '-]+$";
+    private static final String RX_POSTAL  = "^[A-Z]\\d[A-Z]\\d[A-Z]\\d$";
 
     private EditText prenom, nom, naissance, nam;
     private EditText email, emailConfirme, tel, civique, rue, ville, postal;
@@ -52,6 +49,24 @@ public class ModificationInfo extends AppCompatActivity {
         courrielPatient = getIntent().getStringExtra("courriel");
         token = getIntent().getStringExtra("token");
 
+        android.text.InputFilter digitsOnly = (src, s, e, dest, ds, de) ->
+                src.toString().matches("\\d+") ? src : "";
+        tel.setFilters(new android.text.InputFilter[]{digitsOnly});
+        civique.setFilters(new android.text.InputFilter[]{digitsOnly});
+
+        postal.addTextChangedListener(new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
+            @Override public void onTextChanged(CharSequence s, int st, int b, int c) {
+                String up = s.toString().replace(" ", "").toUpperCase();
+                if (!up.equals(s.toString())) {
+                    postal.setText(up);
+                    postal.setSelection(up.length());
+                }
+            }
+            @Override public void afterTextChanged(android.text.Editable s) {}
+        });
+
+
         disableUneditableFields();
         chargerInfosPatient(courrielPatient);
 
@@ -66,24 +81,23 @@ public class ModificationInfo extends AppCompatActivity {
         btnAppliquer.setOnClickListener(v -> {
             if (!champsModifiablesNonVides()) return;
 
-            if (!email.getText().toString().equals(emailConfirme.getText().toString())) {
+            if (!email.getText().toString().trim().equals(emailConfirme.getText().toString().trim())) {
                 Toast.makeText(this, "Les courriels ne correspondent pas", Toast.LENGTH_SHORT).show();
                 return;
             }
+            if (!validateModifs()) return;
 
-            // Construire les données à envoyer
             Map<String, String> data = new HashMap<>();
-            data.put("COURRIEL", email.getText().toString());
+            data.put("COURRIEL", email.getText().toString().trim().toLowerCase());
             data.put("PRENOM_PATIENT", prenom.getText().toString());
             data.put("NOM_PATIENT", nom.getText().toString());
             data.put("DATE_NAISSANCE", naissance.getText().toString());
             data.put("NO_ASSURANCE_MALADIE", nam.getText().toString());
-            data.put("NUM_CIVIQUE", civique.getText().toString());
-            data.put("RUE", rue.getText().toString());
-            data.put("VILLE", ville.getText().toString());
-            data.put("CODE_POSTAL", postal.getText().toString());
-            data.put("NUM_TEL", tel.getText().toString());
-
+            data.put("NUM_CIVIQUE", civique.getText().toString().trim());
+            data.put("RUE", rue.getText().toString().trim());
+            data.put("VILLE", ville.getText().toString().trim());
+            data.put("CODE_POSTAL", postal.getText().toString().trim().toUpperCase());
+            data.put("NUM_TEL", tel.getText().toString().trim());
 
             ApiService apiService = ApiClient.getApiService();
             Call<Void> call = apiService.updatePatient(data);
@@ -93,7 +107,6 @@ public class ModificationInfo extends AppCompatActivity {
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.isSuccessful()) {
                         Toast.makeText(ModificationInfo.this, "Changements appliqués", Toast.LENGTH_SHORT).show();
-                        // Retour vers PageProfil avec les nouvelles infos
                         Intent intent = new Intent(ModificationInfo.this, PageProfil.class);
                         intent.putExtra("courriel", email.getText().toString());
                         intent.putExtra("token", token);
@@ -131,6 +144,50 @@ public class ModificationInfo extends AppCompatActivity {
             Toast.makeText(this, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show();
             return false;
         }
+        return true;
+    }
+
+    private boolean validateModifs() {
+        String vEmail  = email.getText().toString().trim().toLowerCase();
+        String vEmail2 = emailConfirme.getText().toString().trim().toLowerCase();
+        String vTel    = tel.getText().toString().trim();
+        String vCiv    = civique.getText().toString().trim();
+        String vRue    = rue.getText().toString().trim();
+        String vVille  = ville.getText().toString().trim();
+        String vPost   = postal.getText().toString().trim().toUpperCase();
+
+        if (vEmail.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(vEmail).matches()) {
+            Toast.makeText(this, "Courriel invalide (ex: exemple@gmail.com)", Toast.LENGTH_SHORT).show();
+            email.requestFocus(); return false;
+        }
+        if (!vEmail.equals(vEmail2)) {
+            Toast.makeText(this, "Les courriels ne correspondent pas", Toast.LENGTH_SHORT).show();
+            emailConfirme.requestFocus(); return false;
+        }
+
+        if (!vTel.matches(RX_TEL10)) {
+            Toast.makeText(this, "Téléphone invalide : 10 chiffres", Toast.LENGTH_SHORT).show();
+            tel.requestFocus(); return false;
+        }
+
+        if (!vCiv.matches(RX_CIVIQUE)) {
+            Toast.makeText(this, "Numéro civique invalide : chiffres uniquement", Toast.LENGTH_SHORT).show();
+            civique.requestFocus(); return false;
+        }
+
+        if (!vVille.matches(RX_VILLE)) {
+            Toast.makeText(this, "Ville invalide : lettres, accents ou tirets seulement", Toast.LENGTH_SHORT).show();
+            ville.requestFocus(); return false;
+        }
+
+        if (!vPost.matches(RX_POSTAL)) {
+            Toast.makeText(this, "Code postal invalide : format A1A1A1", Toast.LENGTH_SHORT).show();
+            postal.requestFocus(); return false;
+        }
+
+        email.setText(vEmail);
+        emailConfirme.setText(vEmail2);
+        postal.setText(vPost);
 
         return true;
     }

@@ -13,18 +13,16 @@ import com.example.appmobile.R;
 import java.util.List;
 
 public class HoraireAdapter extends ArrayAdapter<HoraireRdv> {
-
     private TextView nomService ;
     private TextView dateRdv ;
-
     private TextView heureRdv ;
     private Button btnPrendreRdv ;
 
     public interface OnPrendreRdvClickListener {
         void onClick(HoraireRdv horaire);
     }
-    private final OnPrendreRdvClickListener listener;
 
+    private final OnPrendreRdvClickListener listener;
 
     public HoraireAdapter(Context context, List<HoraireRdv> horaires, OnPrendreRdvClickListener listener) {
         super(context, 0, horaires);
@@ -40,10 +38,9 @@ public class HoraireAdapter extends ArrayAdapter<HoraireRdv> {
         }
 
         nomService = convertView.findViewById(R.id.nomService);
-         dateRdv = convertView.findViewById(R.id.dateRdv);
+        dateRdv = convertView.findViewById(R.id.dateRdv);
         heureRdv = convertView.findViewById(R.id.heureRdv);
-       btnPrendreRdv = convertView.findViewById(R.id.btnPrendreRdv);
-
+        btnPrendreRdv = convertView.findViewById(R.id.btnPrendreRdv);
 
         nomService.setText(horaire.getNomService());
         dateRdv.setText(horaire.getJourRdv());
@@ -54,9 +51,6 @@ public class HoraireAdapter extends ArrayAdapter<HoraireRdv> {
                 listener.onClick(horaire);
             }
         });
-
         return convertView;
     }
-
-
 }

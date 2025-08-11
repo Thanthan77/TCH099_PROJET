@@ -58,12 +58,10 @@ public class PageInscription extends AppCompatActivity {
 
         apiService = ApiClient.getApiService();
 
-        // chiffres seulement pendant la saisie (tel, civique)
         InputFilter digitsOnly = (src, s, e, dest, ds, de) -> src.toString().matches("\\d+") ? src : "";
         tel.setFilters(new InputFilter[]{digitsOnly});
         civique.setFilters(new InputFilter[]{digitsOnly});
 
-// RAMQ et code postal en MAJ, code postal sans espace
         nam.addTextChangedListener(new SimpleTextWatcher() {
             @Override public void onTextChanged(CharSequence cs, int s, int b, int c) {
                 String up = cs.toString().toUpperCase();
@@ -90,7 +88,6 @@ public class PageInscription extends AppCompatActivity {
     }
 
     private boolean validerChamps() {
-        // 1) Tous remplis + confirmations
         if (TextUtils.isEmpty(prenom.getText()) || TextUtils.isEmpty(nom.getText())
                 || TextUtils.isEmpty(nam.getText()) || TextUtils.isEmpty(naissance.getText())
                 || TextUtils.isEmpty(civique.getText()) || TextUtils.isEmpty(rue.getText())
@@ -112,7 +109,6 @@ public class PageInscription extends AppCompatActivity {
             return false;
         }
 
-        // 2) Valeurs normalisées
         String vPrenom = prenom.getText().toString().trim();
         String vNom    = nom.getText().toString().trim();
         String vNam    = nam.getText().toString().trim().toUpperCase();
@@ -124,76 +120,58 @@ public class PageInscription extends AppCompatActivity {
         String vTel    = tel.getText().toString().trim();
         String vEmail  = email.getText().toString().trim().toLowerCase();
 
-        // 3) Règles demandées (avec TOAST par problème)
 
-        // prénom: lettres, accents, tirets
         if (!vPrenom.matches(RX_NOM)) {
             Toast.makeText(this, "Prénom invalide : lettres, accents ou tirets seulement.", Toast.LENGTH_SHORT).show();
             prenom.requestFocus(); return false;
         }
 
-        // nom: lettres, accents, tirets
         if (!vNom.matches(RX_NOM)) {
             Toast.makeText(this, "Nom invalide : lettres, accents ou tirets seulement.", Toast.LENGTH_SHORT).show();
             nom.requestFocus(); return false;
         }
 
-        // numéro assurance maladie: 4 lettres MAJ + 8 chiffres
         if (!vNam.matches(RX_RAMQ)) {
-            Toast.makeText(this, "Numéro assurance invalide : format RAMQ12345678 (4 lettres MAJ + 8 chiffres).", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Numéro assurance maladie invalide : format AAAA12345678", Toast.LENGTH_SHORT).show();
             nam.requestFocus(); return false;
         }
 
-        // date de naissance: AAAA-MM-JJ (traits d’union obligatoires)
         if (!vDate.matches(RX_DATE)) {
-            Toast.makeText(this, "Date invalide : format AAAA-MM-JJ (ex: 2024-08-11).", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Date invalide : format AAAA-MM-JJ, 2025-01-01.", Toast.LENGTH_SHORT).show();
             naissance.requestFocus(); return false;
         }
 
-        // civique: chiffres uniquement
         if (!vCiv.matches(RX_CIVIQUE)) {
             Toast.makeText(this, "Numéro civique invalide : chiffres uniquement.", Toast.LENGTH_SHORT).show();
             civique.requestFocus(); return false;
         }
 
-        // rue: rien (juste non vide)
-        if (vRue.isEmpty()) {
-            Toast.makeText(this, "Rue requise.", Toast.LENGTH_SHORT).show();
-            rue.requestFocus(); return false;
-        }
-
-        // ville: lettres, accents, tirets
         if (!vVille.matches(RX_NOM)) {
             Toast.makeText(this, "Ville invalide : lettres, accents ou tirets seulement.", Toast.LENGTH_SHORT).show();
             ville.requestFocus(); return false;
         }
 
-        // code postal: A1A1A1 (MAJ)
         if (!vPost.matches(RX_POSTAL)) {
-            Toast.makeText(this, "Code postal invalide : format A1A1A1 (lettres en MAJ).", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Code postal invalide : format A1A1A1.", Toast.LENGTH_SHORT).show();
             postal.requestFocus(); return false;
         }
 
-        // téléphone: 10 chiffres (ex: 5148338504)
         if (!vTel.matches(RX_TEL10)) {
-            Toast.makeText(this, "Téléphone invalide : 10 chiffres (ex: 5148338504).", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Téléphone invalide : 10 chiffres.", Toast.LENGTH_SHORT).show();
             tel.requestFocus(); return false;
         }
 
-        // email
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(vEmail).matches()) {
             Toast.makeText(this, "Courriel invalide : ex. exemple@gmail.com.", Toast.LENGTH_SHORT).show();
             email.requestFocus(); return false;
         }
 
-        // Réinjecte formatés dans les champs (optionnel)
         nam.setText(vNam);
         postal.setText(vPost);
         email.setText(vEmail);
 
         return true;
     }
-
 
     private void envoyerInscription() {
         JSONObject json = new JSONObject();

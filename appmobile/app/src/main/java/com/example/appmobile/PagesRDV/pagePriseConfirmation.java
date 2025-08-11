@@ -17,16 +17,12 @@ import com.example.appmobile.PageMesRDV;
 import com.example.appmobile.PageProfil;
 import com.example.appmobile.R;
 import com.example.appmobile.RdvCreationRequest;
-import com.example.appmobile.RdvRequest;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class pagePriseConfirmation extends AppCompatActivity implements View.OnClickListener {
-
     private TextView nomService;
     private TextView heureRdv;
     private TextView daterdv;
@@ -36,8 +32,6 @@ public class pagePriseConfirmation extends AppCompatActivity implements View.OnC
     private TextView lienDeco;
     private TextView lienProfil;
     private TextView lienMesRdv;
-
-
     private String token;
     private String courriel;
 
@@ -46,11 +40,9 @@ public class pagePriseConfirmation extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prise_confirmation);
 
-
         SharedPreferences prefs = getSharedPreferences("session", MODE_PRIVATE);
         token = prefs.getString("token", null);
         courriel = prefs.getString("courriel", null);
-
 
         lienDeco = findViewById(R.id.lienDeconnexion);
         lienProfil = findViewById(R.id.lienProfil);
@@ -103,7 +95,6 @@ public class pagePriseConfirmation extends AppCompatActivity implements View.OnC
             finish();
         } else if (v == btnConfirme) {
             confirmeRDV();
-
         } else if (v == btnAnnuler) {
             Intent intent = new Intent(pagePriseConfirmation.this, pagePriseMoment.class) ;
             intent.putExtra("token", token);
@@ -150,8 +141,4 @@ public class pagePriseConfirmation extends AppCompatActivity implements View.OnC
             }
         });
     }
-
-
-
-
 }

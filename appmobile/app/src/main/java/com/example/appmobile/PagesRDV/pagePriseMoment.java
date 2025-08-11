@@ -45,8 +45,6 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
         retour = findViewById(R.id.retourPageMoment);
         messagePrAcuneDispo = findViewById(R.id.messageAucuneDispo);
 
-
-
         retour.setOnClickListener(this);
 
         idService = getIntent().getIntExtra("id_service", -1);
@@ -58,7 +56,6 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
 
         Log.d("DEBUG", "id_service reçu : " + idService);
         apiService = ApiClient.getApiService();
-
         chargerHoraires();
     }
 
@@ -77,7 +74,6 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
                         listView.setVisibility(View.GONE);
                         return;
                     }
-
                     messagePrAcuneDispo.setVisibility(View.GONE);
                     listView.setVisibility(View.VISIBLE);
 
@@ -90,7 +86,6 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
                                 h.getNomEmploye()
                         ));
                     }
-
                     HoraireAdapter adapter = new HoraireAdapter(
                             pagePriseMoment.this,
                             rdvItems,
@@ -105,9 +100,7 @@ public class pagePriseMoment extends AppCompatActivity implements View.OnClickLi
                                 startActivity(intent);
                             }
                     );
-
                     listView.setAdapter(adapter);
-
                 } else {
                     Toast.makeText(pagePriseMoment.this, "Erreur de chargement des horaires", Toast.LENGTH_SHORT).show();
                     Log.e("API", "Erreur HTTP: " + response.code());

@@ -6,11 +6,6 @@ import android.widget.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.appmobile.ApiClient;
-import com.example.appmobile.ApiService;
-import com.example.appmobile.PageProfil;
-import com.example.appmobile.R;
-
 import java.util.HashMap;
 import java.util.Map;
 

@@ -10,8 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
     private void seConnecter(String courriel, String motDePasse) {
         LoginRequest request = new LoginRequest(courriel, motDePasse);
         apiService.login(request).enqueue(new Callback<LoginResponse>() {
@@ -74,10 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(MainActivity.this, "Identifiants invalides", Toast.LENGTH_SHORT).show();
                 }
-
-
             }
-
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
                 Toast.makeText(MainActivity.this, "Erreur réseau : " + t.getMessage(), Toast.LENGTH_SHORT).show();
