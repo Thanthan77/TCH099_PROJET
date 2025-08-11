@@ -25,7 +25,7 @@ try {
         WHERE s.NOM = :nom_service ";
 
     $pstmt = $cnx->prepare($sql);
-    $pstmt->bindValue(':nom_service', $nom_service, PDO::PARAM_INT);
+    $pstmt->bindValue(':nom_service', $nom_service, PDO::PARAM_STR);
     $pstmt->execute();
 
     $pstmt->setFetchMode(PDO::FETCH_ASSOC);
