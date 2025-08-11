@@ -16,7 +16,16 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import android.text.InputFilter;
+
 public class PageInscription extends AppCompatActivity {
+
+    private static final String RX_NOM        = "^[\\p{L} '-]+$";
+    private static final String RX_CIVIQUE    = "^\\d+$";
+    private static final String RX_DATE       = "^\\d{4}-\\d{2}-\\d{2}$";
+    private static final String RX_POSTAL     = "^[A-Z]\\d[A-Z]\\d[A-Z]\\d$";
+    private static final String RX_RAMQ       = "^[A-Z]{4}\\d{8}$";
+    private static final String RX_TEL10      = "^\\d{10}$";
 
     private EditText prenom, nom, nam, naissance, civique, rue, ville, postal, tel, email, emailConf, mdp, mdpConf;
 
@@ -30,7 +39,6 @@ public class PageInscription extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inscription);
 
-        // Initialiser les champs
         prenom = findViewById(R.id.inscription_prenom);
         nom = findViewById(R.id.inscription_nom);
         nam = findViewById(R.id.inscription_nam);
@@ -50,6 +58,26 @@ public class PageInscription extends AppCompatActivity {
 
         apiService = ApiClient.getApiService();
 
+        // chiffres seulement pendant la saisie (tel, civique)
+        InputFilter digitsOnly = (src, s, e, dest, ds, de) -> src.toString().matches("\\d+") ? src : "";
+        tel.setFilters(new InputFilter[]{digitsOnly});
+        civique.setFilters(new InputFilter[]{digitsOnly});
+
+// RAMQ et code postal en MAJ, code postal sans espace
+        nam.addTextChangedListener(new SimpleTextWatcher() {
+            @Override public void onTextChanged(CharSequence cs, int s, int b, int c) {
+                String up = cs.toString().toUpperCase();
+                if (!up.equals(cs.toString())) { nam.setText(up); nam.setSelection(up.length()); }
+            }
+        });
+        postal.addTextChangedListener(new SimpleTextWatcher() {
+            @Override public void onTextChanged(CharSequence cs, int s, int b, int c) {
+                String up = cs.toString().replace(" ", "").toUpperCase();
+                if (!up.equals(cs.toString())) { postal.setText(up); postal.setSelection(up.length()); }
+            }
+        });
+
+
         lienConnexion.setOnClickListener(v ->
                 startActivity(new Intent(PageInscription.this, MainActivity.class))
         );
@@ -62,6 +90,7 @@ public class PageInscription extends AppCompatActivity {
     }
 
     private boolean validerChamps() {
+        // 1) Tous remplis + confirmations
         if (TextUtils.isEmpty(prenom.getText()) || TextUtils.isEmpty(nom.getText())
                 || TextUtils.isEmpty(nam.getText()) || TextUtils.isEmpty(naissance.getText())
                 || TextUtils.isEmpty(civique.getText()) || TextUtils.isEmpty(rue.getText())
@@ -83,8 +112,88 @@ public class PageInscription extends AppCompatActivity {
             return false;
         }
 
+        // 2) Valeurs normalisées
+        String vPrenom = prenom.getText().toString().trim();
+        String vNom    = nom.getText().toString().trim();
+        String vNam    = nam.getText().toString().trim().toUpperCase();
+        String vDate   = naissance.getText().toString().trim();
+        String vCiv    = civique.getText().toString().trim();
+        String vRue    = rue.getText().toString().trim();
+        String vVille  = ville.getText().toString().trim();
+        String vPost   = postal.getText().toString().trim().replace(" ", "").toUpperCase();
+        String vTel    = tel.getText().toString().trim();
+        String vEmail  = email.getText().toString().trim().toLowerCase();
+
+        // 3) Règles demandées (avec TOAST par problème)
+
+        // prénom: lettres, accents, tirets
+        if (!vPrenom.matches(RX_NOM)) {
+            Toast.makeText(this, "Prénom invalide : lettres, accents ou tirets seulement.", Toast.LENGTH_SHORT).show();
+            prenom.requestFocus(); return false;
+        }
+
+        // nom: lettres, accents, tirets
+        if (!vNom.matches(RX_NOM)) {
+            Toast.makeText(this, "Nom invalide : lettres, accents ou tirets seulement.", Toast.LENGTH_SHORT).show();
+            nom.requestFocus(); return false;
+        }
+
+        // numéro assurance maladie: 4 lettres MAJ + 8 chiffres
+        if (!vNam.matches(RX_RAMQ)) {
+            Toast.makeText(this, "Numéro assurance invalide : format RAMQ12345678 (4 lettres MAJ + 8 chiffres).", Toast.LENGTH_SHORT).show();
+            nam.requestFocus(); return false;
+        }
+
+        // date de naissance: AAAA-MM-JJ (traits d’union obligatoires)
+        if (!vDate.matches(RX_DATE)) {
+            Toast.makeText(this, "Date invalide : format AAAA-MM-JJ (ex: 2024-08-11).", Toast.LENGTH_SHORT).show();
+            naissance.requestFocus(); return false;
+        }
+
+        // civique: chiffres uniquement
+        if (!vCiv.matches(RX_CIVIQUE)) {
+            Toast.makeText(this, "Numéro civique invalide : chiffres uniquement.", Toast.LENGTH_SHORT).show();
+            civique.requestFocus(); return false;
+        }
+
+        // rue: rien (juste non vide)
+        if (vRue.isEmpty()) {
+            Toast.makeText(this, "Rue requise.", Toast.LENGTH_SHORT).show();
+            rue.requestFocus(); return false;
+        }
+
+        // ville: lettres, accents, tirets
+        if (!vVille.matches(RX_NOM)) {
+            Toast.makeText(this, "Ville invalide : lettres, accents ou tirets seulement.", Toast.LENGTH_SHORT).show();
+            ville.requestFocus(); return false;
+        }
+
+        // code postal: A1A1A1 (MAJ)
+        if (!vPost.matches(RX_POSTAL)) {
+            Toast.makeText(this, "Code postal invalide : format A1A1A1 (lettres en MAJ).", Toast.LENGTH_SHORT).show();
+            postal.requestFocus(); return false;
+        }
+
+        // téléphone: 10 chiffres (ex: 5148338504)
+        if (!vTel.matches(RX_TEL10)) {
+            Toast.makeText(this, "Téléphone invalide : 10 chiffres (ex: 5148338504).", Toast.LENGTH_SHORT).show();
+            tel.requestFocus(); return false;
+        }
+
+        // email
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(vEmail).matches()) {
+            Toast.makeText(this, "Courriel invalide : ex. exemple@gmail.com.", Toast.LENGTH_SHORT).show();
+            email.requestFocus(); return false;
+        }
+
+        // Réinjecte formatés dans les champs (optionnel)
+        nam.setText(vNam);
+        postal.setText(vPost);
+        email.setText(vEmail);
+
         return true;
     }
+
 
     private void envoyerInscription() {
         JSONObject json = new JSONObject();
@@ -132,4 +241,9 @@ public class PageInscription extends AppCompatActivity {
             }
         });
     }
+    private abstract static class SimpleTextWatcher implements android.text.TextWatcher {
+        @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        @Override public void afterTextChanged(android.text.Editable s) {}
+    }
+
 }
