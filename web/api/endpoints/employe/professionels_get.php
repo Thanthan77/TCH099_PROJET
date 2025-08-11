@@ -6,17 +6,26 @@ header('Content-Type: application/json');
 header('Cache-Control: no-cache');
 
 try {
+
+    if (!$nom_service) {
+    http_response_code(400);
+    error_log("Paramètre manquant. Nom Service: $nom_service");
+    echo json_encode(['error' => 'Paramètres manquants']);
+    exit;
+}
+
+
+
     $cnx = Database::getInstance();
     
-    $sql = "
-    SELECT e.NOM_EMPLOYE, e.PRENOM_EMPLOYE, e.CODE_EMPLOYE, e.POSTE
-FROM Employe e
-JOIN ServiceEmploye se ON e.CODE_EMPLOYE = se.CODE_EMPLOYE
-WHERE se.ID_SERVICE = :id_service;
-";
+    $sql = "SELECT e.NOM_EMPLOYE, e.PRENOM_EMPLOYE, e.CODE_EMPLOYE, e.POSTE
+        FROM Employe e
+        JOIN ServiceEmploye se ON e.CODE_EMPLOYE = se.CODE_EMPLOYE
+        JOIN Service s ON se.ID_SERVICE = s.ID_SERVICE
+        WHERE s.NOM = :nom_service ";
 
     $pstmt = $cnx->prepare($sql);
-    $pstmt->bindValue(':id_service', $id_service, PDO::PARAM_INT);
+    $pstmt->bindValue(':nom_service', $nom_service, PDO::PARAM_INT);
     $pstmt->execute();
 
     $pstmt->setFetchMode(PDO::FETCH_ASSOC);

@@ -35,7 +35,7 @@ get($URL.'/horaires','endpoints/employe/horaire_get.php');
 get($URL.'/conge','endpoints/employe/conge_get.php');
 
 //GET pour avoir tous les professionels
-get($URL.'/professionnels/$id_service','endpoints/employe/professionels_get.php');
+get($URL.'/professionnels/$nom_service','endpoints/employe/professionels_get.php');
 
 // GET pour récupérer les services d’un employé
 get($URL.'/service_employe', 'endpoints/employe/service_employe_get.php');
