@@ -9,12 +9,14 @@ try {
     $cnx = Database::getInstance();
     
     $sql = "
-    SELECT NOM_EMPLOYE, PRENOM_EMPLOYE, CODE_EMPLOYE, POSTE
-    FROM Employe 
-    WHERE CODE_EMPLOYE LIKE '1%' OR CODE_EMPLOYE LIKE '2%'
+    SELECT e.NOM_EMPLOYE, e.PRENOM_EMPLOYE, e.CODE_EMPLOYE, e.POSTE
+FROM Employe e
+JOIN ServiceEmploye se ON e.CODE_EMPLOYE = se.CODE_EMPLOYE
+WHERE se.ID_SERVICE = :id_service;
 ";
 
     $pstmt = $cnx->prepare($sql);
+    $pstmt->bindValue(':id_service', $id_service, PDO::PARAM_INT);
     $pstmt->execute();
 
     $pstmt->setFetchMode(PDO::FETCH_ASSOC);
