@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -6,7 +5,7 @@
     android:orientation="vertical"
     android:background="#FFFFFF">
 
-
+    <!-- Barre du haut -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
@@ -14,7 +13,6 @@
         android:padding="12dp"
         android:background="#0077CB"
         android:gravity="center_vertical">
-
 
         <TextView
             android:id="@+id/lienRdv"
@@ -26,7 +24,6 @@
             android:textSize="14sp"
             android:gravity="start" />
 
-
         <TextView
             android:id="@+id/lienProfil"
             android:layout_width="0dp"
@@ -36,7 +33,6 @@
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:gravity="center" />
-
 
         <TextView
             android:id="@+id/lienDeconnexion"
@@ -49,13 +45,13 @@
             android:gravity="end" />
     </LinearLayout>
 
+    <!-- Titre -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_horizontal"
         android:padding="16dp">
-
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -78,44 +74,35 @@
                 android:textColor="#000000"
                 android:gravity="center_vertical" />
         </LinearLayout>
-
     </LinearLayout>
 
-
-
-
-    <ScrollView
+    <!-- Liste qui prend la moitié de l'écran -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingHorizontal="16dp"
-        tools:ignore="SpeakableTextPresentCheck">
+        android:background="#F0F0F0"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <LinearLayout
+        <ListView
+            android:id="@+id/listRdv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/messageAucunRdv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#F0F0F0"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:text="@string/aucun_rendez_vous_pour_le_patient"
+            android:textSize="16sp"
+            android:textColor="#666666"
+            android:gravity="center"
+            android:visibility="gone"
+            android:padding="16dp" />
+    </LinearLayout>
 
-            <ListView
-                android:id="@+id/listRdv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-            <TextView
-                android:id="@+id/messageAucunRdv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/aucun_rendez_vous_pour_le_patient"
-                android:textSize="16sp"
-                android:textColor="#666666"
-                android:gravity="center"
-                android:visibility="gone"
-                android:padding="16dp" />
-
-        </LinearLayout>
-    </ScrollView>
-
+    <!-- Footer -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
