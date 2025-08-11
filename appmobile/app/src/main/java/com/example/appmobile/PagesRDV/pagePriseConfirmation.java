@@ -50,7 +50,6 @@ public class pagePriseConfirmation extends AppCompatActivity implements View.OnC
         nomService = findViewById(R.id.nomConfirmation);
         heureRdv = findViewById(R.id.heureConfirmation);
         daterdv = findViewById(R.id.dateConfirmation);
-        adresseCourriel = findViewById(R.id.adresseCourrielConfriamtion);
         btnConfirme = findViewById(R.id.btnConfirmation);
         btnAnnuler = findViewById(R.id.btnAnnuler);
 
@@ -68,10 +67,6 @@ public class pagePriseConfirmation extends AppCompatActivity implements View.OnC
         nomService.setText("Service : " + nom);
         heureRdv.setText("Heure : " + heure);
         daterdv.setText("Date : " + jour);
-
-        if (courriel != null) {
-            adresseCourriel.setText(courriel);
-        }
     }
 
     @Override
