@@ -38,7 +38,7 @@ try {
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     $nbPlages = ceil($duree / 20);
-    error_log("⏱ Nombre de plages à modifier : $nbPlages");
+    error_log(" Nombre de plages à modifier : $nbPlages");
 
     $heureActuelle = new DateTime($heureDebut);
     $nbMisesAJour = 0;

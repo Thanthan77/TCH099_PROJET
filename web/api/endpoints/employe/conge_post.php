@@ -5,9 +5,7 @@ header('Content-Type: application/json');
 $data = json_decode(file_get_contents('php://input'), true);
 
 
-
-try {
-    $dateDebut = $data['dateDebut'] ?? null;
+$dateDebut = $data['dateDebut'] ?? null;
     $dateFin = $data['dateFin'] ?? null;
 
     if (!$codeEmploye || !$dateDebut || !$dateFin) {
@@ -21,6 +19,10 @@ try {
         echo json_encode(['error' => 'La date de fin doit être après la date de début']);
         exit;
     }
+
+
+try {
+    
 
     $cnx = Database::getInstance();
 
