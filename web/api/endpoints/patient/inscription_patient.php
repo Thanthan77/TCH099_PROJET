@@ -27,6 +27,7 @@ try {
         echo json_encode(['error' => 'Courriel déjà utilisé']);
         exit();
     }
+    $hashedPassword = password_hash($data['MOT_DE_PASSE'], PASSWORD_DEFAULT);
 
     $stmt = $cnx->prepare("
         INSERT INTO Patient (COURRIEL, PRENOM_PATIENT, NOM_PATIENT, MOT_DE_PASSE, NUM_TEL,
@@ -37,7 +38,7 @@ try {
     $stmt->bindParam(':courriel', $data['COURRIEL']);
     $stmt->bindParam(':prenom', $data['PRENOM_PATIENT']);
     $stmt->bindParam(':nom', $data['NOM_PATIENT']);
-    $stmt->bindParam(':mdp', $data['MOT_DE_PASSE']);
+    $stmt->bindParam(':mdp', $hashedPassword);
     $stmt->bindParam(':tel', $data['NUM_TEL']);
     $stmt->bindParam(':civique', $data['NUM_CIVIQUE']);
     $stmt->bindParam(':rue', $data['RUE']);
