@@ -1,16 +1,33 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
 .page-container {
+  min-height: 100%;
   display: flex;
-  justify-content: center; 
-  align-items: center;    
+  flex-direction: column;
 }
 
 .footer-clinique {
   text-align: center;
-  font-family: Arial, sans-serif;
-  font-size: 12px;
-  line-height: 1.2;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+  background-color: #f8f9fa;
+  padding: 15px 20px;
+  border-top: 1px solid #ddd;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: auto; 
 }
 
 .footer-clinique p {
-  margin: 3px 0;
+  margin: 5px 0;
+}
+
+.footer-clinique strong {
+  font-weight: bold;
+  font-size: 15px;
 }
