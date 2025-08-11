@@ -4,18 +4,6 @@ require_once(__DIR__.'/../../db/Database.php');
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-cache');
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-
-if (!$nom_service) {
-    http_response_code(400);
-    error_log("Paramètre manquant. Nom Service: $nom_service");
-    echo json_encode(['error' => 'Paramètres manquants']);
-    exit;
-}
-
-try {
-=======
 try {
     // 1) Récupérer le nom du service envoyé par le JS:
     //    fetch(`${API_URL}professionnels/${encodeURIComponent(serviceNom)}`)
@@ -45,38 +33,6 @@ try {
 
     // Nettoyage des espaces (y compris insécables)
     $nom_service = preg_replace('/[\x{00A0}\s]+/u', ' ', trim($nom_service));
->>>>>>> Stashed changes
-=======
-try {
-    // 1) Récupérer le nom du service envoyé par le JS:
-    //    fetch(`${API_URL}professionnels/${encodeURIComponent(serviceNom)}`)
-    $nom_service = $_GET['service'] ?? null;
-
-    // Essai via PATH_INFO (ex: /professionnels/Consultation%20g%C3%A9n%C3%A9rale)
-    if (!$nom_service && !empty($_SERVER['PATH_INFO'])) {
-        $parts = array_values(array_filter(explode('/', $_SERVER['PATH_INFO'])));
-        if (!empty($parts[0])) $nom_service = urldecode($parts[0]);
-    }
-
-    // Fallback via REQUEST_URI si PATH_INFO indisponible selon conf Apache/PHP
-    if (!$nom_service && !empty($_SERVER['REQUEST_URI'])) {
-        $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        $chunks = array_values(array_filter(explode('/', $uri)));
-        // dernier segment après /professionnels/
-        if (count($chunks) >= 2 && strtolower($chunks[count($chunks)-2]) === 'professionnels') {
-            $nom_service = urldecode($chunks[count($chunks)-1]);
-        }
-    }
-
-    if (!$nom_service) {
-        http_response_code(400);
-        echo json_encode(['error' => 'Paramètre "service" manquant']);
-        exit;
-    }
-
-    // Nettoyage des espaces (y compris insécables)
-    $nom_service = preg_replace('/[\x{00A0}\s]+/u', ' ', trim($nom_service));
->>>>>>> Stashed changes
 
     $cnx = Database::getInstance();
 
