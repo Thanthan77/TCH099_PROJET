@@ -5,14 +5,7 @@ header('Content-Type: application/json; charset=UTF-8');
 
 $input = json_decode(file_get_contents('php://input'), true);
 
-if ($_SERVER['REQUEST_METHOD'] !== 'PUT') {
-    http_response_code(405);
-    header('Allow: PUT');
-    echo json_encode([
-        'error' => 'Méthode non autorisée, utilisez PUT'
-    ], JSON_UNESCAPED_UNICODE);
-    exit();
-}
+
 
 if ( !isset($input['noteConsult'])) {
     http_response_code(400);
