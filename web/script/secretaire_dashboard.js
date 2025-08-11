@@ -29,23 +29,28 @@ let rdvAvantChangement = [];
 
 let demandeEnvoyee = false;
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const codeEmploye = new URLSearchParams(window.location.search).get('codeEmploye');
 
-  // ... tes appels initiaux
-  chargerAfficherRendezVous();
+  try {
+    await chargerPatients();                // ✅ d'abord les patients
+    await chargerAfficherRendezVous();      // ✅ ensuite les RDV
+  } catch (e) {
+    console.error(e);
+  }
+
+  // le reste inchangé
   chargerAfficherHoraires();
   chargerDemandesVacances();
-  chargerPatients();
   chargerPatientsPourListe();
   chargerServicesPourCreation();
   mettreAJourProfessionnelsSuivi();
   showTab("rdv");
 
-  // écouteurs pour les filtres
-  document.getElementById("service").addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
-  document.getElementById("professionnel").addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
-  document.getElementById("date").addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
+  document.getElementById("service")?.addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
+  document.getElementById("professionnel")?.addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
+  document.getElementById("date")?.addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
+ 
 
   // bouton logout
   const logoutBtn = document.getElementById("logout-btn");
@@ -1134,97 +1139,6 @@ async function chargerAfficherHoraires() {
     console.error("Erreur lors du chargement des horaires :", error);
   }
 }
-
-
-
-
-/*async function changerDisponibilite(codeEmploye, jour, heure, courrielPatient, duree, statut) {
-  const resultat = await fetch(`${API_URL}rendezvous`);
-  if (!resultat.ok) throw new Error("Erreur lors du chargement des rendez-vous");
-  const rdvs = await resultat.json();
-
-  rdvs.forEach(r => {
-    console.log(` RDV : courriel=${r.COURRIEL}, jour=${r.JOUR}, heure=${r.HEURE}`);
-  });
-
-  console.log(` Recherché : courriel=${courrielPatient}, jour=${jour}, heure=${heure}`);
-
-  const rdv = rdvs.find(r =>
-    r.COURRIEL === courrielPatient &&
-    r.JOUR === jour &&
-    r.HEURE === heure
-  );
-
-  console.log(' rdv trouvé :', rdv);
-
-  if (!rdv) {
-    console.warn("Aucun rendez-vous trouvé pour :", courrielPatient, jour, heure);
-    return;
-  }
-
-  const numRdv = rdv.NUM_RDV;
-
-  try {
-    const response = await fetch(`${API_URL}disponibilites`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        CODE_EMPLOYE: codeEmploye,
-        JOUR: jour,
-        HEURE: heure,
-        STATUT: statut,
-        NUM_RDV: numRdv,
-        DUREE: duree
-      })
-    });
-
-    if (!response.ok) {
-      const erreur = await response.text();
-      throw new Error(`Erreur API: ${erreur}`);
-    }
-
-    console.log(`Disponibilité changée à ${statut} pour ${codeEmploye} le ${jour} à ${heure}`);
-  } catch (err) {
-    console.error(" Erreur lors de la mise à jour de la disponibilité :", err.message);
-    alert("Erreur changement disponibilité : " + err.message);
-  }
-}
-
-async function changerStatutDisponibilite(codeEmploye, jour, heure, duree, statut) {
-
-  console.log('test 555');
-  console.log({
-  CODE_EMPLOYE: codeEmploye,
-  JOUR: jour,
-  HEURE: heure,
-  STATUT: statut,
-  DUREE: duree
-});
-
-  try {
-    const response = await fetch(`${API_URL}disponibilites/annulation`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        CODE_EMPLOYE: codeEmploye,
-        JOUR: jour,
-        HEURE: heure,
-        STATUT: statut,
-        DUREE: duree
-      })
-    });
-
-    if (!response.ok) {
-      const erreur = await response.text();
-      throw new Error(`Erreur API: ${erreur}`);
-    }
-
-    console.log(` Disponibilité changée à ${statut} pour ${codeEmploye} le ${jour} à ${heure}`);
-  } catch (err) {
-    console.error(" Erreur lors de la mise à jour de la disponibilité :", err.message);
-    alert("Erreur changement disponibilité : " + err.message);
-  }
-}*/
 
 function reinitialiserFormulaireRdv() {
   document.getElementById("nomPatient").value = "";
