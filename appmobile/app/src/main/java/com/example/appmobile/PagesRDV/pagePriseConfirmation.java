@@ -26,7 +26,6 @@ public class pagePriseConfirmation extends AppCompatActivity implements View.OnC
     private TextView nomService;
     private TextView heureRdv;
     private TextView daterdv;
-    private TextView adresseCourriel;
     private Button btnConfirme;
     private Button btnAnnuler;
     private TextView lienDeco;

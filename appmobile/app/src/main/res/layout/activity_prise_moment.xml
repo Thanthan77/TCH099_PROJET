@@ -18,9 +18,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:text="← Retour"
+            android:text="Retour"
             android:textColor="#FFFFFF"
-            android:textSize="29dp" />
+            android:textSize="15dp" />
     </LinearLayout>
 
     <LinearLayout
