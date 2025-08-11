@@ -40,7 +40,7 @@ try {
     $nouveauMdpHash = password_hash($nouveauMdp, PASSWORD_DEFAULT);
     
     $stmt = $cnx->prepare("UPDATE Patient SET MOT_DE_PASSE = :nouveau WHERE COURRIEL = :courriel");
-    $stmt->bindParam(':nouveau', $nouveauMdp);
+    $stmt->bindParam(':nouveau', $nouveauMdpHash);
     $stmt->bindParam(':courriel', $courriel);
     $stmt->execute();
 
