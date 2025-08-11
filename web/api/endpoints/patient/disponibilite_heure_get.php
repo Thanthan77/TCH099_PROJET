@@ -10,20 +10,23 @@ try {
 
     $query = "
         SELECT s.NOM AS NOM_SERVICE,
-               d.JOUR,
-               d.HEURE,
-               e.NOM_EMPLOYE,
-               e.PRENOM_EMPLOYE
-        FROM Service s
-        JOIN ServiceEmploye se ON s.ID_SERVICE = se.ID_SERVICE
-        JOIN Disponibilite d ON se.CODE_EMPLOYE = d.CODE_EMPLOYE
-        JOIN Employe e ON d.CODE_EMPLOYE = e.CODE_EMPLOYE
-        WHERE d.STATUT = 'DISPONIBLE' AND d.CODE_EMPLOYE = :code_employe
-        ORDER BY d.JOUR, d.HEURE
+       d.JOUR,
+       d.HEURE,
+       e.NOM_EMPLOYE,
+       e.PRENOM_EMPLOYE
+FROM Service s
+JOIN ServiceEmploye se ON s.ID_SERVICE = se.ID_SERVICE
+JOIN Disponibilite d ON se.CODE_EMPLOYE = d.CODE_EMPLOYE
+JOIN Employe e ON d.CODE_EMPLOYE = e.CODE_EMPLOYE
+WHERE d.STATUT = 'DISPONIBLE'
+  AND d.CODE_EMPLOYE = :code_employe
+  AND d.JOUR = :jour
+ORDER BY d.HEURE;
     ";
 
     $stmt = $cnx->prepare($query);
     $stmt->bindValue(':code_employe', $code_employe, PDO::PARAM_INT);
+    $stmt->bindValue(':jour',$jour);
     $stmt->execute();
 
     $resultats = $stmt->fetchAll(PDO::FETCH_ASSOC);
