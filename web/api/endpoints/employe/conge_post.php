@@ -4,14 +4,7 @@ header('Content-Type: application/json');
 
 $data = json_decode(file_get_contents('php://input'), true);
 
-$codeEmploye = null;
-if (isset($_SERVER['REQUEST_URI'])) {
-    $parts = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
-    $dernier = end($parts);
-    if (is_numeric($dernier)) {
-        $codeEmploye = intval($dernier);
-    }
-}
+
 
 try {
     $dateDebut = $data['dateDebut'] ?? null;

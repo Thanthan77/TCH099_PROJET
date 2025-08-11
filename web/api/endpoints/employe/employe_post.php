@@ -59,7 +59,7 @@ try {
     // Hacher le mot de passe
     $motDePasseHash = password_hash($data['mot_de_passe'], PASSWORD_DEFAULT);
 
-    // Insertion
+
     $stmt = $cnx->prepare("INSERT INTO Employe (
         CODE_EMPLOYE, PRENOM_EMPLOYE, NOM_EMPLOYE, ETAT_CIVIL, MOT_DE_PASSE,
         COURRIEL, TELEPHONE, ADRESSE, DATE_NAISSANCE, SEXE, POSTE

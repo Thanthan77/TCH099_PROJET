@@ -4,14 +4,14 @@ require_once(__DIR__.'/../../db/Database.php');
 header('Content-Type: application/json');
 header('Cache-Control: no-cache');
 
-try {
-
-   
-    if (!$courriel) {
+if (!$courriel) {
         http_response_code(400);
         echo json_encode(["error" => "Le paramètre courriel est requis"]);
         exit();
     }
+
+try {
+
 
     $cnx = Database::getInstance();
     $pstmt = $cnx->prepare("SELECT * FROM Patient WHERE COURRIEL = :courriel");

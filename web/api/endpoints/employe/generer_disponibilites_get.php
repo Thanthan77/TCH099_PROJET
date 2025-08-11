@@ -1,11 +1,10 @@
 <?php
 header('Content-Type: application/json');
-require_once(__DIR__ . '/../../db/Database.php'); // ✅ Chemin corrigé vers Database.php
+require_once(__DIR__ . '/../../db/Database.php'); 
 
 try {
     $cnx = Database::getInstance();
 
-    // 🔄 Récupérer les horaires + jours travaillés
     $stmtHoraires = $cnx->prepare("
         SELECT h.CODE_EMPLOYE, h.HEURE_DEBUT, h.HEURE_FIN, jt.JOUR_SEMAINE
         FROM Horaire h
@@ -14,7 +13,6 @@ try {
     $stmtHoraires->execute();
     $horaires = $stmtHoraires->fetchAll(PDO::FETCH_ASSOC);
 
-    // 📆 Récupérer les périodes de vacances
     $stmtVacances = $cnx->prepare("
         SELECT CODE_EMPLOYE, DATE_DEBUT, DATE_FIN, STATUS
         FROM Exception_horaire

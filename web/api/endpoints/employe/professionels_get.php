@@ -5,16 +5,15 @@ require_once(__DIR__.'/../../db/Database.php');
 header('Content-Type: application/json');
 header('Cache-Control: no-cache');
 
-try {
 
-    if (!$nom_service) {
+if (!$nom_service) {
     http_response_code(400);
     error_log("Paramètre manquant. Nom Service: $nom_service");
     echo json_encode(['error' => 'Paramètres manquants']);
     exit;
 }
 
-
+try {
 
     $cnx = Database::getInstance();
     
