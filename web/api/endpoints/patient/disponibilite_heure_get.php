@@ -4,7 +4,12 @@ require_once(__DIR__ . '/../../db/Database.php');
 
 try {
     
-    
+    if (!$jour || !$code_employe) {
+    http_response_code(400);
+    error_log("Paramètres manquants. Date: $jour, Code Employe: $code_employe");
+    echo json_encode(['error' => 'Paramètres manquants']);
+    exit;
+}
 
     $cnx = Database::getInstance();
 
