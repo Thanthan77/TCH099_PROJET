@@ -24,7 +24,20 @@ try {
     
     $pstmt->setFetchMode(PDO::FETCH_ASSOC);
     if ($result = $pstmt->fetch()) { 
-        if (trim($mdp) === trim($result['MOT_DE_PASSE'])) {
+        $stored = $result['MOT_DE_PASSE'];
+        $isHashed = password_get_info($stored)['algo'] !== 0;
+        $ok = $isHashed ? password_verify($mdp, $stored)
+                        : hash_equals(trim($stored), trim($mdp));
+
+        if ($ok) {
+            if (!$isHashed) {
+                $newHash = password_hash($mdp, PASSWORD_DEFAULT);
+                $up = $cnx->prepare("UPDATE Patient SET MOT_DE_PASSE = :h WHERE COURRIEL = :c");
+                $up->bindParam(':h', $newHash);
+                $up->bindParam(':c', $courriel);
+                $up->execute();
+            }
+
             $token = generate_jwt([
                 'COURRIEL' => $courriel,
                 'exp' => time() + 3600
@@ -35,7 +48,7 @@ try {
                 'COURRIEL' => $courriel
             ]);
             exit();
-        } 
+        }
     }
     http_response_code(401);
     echo json_encode(['error' => 'Identifiants invalides']);
