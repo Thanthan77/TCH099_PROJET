@@ -31,12 +31,14 @@ try {
         exit();
     }
 
-    if ($row['MOT_DE_PASSE'] !== $ancienMdp) {
+    if (!password_verify($ancienMdp, $row['MOT_DE_PASSE'])) {
         http_response_code(401);
         echo json_encode(['error' => 'Ancien mot de passe incorrect']);
         exit();
     }
 
+    $nouveauMdpHash = password_hash($nouveauMdp, PASSWORD_DEFAULT);
+    
     $stmt = $cnx->prepare("UPDATE Patient SET MOT_DE_PASSE = :nouveau WHERE COURRIEL = :courriel");
     $stmt->bindParam(':nouveau', $nouveauMdp);
     $stmt->bindParam(':courriel', $courriel);
