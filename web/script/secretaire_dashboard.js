@@ -626,7 +626,7 @@ function afficherAssurancesFiltres(nasTape) {
   const needle = (nasTape || "").toLowerCase();
   const filtres = (tousLesPatients || []).filter((p) => {
     const nas = (p.NO_ASSURANCE_MALADIE || "").toLowerCase();
-    return nas.includes(needle); // focus vide => tous
+    return nas.includes(needle);
   });
 
   if (filtres.length === 0) {
@@ -636,7 +636,6 @@ function afficherAssurancesFiltres(nasTape) {
 
   filtres.forEach((p) => {
     const li = document.createElement("li");
-    // ✅ n’affiche QUE le NAS (sans nom)
     li.textContent = p.NO_ASSURANCE_MALADIE || "";
     li.onclick = () => {
       document.getElementById("assurancePatient").value = p.NO_ASSURANCE_MALADIE || "";
@@ -810,17 +809,16 @@ function escapeHtml(str) {
 // ===================================================================
 // ============== 11) JOURS DISPONIBLES (CALENDRIER) =================
 // ===================================================================
-// [NOUVEAU] — restreint les jours du calendrier aux dates où l'employé a au moins une plage DISPONIBLE
 
-const __joursDispoCache = {};                 // { [CODE_EMPLOYE]: Set("YYYY-MM-DD", ...) }
-const __SCAN_RANGE_JOURS = 60;                // fallback: explorera les 60 prochains jours si pas d'API agrégée
+const __joursDispoCache = {};
+const __SCAN_RANGE_JOURS = 60;
 
-const toYMD = (d) => {                        // [NOUVEAU] utilitaire date
+const toYMD = (d) => {                        
   const pad = (n) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 };
 
-async function fetchJoursDisponibles(codeEmp, fromDate, toDate) { // [NOUVEAU]
+async function fetchJoursDisponibles(codeEmp, fromDate, toDate) {
   if (!codeEmp) return new Set();
 
   // 1) Essai endpoint agrégé (optionnel côté backend)
