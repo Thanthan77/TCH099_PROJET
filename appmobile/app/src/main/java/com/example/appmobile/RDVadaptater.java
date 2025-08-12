@@ -43,14 +43,15 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
 
         assert rdv != null;
 
+        // Remplissage des données
         serviceRdv.setText(rdv.getNomService());
         dateRdv.setText(rdv.getJourRdv());
         timeRdv.setText(rdv.getHeureRdv());
+        medecinRdv.setText("Rendez-vous avec Mm(e) " + rdv.getMedecin());
 
-        // Texte affiché avec le nom du professionnel
-        medecinRdv.setText("Rendez-vous avec Mm(e)" + rdv.getMedecin());
-
+        // Bouton annuler
         annulerRdv.setOnClickListener(v -> annulerRdv(rdv));
+
         return convertView;
     }
 
@@ -60,6 +61,7 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
         int numRdv = rdv.getNumRdv();
         Map<String, String> jsonBody = new HashMap<>();
         jsonBody.put("action", "cancel");
+
         Log.d("API_REQUEST", "Annulation du RDV id=" + numRdv + " avec body=" + jsonBody);
 
         Call<Void> call = apiService.putAnnulerRdv(numRdv, jsonBody);
@@ -67,6 +69,7 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
+                    // Retirer l'élément de la liste
                     remove(rdv);
                     notifyDataSetChanged();
                     Log.d("API", "RDV annulé avec succès");

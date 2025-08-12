@@ -2,6 +2,7 @@ package com.example.appmobile;
 
 import com.google.gson.annotations.SerializedName;
 
+//Modèle de données représentant un patient.
 public class Patient {
     @SerializedName("PRENOM_PATIENT") private String prenom;
     @SerializedName("NOM_PATIENT") private String nom;
