@@ -16,38 +16,40 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
 public interface ApiService {
-    @POST("login_patient")
-    Call<LoginResponse> login(@Body LoginRequest request);
+
 
     @GET("services")
     Call<List<ServiceRequest>> getServices();
-
+    // GET pour avoir toutes les informations d'un patient
+    @GET("patient/{courriel}")
+    Call<Patient> getPatient(@Path("courriel") String courriel);
     @GET("disponibilitees/services/id/{id_service}")
     Call<List<HoraireRequest>> getHoraire(@Path("id_service") int idService);
+    // GET pour avoir les rendezvous d'un patient
     @GET("rendezvous/patient/{courriel}")
     Call<RdvResponse> getRDV(@Path("courriel") String courriel);
 
+    // POST pour prendre un rendezvous en tant que pâtient
     @POST("rendezvous/patient")
     Call<Void> postRdv(@Body com.example.appmobile.RdvCreationRequest rdv);
-
-    @PUT("rendezVous/id/patient/{numRdv}")
-    Call<Void> putAnnulerRdv(
-            @Path("numRdv") int numRdv,
-            @Body Map<String, String> body
-    );
-
+    // POST pour le login de patient (génération du token JWT)
+    @POST("login_patient")
+    Call<LoginResponse> login(@Body LoginRequest request);
+    // POST pour l'inscription du patient
     @POST("inscription_patient")
     Call<ResponseBody> inscrirePatient(@Body RequestBody body);
 
-    @GET("patient/{courriel}")
-    Call<Patient> getPatient(@Path("courriel") String courriel);
-
-
+    // PUT modifie les informations des patients
     @PUT("modifier_patient")
     Call<Void> updatePatient(@Body Map<String, String> data);
-
+    // PUT pour changer le mot de passe
     @PUT("mdp_put")
     Call<ResponseBody> changerMotDePasse(@Body Map<String, String> data);
+    // PUT annulation de rendezVous
+    @PUT("rendezVous/id/patient/{numRdv}")
+    Call<Void> putAnnulerRdv(
+            @Path("numRdv") int numRdv,
+            @Body Map<String, String> body);
 
 }
 
