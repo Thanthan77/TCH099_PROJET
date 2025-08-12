@@ -1,9 +1,16 @@
 <?php
-// config.php
-interface Config
+
+    interface Config
     {
-        const DB_HOST = "database:3306";//adresse/nom de domaine du serveur MySQL
-        const DB_USER = "root";        //nom d'utilisateur pour se connecter à MySQL
-        const DB_PWD = "tiger";        //mot de passe pour se connecter à MySQL
-        const DB_NAME = "docker"; //nom de la base de donnees
+    const DB_HOST = 'database:3306';
+    const DB_USER = 'root';
+    const DB_PWD =  'tiger';
+    const DB_NAME = 'docker';
     }
+    
+    define('DB_HOST', 'vitalis-sql.mysql.database.azure.com');
+    define('DB_USER', 'app_vitalis');
+    define('DB_PWD', 'Banane&01');
+    define('DB_NAME', 'clinique_db');
+
+?>

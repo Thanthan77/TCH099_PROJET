@@ -1,7 +1,7 @@
 package com.example.appmobile;
 
 import com.google.gson.annotations.SerializedName;
-
+//Modèle de données pour la requête de connexion.
 public class LoginRequest {
     @SerializedName("COURRIEL")
     private String courriel;
