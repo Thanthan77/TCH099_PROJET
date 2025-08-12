@@ -34,7 +34,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: php-app
-          path: ./web   # <<< ICI on envoie seulement le contenu du dossier web
+          path: ./web/*
 
   deploy:
     runs-on: ubuntu-latest
