@@ -45,7 +45,7 @@ document.getElementById("connexion").addEventListener("submit", function (e) {
   const motdepasse = document.getElementById("motDePasse").value;
   const memoriser = document.getElementById("memoriserCompte").checked;
 
-  fetch(API_URL + "login", {
+  fetch(API_URL + "login.php", {
     method: "POST",
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

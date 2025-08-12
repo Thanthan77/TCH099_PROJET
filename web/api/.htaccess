@@ -1,6 +1,10 @@
 RewriteEngine On
 RewriteBase /
 
+
+RewriteCond %{REQUEST_URI}  !(.png|.jpg|.webp|.gif|.jpeg|.zip|.css|.svg|.js|.pdf)$
+RewriteRule (.*) routes.php [QSA,L]
+
 # Garde les fichiers/dossiers existants intacts (html, css, js, images, .php, etc.)
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
