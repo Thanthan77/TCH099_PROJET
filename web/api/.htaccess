@@ -1,4 +1,19 @@
 RewriteEngine On
+RewriteBase /
 
-RewriteCond %{REQUEST_URI}  !(\.png|\.jpg|\.webp|\.gif|\.jpeg|\.zip|\.css|\.svg|\.js|\.pdf)$
-RewriteRule (.*) routes.php [QSA,L]
+# Garde les fichiers/dossiers existants intacts (html, css, js, images, .php, etc.)
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Si tu utilises Authorization: Bearer
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
+# === Routes API propres -> fichiers PHP correspondants ===
+RewriteRule ^api/ping$                 api/ping.php               [L,QSA]
+RewriteRule ^api/login$                api/login.php              [L,QSA]
+RewriteRule ^api/patients$             api/patients.php           [L,QSA]
+RewriteRule ^api/horaires$             api/horaires.php           [L,QSA]
+RewriteRule ^api/rendezvous/([0-9]+)$  api/rendezvous.php?code=$1 [L,QSA]
+RewriteRule ^api/conge/([0-9]+)$       api/conge.php?code=$1      [L,QSA]
+RewriteRule ^api/note/([0-9]+)$        api/note.php?num=$1        [L,QSA]
