@@ -32,19 +32,22 @@ try {
 
     $queryRDV = "
         SELECT 
-            r.NUM_RDV,
-            DATE_FORMAT(r.JOUR, '%Y-%m-%d') AS DATE_RDV,
-            TIME_FORMAT(r.HEURE, '%H:%i')   AS HEURE,
-            r.DUREE,
-            r.ID_SERVICE,
-            s.NOM AS NOM_SERVICE,
-            s.DESCRIPTION AS DESCRIPTION_SERVICE,
-            r.NOTE_CONSULT,
-            r.STATUT
-        FROM Rendezvous AS r
-        JOIN Service AS s ON r.ID_SERVICE = s.ID_SERVICE
-        WHERE r.COURRIEL = :courriel
-        ORDER BY r.JOUR, r.HEURE
+    r.NUM_RDV,
+    DATE_FORMAT(r.JOUR, '%Y-%m-%d') AS DATE_RDV,
+    TIME_FORMAT(r.HEURE, '%H:%i')   AS HEURE,
+    r.DUREE,
+    r.ID_SERVICE,
+    s.NOM AS NOM_SERVICE,
+    s.DESCRIPTION AS DESCRIPTION_SERVICE,
+    e.NOM_EMPLOYE,
+    e.PRENOM_EMPLOYE,
+    r.NOTE_CONSULT,
+    r.STATUT
+FROM Rendezvous AS r
+JOIN Service AS s ON r.ID_SERVICE = s.ID_SERVICE
+JOIN Employe AS e ON r.CODE_EMPLOYE = e.CODE_EMPLOYE
+WHERE r.COURRIEL = :courriel
+ORDER BY r.JOUR, r.HEURE;
     ";
     $stmtRDV = $cnx->prepare($queryRDV);
     $stmtRDV->bindValue(':courriel', $courriel);
