@@ -9,7 +9,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RDVadaptater extends ArrayAdapter<RdvInfo> {
     private TextView serviceRdv;
@@ -29,9 +35,6 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
         this.listener = listener;
     }
 
-    /**
-    *Fonction qui va nous faire afficher tout le selements de la liste
-    */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         RdvInfo rdv = getItem(position);
@@ -51,49 +54,10 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
         dateRdv.setText(rdv.getJourRdv());
         timeRdv.setText(rdv.getHeureRdv());
 
-        medecinRdv.setText("Rendez-vous avec M(me). " + rdv.getMedecin());
-
-        annulerRdv.setOnClickListener(v -> {
-            if (listener != null) listener.onClick(rdv);
-        });
+    medecinRdv.setText("Rendez-vous avec M(me). " + rdv.getMedecin());
+    annulerRdv.setOnClickListener(v -> {
+        if (listener != null) listener.onClick(rdv);
+    });
         return convertView;
-    }
-
-<<<<<<< HEAD
-    /**
-     * Fonction qui va nous permettre d'annuler un rdv
-     */
-
-    private void annulerRdv(RdvInfo rdv) {
-        ApiService apiService = ApiClient.getApiService();
-
-        int numRdv = rdv.getNumRdv();
-        Map<String, String> jsonBody = new HashMap<>();
-        jsonBody.put("action", "cancel");
-        Log.d("API_REQUEST", "Annulation du RDV id=" + numRdv + " avec body=" + jsonBody);
-
-        Call<Void> call = apiService.putAnnulerRdv(numRdv, jsonBody);
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    remove(rdv);
-                    notifyDataSetChanged();
-                    Log.d("API", "RDV annulé avec succès");
-                    if (listener != null) {
-                        listener.onClick(rdv);
-                    }
-                } else {
-                    Log.e("API", "Erreur d'annulation : code " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Log.e("API", "Erreur réseau : " + t.getMessage());
-            }
-        });
-    }
-=======
->>>>>>> af4e65f3402eb10355046897344a6f9dc260974a
+}
 }
