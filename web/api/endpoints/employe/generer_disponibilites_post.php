@@ -146,4 +146,8 @@ try {
         "error" => "Erreur inattendue",
         "details" => $e->getMessage()
     ]);
+}finally {
+    if (isset($cnx)) {
+        $cnx = null;
+    }
 }

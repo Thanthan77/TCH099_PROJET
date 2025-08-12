@@ -11,10 +11,10 @@ if (!$date || !$codeEmploye) {
 
 try {
     // Connexion à la base de données via Singleton
-    $pdo = Database::getInstance();
+    $cnx = Database::getInstance();
 
     // Préparer la requête SQL pour récupérer les disponibilités et l'heure actuelle
-    $stmt = $pdo->prepare("
+    $stmt = $cnx->prepare("
         SELECT HEURE, STATUT
         FROM Disponibilite
         WHERE CODE_EMPLOYE = :code
