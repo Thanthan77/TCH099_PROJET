@@ -11,26 +11,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Upload artifact for deployment
+   
+      - name: Upload artifact (web)
         uses: actions/upload-artifact@v4
         with:
-        name: php-app
-        path: |
-          web/**
-          api/**
-          .htaccess
+          name: webapp
+          path: web/**
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Download artifact
+        uses: actions/download-artifact@v4
         with:
-          name: php-app
+          name: webapp
+          path: ./build            
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: vitalis
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_VITALIS }}
-          package: .     
+          package: ./build        
