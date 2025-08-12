@@ -1,15 +1,17 @@
 const API_URL =
-  window.location.hostname === "localhost"
+  ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname)
     ? "http://localhost/api/"
-    : "http://20.116.216.218/api/";
+    : "https://vitalis-bbe7aybcc3ata2gm.canadacentral-01.azurewebsites.net/api/";
 
 
-// Vérifie la session
+// ================== VÉRIFICATION SESSION ==================
 const codeInUrl = new URLSearchParams(window.location.search).get("codeEmploye");
 const codeSession = sessionStorage.getItem("codeEmploye") || localStorage.getItem("codeEmploye");
+
 if (!codeSession || (!sessionStorage.getItem("isConnected") && !localStorage.getItem("isConnected"))) {
   window.location.replace("index.html");
 }
+
 if (codeInUrl && codeInUrl !== codeSession) {
   alert("Accès interdit : vous ne pouvez consulter que votre propre tableau de bord.");
   const url = new URL(window.location.href);
@@ -19,12 +21,16 @@ if (codeInUrl && codeInUrl !== codeSession) {
   window.codeEmploye = codeInUrl || codeSession;
 }
 
+// ================== AU CHARGEMENT ==================
 document.addEventListener("DOMContentLoaded", () => {
+  // Onglet par défaut
   showTab("comptes");
-  chargerEmployes();
-  chargerAfficherHoraires();
-  chargerDemandesVacances();
-  chargerAssignationsServices();
+
+  // Chargements initiaux
+  safeCall(chargerEmployes);
+  safeCall(chargerAfficherHoraires);
+  safeCall(chargerDemandesVacances);
+  safeCall(chargerAssignationsServices);
 
   // Déconnexion
   const logoutBtn = document.getElementById("btn-logout");
@@ -49,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (champ) champ.addEventListener("input", filtrerEmployes);
   });
 
-  // Création de compte
+  // Modal création de compte
   const btnOuvrir = document.getElementById("btn-creer-compte");
   const modal = document.getElementById("modal-creer-compte");
   const modalContent = document.querySelector(".modal-content");
@@ -57,25 +63,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnAnnuler = document.getElementById("annuler-modal");
   const form = document.getElementById("form-nouveau-compte");
 
-  if (btnOuvrir) btnOuvrir.addEventListener("click", () => modal.classList.remove("hidden"));
-  if (btnFermer) btnFermer.addEventListener("click", () => modal.classList.add("hidden"));
-  if (btnAnnuler) btnAnnuler.addEventListener("click", () => modal.classList.add("hidden"));
+  if (btnOuvrir && modal) btnOuvrir.addEventListener("click", () => modal.classList.remove("hidden"));
+  if (btnFermer && modal) btnFermer.addEventListener("click", () => modal.classList.add("hidden"));
+  if (btnAnnuler && modal) btnAnnuler.addEventListener("click", () => modal.classList.add("hidden"));
   if (modalContent) modalContent.addEventListener("click", (e) => e.stopPropagation());
   if (modal) {
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) {
-      modal.classList.add("hidden");
-    }
-  });
-}
+    modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList.add("hidden"); });
+  }
 
-
-  if (form) {
-    form.addEventListener("submit", async function (e) {
+  if (form && modal) {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const motDePasse = genererMotDePasse();
-
       const data = {
         prenom: form.prenom.value.trim(),
         nom: form.nom.value.trim(),
@@ -98,12 +98,24 @@ document.addEventListener("DOMContentLoaded", () => {
         const result = await res.json();
 
         if (res.ok) {
+          // récupère un identifiant d'employé quelle que soit la clé renvoyée
+          const newCode = result.codeEmploye || result.CODE_EMPLOYE || result.code || result.id || null;
+
           alert(`Compte créé avec succès !\nMot de passe généré : ${motDePasse}`);
           form.reset();
           modal.classList.add("hidden");
-          chargerEmployes();
+          safeCall(chargerEmployes);
+
+          // ouvre le popup Horaire si on a le code
+          if (newCode) {
+            ouvrirPopupHoraire({
+              codeEmploye: newCode,
+              prenom: data.prenom,
+              nom: data.nom
+            });
+          }
         } else {
-          alert("Erreur : " + result.error);
+          alert("Erreur : " + (result?.error || "Inconnue"));
         }
       } catch (err) {
         alert("Erreur réseau : " + err.message);
@@ -111,20 +123,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Génération des disponibilités
+  // Popup disponibilités
   const btnCharger = document.getElementById("btn-charger-disponibilites");
   const popupDispo = document.getElementById("popup-disponibilites");
   const formDispo = document.getElementById("form-disponibilites");
 
-  if (btnCharger && popupDispo && formDispo) {
-    btnCharger.addEventListener("click", () => {
-      popupDispo.classList.remove("hidden");
-    });
+  if (btnCharger && popupDispo) {
+    btnCharger.addEventListener("click", () => popupDispo.classList.remove("hidden"));
+  }
 
+  if (formDispo) {
     formDispo.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const debut = document.getElementById("dateDebutDispo").value;
-      const fin = document.getElementById("dateFinDispo").value;
+      const debut = document.getElementById("dateDebutDispo")?.value;
+      const fin = document.getElementById("dateFinDispo")?.value;
 
       if (!debut || !fin || debut >= fin) {
         alert("Veuillez entrer une période valide.");
@@ -132,13 +144,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       try {
-        // GET des horaires et vacances
         const resInfos = await fetch(`${API_URL}disponibilites/generation`);
         const infos = await resInfos.json();
+        if (!resInfos.ok) throw new Error(infos?.error || "Erreur lors du chargement des données");
 
-        if (!resInfos.ok) throw new Error(infos.error || "Erreur lors du chargement des données");
-
-        // POST pour générer les disponibilités
         const resGen = await fetch(`${API_URL}disponibilites/generation`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -155,39 +164,210 @@ document.addEventListener("DOMContentLoaded", () => {
           alert(`${result.message}\nTotal créés : ${result.total_insertions}`);
           fermerPopupDisponibilites();
         } else {
-          throw new Error(result.error || "Erreur inconnue");
+          throw new Error(result?.error || "Erreur inconnue");
         }
       } catch (err) {
         alert("Erreur : " + err.message);
       }
     });
   }
+
+  // Form assignations (soumission)
+  const formAssign = document.getElementById("form-modifier-assignation");
+  if (formAssign) {
+    formAssign.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const codeEmploye = document.getElementById("popup-code-employe")?.value || "";
+      const checkboxes = document.querySelectorAll("#liste-services-checkboxes input[type='checkbox']");
+      const services = [];
+      checkboxes.forEach(cb => { if (cb.checked) services.push(cb.value); });
+
+      try {
+        const res = await fetch(`${API_URL}service_employe`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ codeEmploye, services })
+        });
+        const result = await res.json();
+
+        if (res.ok) {
+          alert("Assignations mises à jour avec succès !");
+          fermerPopup();
+          safeCall(chargerAssignationsServices);
+        } else {
+          alert("Erreur : " + (result?.error || "Inconnue"));
+        }
+      } catch (err) {
+        console.error("Erreur lors de l'enregistrement des assignations :", err);
+        alert("Erreur réseau.");
+      }
+    });
+  }
+
+  // ================== POPUP HORAIRE (initialisation listeners) ==================
+  const popupHoraire = document.getElementById("popup-horaire");
+  const formHoraire = document.getElementById("form-horaire");
+  const btnHoraireFermer = document.getElementById("horaire-btn-fermer");
+  const btnHoraireAnnuler = document.getElementById("horaire-btn-annuler");
+  const selHeureDebut = document.getElementById("heureDebut");
+  const selHeureFin = document.getElementById("heureFin");
+
+  if (btnHoraireFermer && popupHoraire) {
+    btnHoraireFermer.addEventListener("click", () => popupHoraire.classList.add("hidden"));
+  }
+  if (btnHoraireAnnuler && popupHoraire) {
+    btnHoraireAnnuler.addEventListener("click", () => popupHoraire.classList.add("hidden"));
+  }
+  if (popupHoraire) {
+    popupHoraire.addEventListener("click", (e) => { if (e.target === popupHoraire) popupHoraire.classList.add("hidden"); });
+  }
+
+  if (selHeureDebut && selHeureFin) {
+    selHeureDebut.addEventListener("change", () => {
+      const d = selHeureDebut.value;
+      if (d && selHeureFin.value && selHeureFin.value <= d) {
+        const options = Array.from(selHeureFin.options);
+        const next = options.find(o => o.value > d);
+        if (next) selHeureFin.value = next.value;
+      }
+    });
+  }
+
+  if (formHoraire) {
+    formHoraire.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const codeEmploye = document.getElementById("horaire-code-employe")?.value || "";
+      const jours = Array.from(document.querySelectorAll('#form-horaire input[name="jours"]:checked')).map(x => x.value);
+      const heureDebut = document.getElementById("heureDebut")?.value || "";
+      const heureFin = document.getElementById("heureFin")?.value || "";
+
+      if (!codeEmploye) { alert("Code employé introuvable."); return; }
+      if (!jours.length) { alert("Sélectionnez au moins un jour."); return; }
+      if (!heureDebut || !heureFin || heureDebut >= heureFin) { alert("Sélectionnez une plage horaire valide."); return; }
+
+      try {
+        const toHHMMSS = (hhmm) => (hhmm && hhmm.length === 5 ? `${hhmm}:00` : hhmm);
+        const payload = {
+          CODE_EMPLOYE: codeEmploye,
+          JOURS: jours.join(", "),
+          HEURE_DEBUT: toHHMMSS(heureDebut),
+          HEURE_FIN: toHHMMSS(heureFin)
+        };
+
+        const res = await fetch(`${API_URL}horaires`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data?.error || "Erreur lors de l'enregistrement de l'horaire.");
+
+        alert(data?.message || "Horaire enregistré avec succès.");
+        popupHoraire.classList.add("hidden");
+        safeCall(chargerAfficherHoraires);
+      } catch (err) {
+        console.error(err);
+        alert("Erreur : " + err.message);
+      }
+    });
+  }
 });
 
-// Fermer le popup
+// ================== OUTILS SÛRS ==================
+function safeCall(fn) {
+  try { fn?.(); } catch (e) { console.error(e); }
+}
+
+// ================== FONCTIONS UI ==================
+function showTab(id) {
+  document.querySelectorAll(".tab-content").forEach(sec => sec.classList.add("hidden"));
+  const target = document.getElementById(id);
+  if (target) target.classList.remove("hidden");
+}
+
+function toggleFiltres() {
+  const section = document.getElementById("filtreSection");
+  if (section) section.classList.toggle("hidden");
+}
+
 function fermerPopupDisponibilites() {
   const popup = document.getElementById("popup-disponibilites");
   if (popup) popup.classList.add("hidden");
 }
 
-
-
-
-// Onglets
-function showTab(id) {
-  document.querySelectorAll(".tab-content").forEach(sec => sec.classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
+function fermerPopup() {
+  const p = document.getElementById('popupModifierAssignation');
+  if (p) p.classList.add('hidden');
 }
 
-// Employés
+// Menu utilisateur (si présent)
+window.toggleUserMenu = function () {
+  const menu = document.getElementById("userDropdown");
+  if (menu) menu.style.display = (menu.style.display === "block") ? "none" : "block";
+};
+
+window.addEventListener("click", (event) => {
+  const icon = document.querySelector(".user-menu-icon");
+  const menu = document.getElementById("userDropdown");
+  if (menu && !menu.contains(event.target) && event.target !== icon) {
+    menu.style.display = "none";
+  }
+});
+
+// ================== UTILITAIRES ==================
+function escapeHtml(str) {
+  return (str ?? '').toString()
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function getRandomChar(str) {
+  return str[Math.floor(Math.random() * str.length)];
+}
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function genererMotDePasse() {
+  const minuscules = "abcdefghijklmnopqrstuvwxyz";
+  const majuscules = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const chiffres = "0123456789";
+  const speciaux = "!@#$%^&*(),.?\":{}|<>";
+  const all = minuscules + majuscules + chiffres + speciaux;
+
+  let motDePasse = [
+    getRandomChar(minuscules),
+    getRandomChar(majuscules),
+    getRandomChar(chiffres),
+    getRandomChar(speciaux)
+  ];
+  while (motDePasse.length < 10) motDePasse.push(getRandomChar(all));
+  return shuffleArray(motDePasse).join('');
+}
+
+// ================== EMPLOYÉS ==================
 async function chargerEmployes() {
   try {
     const response = await fetch(`${API_URL}employes`);
+    if (!response.ok) throw new Error("Réponse invalide");
     const employes = await response.json();
+
     const tbody = document.querySelector("#employe-table-body");
+    if (!tbody) return;
+
     tbody.innerHTML = "";
 
-    if (employes.length === 0) {
+    if (!Array.isArray(employes) || employes.length === 0) {
       tbody.innerHTML = `<tr><td colspan="4">Aucun employé trouvé</td></tr>`;
       return;
     }
@@ -196,115 +376,118 @@ async function chargerEmployes() {
       const row = document.createElement("tr");
       row.classList.add("ligne-employe");
       row.innerHTML = `
-        <td class="col-nom">${emp.PRENOM_EMPLOYE} ${emp.NOM_EMPLOYE}</td>
-        <td class="col-code">${emp.CODE_EMPLOYE}</td>
-        <td class="col-poste">${emp.POSTE}</td>
+        <td class="col-nom">${escapeHtml(emp.PRENOM_EMPLOYE)} ${escapeHtml(emp.NOM_EMPLOYE)}</td>
+        <td class="col-code">${escapeHtml(emp.CODE_EMPLOYE)}</td>
+        <td class="col-poste">${escapeHtml(emp.POSTE)}</td>
         <td>
-          <button onclick="ouvrirProfil('${emp.CODE_EMPLOYE}')">Profil</button>
+          <button onclick="ouvrirProfil('${escapeHtml(emp.CODE_EMPLOYE)}')">Profil</button>
         </td>
       `;
       tbody.appendChild(row);
     });
   } catch (err) {
     console.error("Erreur lors du chargement des employés :", err);
+    const tbody = document.querySelector("#employe-table-body");
+    if (tbody) tbody.innerHTML = `<tr><td colspan="4">Erreur de chargement</td></tr>`;
   }
 }
 
-// A remettre en dessous du bouton profile
-//<button class="danger" onclick="supprimerEmploye('${emp.CODE_EMPLOYE}')">Supprimer</button>
-
-function ouvrirProfil(code) {
+// Boutons inline (HTML)
+window.ouvrirProfil = function (code) {
   window.location.href = `profile.html?codeEmploye=${code}`;
-}
+};
 
-function supprimerEmploye(code) {
-  if (confirm("Confirmer la suppression de l'employé ?")) {
-    fetch(`${API_URL}employe/user/${code}`, {
+window.supprimerEmploye = async function (code) {
+  if (!confirm("Confirmer la suppression de l'employé ?")) return;
+
+  try {
+    const res = await fetch(`${API_URL}employe/user/${code}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "delete", CODE_EMPLOYE: code })
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.status === "OK") {
-          alert(`Employé ${data.codeEmploye} supprimé avec succès`);
-          chargerEmployes();
-        } else {
-          alert(`Erreur : ${data.error}`);
-        }
-      })
-      .catch(err => alert("Erreur réseau : " + err.message));
-  }
-}
+    });
+    const data = await res.json();
 
-// Vacances
+    if (res.ok && data?.status === "OK") {
+      alert(`Employé ${data.codeEmploye} supprimé avec succès`);
+      safeCall(chargerEmployes);
+    } else {
+      alert(`Erreur : ${data?.error || "Inconnue"}`);
+    }
+  } catch (err) {
+    alert("Erreur réseau : " + err.message);
+  }
+};
+
+// ================== VACANCES ==================
 async function chargerDemandesVacances() {
   try {
     const response = await fetch(`${API_URL}conge`);
+    if (!response.ok) throw new Error("Réponse invalide");
     const demandes = await response.json();
+
     const tbody = document.querySelector('#vacances table tbody');
+    if (!tbody) return;
+
     tbody.innerHTML = '';
+
+    if (!Array.isArray(demandes) || demandes.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6">Aucune demande</td></tr>`;
+      return;
+    }
 
     demandes.forEach((demande) => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${(demande.PRENOM || '') + ' ' + (demande.NOM || '')}</td>
-        <td>${demande.ROLE || 'N/A'}</td>
-        <td>${demande.DATE_DEBUT}</td>
-        <td>${demande.DATE_FIN}</td>
+        <td>${escapeHtml((demande.PRENOM || '') + ' ' + (demande.NOM || ''))}</td>
+        <td>${escapeHtml(demande.ROLE || 'N/A')}</td>
+        <td>${escapeHtml(demande.DATE_DEBUT)}</td>
+        <td>${escapeHtml(demande.DATE_FIN)}</td>
         <td>En Attente</td>
         <td>
           <div class="action-buttons">
-            <button onclick="traiterExceptionVacances(${demande.ID_EXC}, 'accepter')">Accepter</button>
-            <button class="danger" onclick="traiterExceptionVacances(${demande.ID_EXC}, 'refuser')">Refuser</button>
-
+            <button onclick="traiterExceptionVacances(${Number(demande.ID_EXC)})">Accepter</button>
+            <button class="danger" onclick="traiterExceptionVacances(${Number(demande.ID_EXC)}, 'refuser')">Refuser</button>
           </div>
         </td>
       `;
       tbody.appendChild(tr);
     });
   } catch (e) {
-    alert("Erreur lors du chargement des vacances");
     console.error(e);
+    alert("Erreur lors du chargement des vacances");
+    const tbody = document.querySelector('#vacances table tbody');
+    if (tbody) tbody.innerHTML = `<tr><td colspan="6">Erreur de chargement</td></tr>`;
   }
 }
 
-async function traiterExceptionVacances(idException, action) {
+window.traiterExceptionVacances = async function (idException, action = 'accepter') {
   try {
     const res = await fetch(`${API_URL}conge/${idException}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: action,
-        id_exc: idException
-      })
+      body: JSON.stringify({ action, id_exc: idException })
     });
-
     const data = await res.json();
+
     if (res.ok) {
-      alert(data.message);
-      chargerDemandesVacances();
+      alert(data.message || "Mis à jour.");
+      safeCall(chargerDemandesVacances);
     } else {
-      alert("Erreur : " + data.error);
+      alert("Erreur : " + (data?.error || "Inconnue"));
     }
   } catch (e) {
-    alert("Erreur réseau");
     console.error(e);
+    alert("Erreur réseau");
   }
-}
+};
 
-
-// Filtres
-function toggleFiltres() {
-  const section = document.getElementById("filtreSection");
-  if (section) section.classList.toggle("hidden");
-}
-
+// ================== FILTRES EMPLOYÉS ==================
 function filtrerEmployes() {
-  const prenom = document.getElementById("filtrePrenom").value.toLowerCase();
-  const nom = document.getElementById("filtreNom").value.toLowerCase();
-  const code = document.getElementById("filtreCode").value.toLowerCase();
-  const poste = document.getElementById("filtrePoste").value.toLowerCase();
+  const prenom = (document.getElementById("filtrePrenom")?.value || "").toLowerCase();
+  const nom = (document.getElementById("filtreNom")?.value || "").toLowerCase();
+  const code = (document.getElementById("filtreCode")?.value || "").toLowerCase();
+  const poste = (document.getElementById("filtrePoste")?.value || "").toLowerCase();
   const lignes = document.querySelectorAll(".ligne-employe");
 
   lignes.forEach(ligne => {
@@ -324,70 +507,22 @@ function filtrerEmployes() {
   });
 }
 
-
-
 function reinitialiserFiltres() {
-  document.getElementById("filtreNom").value = "";
-  document.getElementById("filtreCode").value = "";
-  document.getElementById("filtrePoste").value = "";
+  const ids = ["filtrePrenom","filtreNom","filtreCode","filtrePoste"];
+  ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
   filtrerEmployes();
 }
-
 window.reinitialiserFiltres = reinitialiserFiltres;
-window.toggleUserMenu = function () {
-  const menu = document.getElementById("userDropdown");
-  menu.style.display = (menu.style.display === "block") ? "none" : "block";
-};
 
-window.addEventListener("click", function (event) {
-  const icon = document.querySelector(".user-menu-icon");
-  const menu = document.getElementById("userDropdown");
-  if (!menu.contains(event.target) && event.target !== icon) {
-    menu.style.display = "none";
-  }
-});
-
-function genererMotDePasse() {
-  const minuscules = "abcdefghijklmnopqrstuvwxyz";
-  const majuscules = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const chiffres = "0123456789";
-  const speciaux = "!@#$%^&*(),.?\":{}|<>";
-
-  const all = minuscules + majuscules + chiffres + speciaux;
-
-  let motDePasse = [
-    getRandomChar(minuscules),
-    getRandomChar(majuscules),
-    getRandomChar(chiffres),
-    getRandomChar(speciaux)
-  ];
-
-  while (motDePasse.length < 10) {
-    motDePasse.push(getRandomChar(all));
-  }
-
-  return shuffleArray(motDePasse).join('');
-}
-
-function getRandomChar(str) {
-  return str[Math.floor(Math.random() * str.length)];
-}
-
-function shuffleArray(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
+// ================== ASSIGNATION DES SERVICES ==================
 async function chargerAssignationsServices() {
   try {
     const response = await fetch(`${API_URL}service_employe`);
     if (!response.ok) throw new Error("Réponse réseau invalide");
-
     const assignations = await response.json();
+
     const tbody = document.getElementById("service-assignation-body");
+    if (!tbody) return;
     tbody.innerHTML = "";
 
     if (!Array.isArray(assignations) || assignations.length === 0) {
@@ -402,11 +537,9 @@ async function chargerAssignationsServices() {
       tdNom.textContent = `${emp.PRENOM_EMPLOYE} ${emp.NOM_EMPLOYE}`;
 
       const tdPoste = document.createElement("td");
-      if (emp.POSTE.toLowerCase() === "infirmier" && emp.SEXE === "Femme") {
-        tdPoste.textContent = "Infirmière";
-      } else {
-        tdPoste.textContent = emp.POSTE;
-      }
+      tdPoste.textContent = (emp.POSTE?.toLowerCase() === "infirmier" && emp.SEXE === "Femme")
+        ? "Infirmière"
+        : emp.POSTE;
 
       const tdServices = document.createElement("td");
       const ul = document.createElement("ul");
@@ -422,7 +555,6 @@ async function chargerAssignationsServices() {
         li.textContent = "Aucun service";
         ul.appendChild(li);
       }
-
       tdServices.appendChild(ul);
 
       const tdAction = document.createElement("td");
@@ -437,31 +569,36 @@ async function chargerAssignationsServices() {
       tr.appendChild(tdAction);
       tbody.appendChild(tr);
     });
-
-
   } catch (err) {
     console.error("Erreur lors du chargement des assignations de services :", err);
     const tbody = document.getElementById("service-assignation-body");
-    tbody.innerHTML = `<tr><td colspan="4">Erreur de chargement</td></tr>`;
+    if (tbody) tbody.innerHTML = `<tr><td colspan="4">Erreur de chargement</td></tr>`;
   }
 }
 
 async function modifierAssignation(codeEmploye) {
   try {
+    // Récup employé + assignations
     const response = await fetch(`${API_URL}service_employe`);
     const assignations = await response.json();
     const employe = assignations.find(e => e.CODE_EMPLOYE === codeEmploye);
-
     if (!employe) return alert("Employé non trouvé.");
 
-    document.getElementById("popup-nom-employe").textContent = `${employe.PRENOM_EMPLOYE} ${employe.NOM_EMPLOYE}`;
-    document.getElementById("popup-poste-employe").textContent = employe.SEXE === "Femme" && employe.POSTE === "Infirmier" ? "Infirmière" : employe.POSTE;
-    document.getElementById("popup-code-employe").value = codeEmploye;
+    const nomEl = document.getElementById("popup-nom-employe");
+    const posteEl = document.getElementById("popup-poste-employe");
+    const codeEl = document.getElementById("popup-code-employe");
+    const listEl = document.getElementById("liste-services-checkboxes");
+    const popup = document.getElementById("popupModifierAssignation");
 
-    const serviceCheckboxes = document.getElementById("liste-services-checkboxes");
-    serviceCheckboxes.innerHTML = "";
+    if (!nomEl || !posteEl || !codeEl || !listEl || !popup) return;
 
-    // Charger tous les services disponibles
+    nomEl.textContent = `${employe.PRENOM_EMPLOYE} ${employe.NOM_EMPLOYE}`;
+    posteEl.textContent = (employe.SEXE === "Femme" && employe.POSTE === "Infirmier") ? "Infirmière" : employe.POSTE;
+    codeEl.value = codeEmploye;
+
+    listEl.innerHTML = "";
+
+    // Tous les services
     const allServices = await fetch(`${API_URL}services`);
     const servicesList = await allServices.json();
 
@@ -474,79 +611,34 @@ async function modifierAssignation(codeEmploye) {
       checkbox.name = "services[]";
       checkbox.value = service.NOM;
       checkbox.id = `srv-${service.ID_SERVICE}`;
-      checkbox.checked = employe.SERVICES.includes(service.NOM);
+      checkbox.checked = Array.isArray(employe.SERVICES) && employe.SERVICES.includes(service.NOM);
 
       const span = document.createElement("span");
       span.textContent = service.NOM;
 
       card.appendChild(checkbox);
       card.appendChild(span);
-      serviceCheckboxes.appendChild(card);
+      listEl.appendChild(card);
     });
 
-    document.getElementById("popupModifierAssignation").classList.remove("hidden");
-
+    popup.classList.remove("hidden");
   } catch (e) {
     console.error("Erreur lors de la modification d’assignation :", e);
     alert("Impossible de charger les données.");
   }
 }
+window.modifierAssignation = modifierAssignation;
+window.fermerPopup = fermerPopup;
 
-function fermerPopup() {
-  document.getElementById('popupModifierAssignation').classList.add('hidden');
-}
-
-document.getElementById("form-modifier-assignation").addEventListener("submit", async function (e) {
-  e.preventDefault();
-
-  const codeEmploye = document.getElementById("popup-code-employe").value;
-  const checkboxes = document.querySelectorAll("#liste-services-checkboxes input[type='checkbox']");
-  const services = [];
-
-  checkboxes.forEach(cb => {
-    if (cb.checked) services.push(cb.value);
-  });
-
-  try {
-    const res = await fetch(`${API_URL}service_employe`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        codeEmploye,
-        services
-      })
-    });
-
-    const result = await res.json();
-
-    if (res.ok) {
-      alert("Assignations mises à jour avec succès !");
-      fermerPopup();
-      chargerAssignationsServices();
-    } else {
-      alert("Erreur : " + result.error);
-    }
-  } catch (err) {
-    console.error("Erreur lors de l'enregistrement des assignations :", err);
-    alert("Erreur réseau.");
-  }
-});
-
-function escapeHtml(str) {
-  return (str ?? '').toString()
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
+// ================== HORAIRES ==================
 async function chargerAfficherHoraires() {
   try {
     const res = await fetch(`${API_URL}horaires`);
+    if (!res.ok) throw new Error("Réponse invalide");
     const data = await res.json();
 
     const tbody = document.querySelector('#horaire table tbody');
+    if (!tbody) return;
 
     if (!Array.isArray(data) || !data.length) {
       tbody.innerHTML = '<tr><td colspan="3">Aucun horaire disponible</td></tr>';
@@ -563,6 +655,26 @@ async function chargerAfficherHoraires() {
   } catch (error) {
     console.error("Erreur lors du chargement des horaires :", error);
     const tbody = document.querySelector('#horaire table tbody');
-    tbody.innerHTML = '<tr><td colspan="3">Erreur de chargement des horaires</td></tr>';
+    if (tbody) tbody.innerHTML = '<tr><td colspan="3">Erreur de chargement des horaires</td></tr>';
   }
+}
+
+// ================== POPUP HORAIRE (ouverture) ==================
+function ouvrirPopupHoraire({ codeEmploye, prenom, nom }) {
+  const popup = document.getElementById("popup-horaire");
+  if (!popup) return;
+
+  const codeInput = document.getElementById("horaire-code-employe");
+  const leg = document.getElementById("horaire-emp-legende");
+  if (codeInput) codeInput.value = codeEmploye || "";
+  if (leg) leg.textContent = `Employé : ${prenom ?? ""} ${nom ?? ""} (code : ${codeEmploye ?? "?"})`;
+
+  const selHeureDebut = document.getElementById("heureDebut");
+  const selHeureFin = document.getElementById("heureFin");
+  if (selHeureDebut) selHeureDebut.value = "09:00";
+  if (selHeureFin) selHeureFin.value = "17:00";
+
+  document.querySelectorAll('#form-horaire input[name="jours"]').forEach(c => { c.checked = false; });
+
+  popup.classList.remove("hidden");
 }

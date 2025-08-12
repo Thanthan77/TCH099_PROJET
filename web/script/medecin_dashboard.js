@@ -1,19 +1,19 @@
 const API_URL =
-  window.location.hostname === "localhost"
+  ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname)
     ? "http://localhost/api/"
-    : "http://20.116.216.218/api/";
+    : "https://vitalis-bbe7aybcc3ata2gm.canadacentral-01.azurewebsites.net/api/";
+
 
 const codeEmploye = new URLSearchParams(window.location.search).get('codeEmploye');
-
 const codeInUrl = new URLSearchParams(window.location.search).get("codeEmploye");
 const codeSession = sessionStorage.getItem("codeEmploye") || localStorage.getItem("codeEmploye");
 
-// Vérifie la session de connexion
+// ===== Vérifie la session de connexion =====
 if (!codeSession || (!sessionStorage.getItem("isConnected") && !localStorage.getItem("isConnected"))) {
   window.location.replace("index.html");
 }
 
-// Empêche d'accéder à un autre dashboard via URL
+// ===== Empêche l'accès à un autre dashboard via URL =====
 if (codeInUrl && codeInUrl !== codeSession) {
   alert("Accès interdit : vous ne pouvez consulter que votre propre tableau de bord.");
   const url = new URL(window.location.href);
@@ -23,6 +23,7 @@ if (codeInUrl && codeInUrl !== codeSession) {
   window.codeEmploye = codeInUrl || codeSession;
 }
 
+// ===== Sécurité HTML =====
 function escapeHtml(str) {
   if (!str) return '';
   return str.toString()
@@ -33,12 +34,14 @@ function escapeHtml(str) {
     .replace(/'/g, "&#039;");
 }
 
+// ===== Gestion des onglets =====
 function showTab(id) {
   document.querySelectorAll('.tab-content').forEach(sec => sec.classList.add('hidden'));
   const target = document.getElementById(id);
   if (target) target.classList.remove('hidden');
 }
 
+// ===== Charger et afficher les rendez-vous =====
 async function chargerAfficherRendezVous() {
   if (!codeEmploye) return;
 
@@ -65,7 +68,7 @@ async function chargerAfficherRendezVous() {
       return `
         <tr>
           <td>${rdv.date}</td>
-          <td>${rdv.heure} (${rdv.duree} min)</td>
+          <td>${rdv.heure} (${rdv.duree} min)</td>
           <td>${pat.PRENOM_PATIENT || ''} ${pat.NOM_PATIENT || ''}</td>
           <td>${nomSvc}</td>
           <td>
@@ -87,6 +90,7 @@ async function chargerAfficherRendezVous() {
   }
 }
 
+// ===== Afficher le dossier patient =====
 function afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, note) {
   document.getElementById('patient-nom').textContent = `${prenom} ${nom}`;
   document.getElementById('patient-dob').textContent = dateNaissance || 'Date inconnue';
@@ -114,7 +118,7 @@ function afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, note) {
     });
     const j = await r.json();
     if (r.ok && j.status === 'success') {
-      alert('Note mise à jour avec succès !');
+      alert('Note mise à jour avec succès !');
       chargerAfficherRendezVous();
       showTab('rdv');
     } else {
@@ -124,6 +128,7 @@ function afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, note) {
   sec.appendChild(btn);
 }
 
+// ===== Charger et afficher les horaires =====
 async function chargerAfficherHoraires() {
   try {
     const res = await fetch(`${API_URL}horaires`);
@@ -137,26 +142,23 @@ async function chargerAfficherHoraires() {
 
     console.log("Code employé actuel :", codeEmploye);
     tbody.innerHTML = data.map(h => {
-    const isCurrentUser = parseInt(h.CODE_EMPLOYE) === parseInt(codeEmploye);
+      const isCurrentUser = parseInt(h.CODE_EMPLOYE) === parseInt(codeEmploye);
+      console.log("Employé JSON :", h.CODE_EMPLOYE, " Comparé avec :", codeEmploye);
 
-    console.log("Employé JSON :", h.CODE_EMPLOYE, " Comparé avec :", codeEmploye);
-
-    return `
-    <tr ${isCurrentUser ? 'class="surbrillance-row"' : ''}>
-      <td>${escapeHtml(h.NOM_EMPLOYE)}</td>
-      <td>${escapeHtml(h.JOURS)}</td>
-      <td>${escapeHtml(h.HEURE)}</td>
-    </tr>
-  `;
-  }).join('');
-
+      return `
+        <tr ${isCurrentUser ? 'class="surbrillance-row"' : ''}>
+          <td>${escapeHtml(h.NOM_EMPLOYE)}</td>
+          <td>${escapeHtml(h.JOURS)}</td>
+          <td>${escapeHtml(h.HEURE)}</td>
+        </tr>
+      `;
+    }).join('');
   } catch (error) {
     console.error("Erreur lors du chargement des horaires :", error);
   }
 }
 
-
-
+// ===== Charger et afficher les demandes de vacances =====
 async function chargerDemandesVacances() {
   try {
     const res = await fetch(`${API_URL}conge/${codeEmploye}`);
@@ -183,6 +185,7 @@ async function chargerDemandesVacances() {
   }
 }
 
+// ===== Gestion du bouton de demande de vacances =====
 let demandeEnvoyee = false;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -223,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const rawText = await response.text();
-        console.log("Répnse du serveur : ", rawText);
+        console.log("Réponse du serveur : ", rawText);
         const json = JSON.parse(rawText);
 
         if (!response.ok) throw new Error(json.error || "Erreur inconnue");
@@ -231,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (json.status === "OK") {
           errDiv.style.color = "green";
           errDiv.innerText = json.message || "Demande envoyée avec succès.";
-          chargerDemandesVacances(); 
+          chargerDemandesVacances();
         } else {
           errDiv.style.color = "red";
           errDiv.innerText = json.error || "Des vacances ont déjà été prises durant ces dates";
@@ -248,6 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// ===== Menus et actions globales =====
 window.showTab = showTab;
 window.afficherDossier = afficherDossier;
 
@@ -264,6 +268,7 @@ window.addEventListener("click", function (event) {
   }
 });
 
+// ===== Déconnexion =====
 document.addEventListener("DOMContentLoaded", function () {
   const logoutBtn = document.getElementById("btn-logout");
   if (logoutBtn) {

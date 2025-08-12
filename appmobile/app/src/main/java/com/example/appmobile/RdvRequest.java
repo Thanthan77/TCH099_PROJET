@@ -15,7 +15,8 @@ public class RdvRequest {
     private String nomService;
     @SerializedName("ID_SERVICE")
     private int idRdv ;
-
+    @SerializedName("STATUT")
+    private String statut;
     @SerializedName("NOM_EMPLOYE")
     private String medecin;
 
@@ -45,4 +46,5 @@ public class RdvRequest {
     public String getMedecin() {
         return medecin;
     }
+    public String getStatut() { return statut; }
 }

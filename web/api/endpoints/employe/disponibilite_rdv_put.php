@@ -95,4 +95,8 @@ try {
     http_response_code(500);
     error_log(" Erreur PDO : " . $e->getMessage());
     echo json_encode(['error' => 'Erreur DB', 'details' => $e->getMessage()]);
+}finally {
+    if (isset($cnx)) {
+        $cnx = null;
+    }
 }

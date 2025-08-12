@@ -9,13 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class RDVadaptater extends ArrayAdapter<RdvInfo> {
     private TextView serviceRdv;
@@ -57,13 +51,15 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
         dateRdv.setText(rdv.getJourRdv());
         timeRdv.setText(rdv.getHeureRdv());
 
-        // Affichage direct sans string.xml
-        medecinRdv.setText("Rendez-vous avec Mm(e)" + rdv.getMedecin());
+        medecinRdv.setText("Rendez-vous avec M(me). " + rdv.getMedecin());
 
-        annulerRdv.setOnClickListener(v -> annulerRdv(rdv));
+        annulerRdv.setOnClickListener(v -> {
+            if (listener != null) listener.onClick(rdv);
+        });
         return convertView;
     }
 
+<<<<<<< HEAD
     /**
      * Fonction qui va nous permettre d'annuler un rdv
      */
@@ -98,4 +94,6 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
             }
         });
     }
+=======
+>>>>>>> af4e65f3402eb10355046897344a6f9dc260974a
 }

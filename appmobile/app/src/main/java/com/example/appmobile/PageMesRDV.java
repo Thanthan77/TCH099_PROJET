@@ -105,6 +105,8 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
 
             List<RdvInfo> rdvInfos = new ArrayList<>();
             for (RdvRequest request : rdvRequests) {
+                String statut = request.getStatut();
+                if (statut == null || !statut.equalsIgnoreCase("CONFIRMÉ")) continue;
                 RdvInfo rdv = new RdvInfo(request.getNUMRdv(), request.getDateRdv(), request.getHeureRdv(), request.getIdRdv(),request.getNomService(), request.getMedecin());
                 rdv.setCourriel(request.getCourriel());
                 rdvInfos.add(rdv);
@@ -136,11 +138,11 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
                 } else {
                     Toast.makeText(PageMesRDV.this, "Erreur serveur", Toast.LENGTH_SHORT).show();
                 }
+                chargerRdv();
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Log.e("API", "Erreur réseau : " + t.getMessage());
                 Toast.makeText(PageMesRDV.this, "Échec de la connexion", Toast.LENGTH_SHORT).show();
             }
         });

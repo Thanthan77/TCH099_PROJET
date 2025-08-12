@@ -7,6 +7,7 @@
   <meta http-equiv="Expires" content="0" />
   <title>Tableau de bord - Administrateur</title>
   <link rel="stylesheet" href="css/admin_dashboard.css" />
+  <link rel="stylesheet" href="css/footer.css" />
   <script src="script/get_handle_data.js" defer></script>
   <script src="script/admin_dashboard.js" defer></script>
 </head>
@@ -200,9 +201,7 @@
 
       <form id="form-modifier-assignation">
         <input type="hidden" id="popup-code-employe" name="codeEmploye" />
-        <div id="liste-services-checkboxes">
-          <!-- Cases à cocher injectées dynamiquement -->
-        </div>
+        <div id="liste-services-checkboxes"></div>
         <div class="btn-group">
           <button type="submit" class="btn-submit">Enregistrer</button>
           <button type="button" class="btn-cancel" onclick="fermerPopup()">Annuler</button>
@@ -210,6 +209,68 @@
       </form>
     </div>
   </div>
+
+
+<div class="modal hidden" id="popup-horaire">
+  <div class="modal-content">
+    <span class="close-button" id="horaire-btn-fermer">✖</span>
+    <h2>Définir l'horaire du nouvel employé</h2>
+    <p id="horaire-emp-legende" style="margin-top:-6px; color:#555;"></p>
+
+    <form id="form-horaire">
+      <input type="hidden" id="horaire-code-employe" value="">
+
+      <fieldset>
+        <legend>Jours (lundi à vendredi)</legend>
+        <div class="jours-grid">
+          <label><input type="checkbox" name="jours" value="Lundi"> Lundi</label>
+          <label><input type="checkbox" name="jours" value="Mardi"> Mardi</label>
+          <label><input type="checkbox" name="jours" value="Mercredi"> Mercredi</label>
+          <label><input type="checkbox" name="jours" value="Jeudi"> Jeudi</label>
+          <label><input type="checkbox" name="jours" value="Vendredi"> Vendredi</label>
+        </div>
+      </fieldset>
+
+      <div class="horaire-grid">
+        <label>
+          Heure début
+          <select id="heureDebut" required>
+            <option value="08:00">08:00</option>
+            <option value="09:00">09:00</option>
+            <option value="10:00">10:00</option>
+            <option value="11:00">11:00</option>
+            <option value="12:00">12:00</option>
+            <option value="13:00">13:00</option>
+            <option value="14:00">14:00</option>
+            <option value="15:00">15:00</option>
+            <option value="16:00">16:00</option>
+          </select>
+        </label>
+
+        <label>
+          Heure fin
+          <select id="heureFin" required>
+            <option value="09:00">09:00</option>
+            <option value="10:00">10:00</option>
+            <option value="11:00">11:00</option>
+            <option value="12:00">12:00</option>
+            <option value="13:00">13:00</option>
+            <option value="14:00">14:00</option>
+            <option value="15:00">15:00</option>
+            <option value="16:00">16:00</option>
+            <option value="17:00">17:00</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="btn-group">
+        <button type="button" id="horaire-btn-annuler">Annuler</button>
+        <button type="submit">Enregistrer l'horaire</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 
   <footer class="footer-clinique">
     <p><strong>Clinique VITALIS</strong></p>

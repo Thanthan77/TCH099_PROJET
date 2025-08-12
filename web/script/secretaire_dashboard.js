@@ -1,8 +1,8 @@
-// ================== Config & session ==================
 const API_URL =
-  window.location.hostname === "localhost"
+  ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname)
     ? "http://localhost/api/"
-    : "http://20.116.216.218/api/";
+    : "https://vitalis-bbe7aybcc3ata2gm.canadacentral-01.azurewebsites.net/api/";
+
 
 const codeEmploye = new URLSearchParams(window.location.search).get("codeEmploye");
 const codeInUrl   = new URLSearchParams(window.location.search).get("codeEmploye");
@@ -21,7 +21,6 @@ if (codeInUrl && codeInUrl !== codeSession) {
   window.codeEmploye = codeInUrl || codeSession;
 }
 
-// ================== État global + Utils ==================
 let tousLesPatients = [];
 let rendezVousGlobaux = [];
 let optionHeure = [];
@@ -33,9 +32,6 @@ let demandeEnvoyee = false;
 // utilitaire heure "HH:MM"
 const toHHMM = (h) => (h ?? "").slice(0, 5);
 
-// ===================================================================
-// ============== 1) RENDEZ-VOUS — LISTE & FILTRES ===================
-// ===================================================================
 function showTab(id) {
   document.querySelectorAll(".tab-content").forEach((sec) => sec.classList.add("hidden"));
   document.getElementById(id)?.classList.remove("hidden");
@@ -125,9 +121,6 @@ function reinitialiserFiltreRdv() {
   filtrerRendezVous();
 }
 
-// ===================================================================
-// ============== 2) RENDEZ-VOUS — ACTIONS / MODIFICATION ============
-// ===================================================================
 async function modifierRdv(numRdv) {
   const rdv = rendezVousGlobaux.find((r) => r.NUM_RDV === numRdv);
   if (!rdv) return;
@@ -176,7 +169,6 @@ async function modifierRdv(numRdv) {
   heureSelect = document.getElementById("popupHour");
   heureSelect.innerHTML = "";
 
-  // [NOUVEAU] Restreindre les jours dans la popup selon l'employé courant
   try {
     await appliquerJoursDisponiblesAuChamp("popupDate", rdv.CODE_EMPLOYE);
   } catch (e) { console.error(e); }
@@ -232,9 +224,6 @@ async function validerModification() {
   }
 }
 
-// ===================================================================
-// ============== 3) RENDEZ-VOUS — HEURES (POPUP MODIF) ==============
-// ===================================================================
 async function mettreAJourHeuresDisponibles() {
   try {
     const numRdv = parseInt(document.getElementById("popupNumRdv").value, 10);
@@ -305,9 +294,6 @@ async function mettreAJourHeuresDisponibles() {
   }
 }
 
-// ===================================================================
-// ============== 4) NOUVEAU RENDEZ-VOUS — SERVICES/PROS =============
-// ===================================================================
 async function chargerServicesPourCreation() {
   const selectService = document.getElementById("service");
   if (!selectService) return;
@@ -392,9 +378,6 @@ async function mettreAJourProfessionnelsSuivi() {
   }
 }
 
-// ===================================================================
-// ============== 5) NOUVEAU RENDEZ-VOUS — HEURES & CRÉATION =========
-// ===================================================================
 async function mettreAJourHeuresDisponiblesNewRdv() {
   try {
     const date = document.getElementById("date").value;
@@ -539,9 +522,6 @@ function reinitialiserFormulaireRdv() {
   document.getElementById("heure").innerHTML = `<option value="">Heure du Rendez-Vous</option>`;
 }
 
-// ===================================================================
-// ============== 6) INFORMATIONS PATIENTS ===========================
-// ===================================================================
 async function chargerPatients() {
   try {
     const response = await fetch(`${API_URL}patients`);
@@ -617,7 +597,6 @@ function afficherPatientsFiltres(nomTape) {
   liste.classList.remove("hidden");
 }
 
-// --------- LISTE NAS (UL) — NOUVEAU ---------
 function afficherAssurancesFiltres(nasTape) {
   const liste = document.getElementById("listeDeroulanteAssurances");
   if (!liste) return;
@@ -678,9 +657,6 @@ function filtrerPatients() {
   });
 }
 
-// ===================================================================
-// ============== 7) CONGÉ ===========================================
-// ===================================================================
 async function chargerDemandesVacances() {
   try {
     const res = await fetch(`${API_URL}conge/${codeEmploye}`);
@@ -712,9 +688,6 @@ async function chargerDemandesVacances() {
   }
 }
 
-// ===================================================================
-// ============== 8) HORAIRE =========================================
-// ===================================================================
 async function chargerAfficherHoraires() {
   try {
     const res = await fetch(`${API_URL}horaires`);
@@ -745,9 +718,6 @@ async function chargerAfficherHoraires() {
   }
 }
 
-// ===================================================================
-// ============== 9) UI DIVERS =======================================
-// ===================================================================
 window.toggleUserMenu = function () {
   const menu = document.getElementById("userDropdown");
   if (!menu) return;
@@ -806,10 +776,6 @@ function escapeHtml(str) {
     .replace(/'/g, "&#039;");
 }
 
-// ===================================================================
-// ============== 11) JOURS DISPONIBLES (CALENDRIER) =================
-// ===================================================================
-
 const __joursDispoCache = {};
 const __SCAN_RANGE_JOURS = 60;
 
@@ -836,7 +802,6 @@ async function fetchJoursDisponibles(codeEmp, fromDate, toDate) {
     }
   } catch (_) { /* ignore */ }
 
-  // 2) Fallback: scan quotidien via /disponibilites/{codeEmp}/{date}
   const start = new Date(fromDate);
   const end   = new Date(toDate);
   const dates = [];
@@ -931,9 +896,6 @@ function clearDateEtHeure(ids = { dateId: "date", heureId: "heure" }) { // [NOUV
   if (h) h.innerHTML = `<option value="">Heure du Rendez-Vous</option>`;
 }
 
-// ===================================================================
-// ============== 10) DOM READY (branchements & init) =================
-// ===================================================================
 document.addEventListener("DOMContentLoaded", () => {
   // 1) Branchements IMMEDIATS : menus nom + NAS
   const champNomPatient = document.getElementById("nomPatient");
