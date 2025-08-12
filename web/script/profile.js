@@ -3,13 +3,13 @@ const API_URL =
     ? "http://localhost/api/"
     : "http://20.116.216.218/api/";
 
-
 const codeInUrl = new URLSearchParams(window.location.search).get("codeEmploye");
 const codeSession = sessionStorage.getItem("codeEmploye") || localStorage.getItem("codeEmploye");
 const estAdmin = codeSession && codeSession.startsWith("4");
 
 let codeEmploye = null;
 
+// ===== Vérification connexion =====
 function verifierConnexion() {
   if (!sessionStorage.getItem("isConnected") && !localStorage.getItem("isConnected")) {
     window.location.replace("index.html");
@@ -19,7 +19,7 @@ function verifierConnexion() {
 document.addEventListener("DOMContentLoaded", verifierConnexion);
 window.addEventListener("pageshow", verifierConnexion);
 
-// Contrôle d'accès
+// ===== Contrôle d'accès =====
 if (estAdmin) {
   codeEmploye = codeInUrl || codeSession;
 } else {
@@ -43,6 +43,7 @@ function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
+// ===== Chargement profil =====
 document.addEventListener("DOMContentLoaded", async () => {
   if (!codeEmploye) {
     alert("Impossible d'identifier l'utilisateur.");
@@ -78,6 +79,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const saveBtn = document.getElementById("saveBtn");
 
   if (editBtn && saveBtn) {
+    // Activation édition
     editBtn.addEventListener("click", () => {
       modifiables.forEach(id => {
         const field = document.getElementById(id);
@@ -94,6 +96,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       saveBtn.style.display = "inline-block";
     });
 
+    // Sauvegarde modifications
     document.getElementById("formProfil").addEventListener("submit", async function (e) {
       e.preventDefault();
 
@@ -142,13 +145,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             field.classList.remove("editable");
           }
         });
-
         editBtn.style.display = "inline-block";
         saveBtn.style.display = "none";
       }
     });
   }
 
+  // Déconnexion
   const logoutBtn = document.getElementById("btn-logout");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", function (e) {
@@ -160,6 +163,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
+// ===== Retour au dashboard =====
 const dashboardBtn = document.getElementById("btn-dashboard");
 if (dashboardBtn) {
   dashboardBtn.addEventListener("click", function (e) {
@@ -186,6 +190,7 @@ if (dashboardBtn) {
   });
 }
 
+// ===== Menu utilisateur =====
 function toggleUserMenu() {
   const menu = document.getElementById("userDropdown");
   if (menu) {
