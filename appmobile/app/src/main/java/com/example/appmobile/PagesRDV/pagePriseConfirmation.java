@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,34 +24,36 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class pagePriseConfirmation extends AppCompatActivity implements View.OnClickListener {
-    private TextView nomService;
-    private TextView heureRdv;
-    private TextView daterdv;
-    private Button btnConfirme;
-    private Button btnAnnuler;
-    private TextView lienDeco;
-    private TextView lienProfil;
-    private TextView lienMesRdv;
-    private String token;
-    private String courriel;
+
+    private TextView nomService, heure, date, nomEmploye, prenomEmploye;
+    private Button btnConfirme, btnAnnuler;
+    private TextView lienDeco, lienProfil, lienMesRdv;
+
+    private String token, courriel;
+    private String nomServiceStr, heureStr, jourStr, nomEmployeStr, prenomEmployeStr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prise_confirmation);
 
+
         SharedPreferences prefs = getSharedPreferences("session", MODE_PRIVATE);
         token = prefs.getString("token", null);
         courriel = prefs.getString("courriel", null);
+
 
         lienDeco = findViewById(R.id.lienDeconnexion);
         lienProfil = findViewById(R.id.lienProfil);
         lienMesRdv = findViewById(R.id.lienMesRdv);
         nomService = findViewById(R.id.nomConfirmation);
-        heureRdv = findViewById(R.id.heureConfirmation);
-        daterdv = findViewById(R.id.dateConfirmation);
+        heure = findViewById(R.id.heureConfirmation);
+        date= findViewById(R.id.dateConfirmation);
+        nomEmploye = findViewById(R.id.nomEmployeConfirmation);
+        prenomEmploye = findViewById(R.id.prenomEmployeConfirmation);
         btnConfirme = findViewById(R.id.btnConfirmation);
         btnAnnuler = findViewById(R.id.btnAnnuler);
+
 
         lienMesRdv.setOnClickListener(this);
         lienProfil.setOnClickListener(this);
@@ -58,31 +61,40 @@ public class pagePriseConfirmation extends AppCompatActivity implements View.OnC
         btnConfirme.setOnClickListener(this);
         btnAnnuler.setOnClickListener(this);
 
-        Intent intent = getIntent();
-        String nom = intent.getStringExtra("nom_service");
-        String heure = intent.getStringExtra("heure");
-        String jour = intent.getStringExtra("jour");
 
-        nomService.setText("Service : " + nom);
-        heureRdv.setText("Heure : " + heure);
-        daterdv.setText("Date : " + jour);
+        Intent intent = getIntent();
+        nomServiceStr = intent.getStringExtra("nom_service");
+        heureStr = intent.getStringExtra("heure");
+        jourStr = intent.getStringExtra("jour");
+        nomEmployeStr = intent.getStringExtra("nom_employe");
+        prenomEmployeStr = intent.getStringExtra("prenom_employe");
+
+
+
+
+
+        nomService.setText("Service : " + nomServiceStr);
+        heure.setText("Heure : " + heureStr);
+        date.setText("Date : " + jourStr);
+        nomEmploye.setText("Nom : " + nomEmployeStr);
+        prenomEmploye.setText("Prénom : " + prenomEmployeStr);
     }
 
     @Override
     public void onClick(View v) {
         if (v == lienDeco) {
-            Intent intent = new Intent(pagePriseConfirmation.this, MainActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
         } else if (v == lienMesRdv) {
-            Intent intent = new Intent(pagePriseConfirmation.this, PageMesRDV.class) ;
+            Intent intent = new Intent(this, PageMesRDV.class);
             intent.putExtra("token", token);
             intent.putExtra("courriel", courriel);
             startActivity(intent);
             finish();
         } else if (v == lienProfil) {
-            Intent intent = new Intent(pagePriseConfirmation.this, PageProfil.class) ;
+            Intent intent = new Intent(this, PageProfil.class);
             intent.putExtra("token", token);
             intent.putExtra("courriel", courriel);
             startActivity(intent);
@@ -90,7 +102,7 @@ public class pagePriseConfirmation extends AppCompatActivity implements View.OnC
         } else if (v == btnConfirme) {
             confirmeRDV();
         } else if (v == btnAnnuler) {
-            Intent intent = new Intent(pagePriseConfirmation.this, pagePriseMoment.class) ;
+            Intent intent = new Intent(this, PageFiltreHeure.class);
             intent.putExtra("token", token);
             intent.putExtra("courriel", courriel);
             startActivity(intent);
@@ -99,11 +111,6 @@ public class pagePriseConfirmation extends AppCompatActivity implements View.OnC
     }
 
     private void confirmeRDV() {
-        String nomServiceStr = getIntent().getStringExtra("nom_service");
-        String jourStr = getIntent().getStringExtra("jour");
-        String heureStr = getIntent().getStringExtra("heure");
-        String nomEmployeStr = getIntent().getStringExtra("nom_employe");
-
         RdvCreationRequest rdv = new RdvCreationRequest(
                 nomEmployeStr,
                 nomServiceStr,
@@ -119,6 +126,10 @@ public class pagePriseConfirmation extends AppCompatActivity implements View.OnC
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
+                    Toast.makeText(pagePriseConfirmation.this,
+                            "RDV confirmé avec " + prenomEmployeStr + " " + nomEmployeStr,
+                            Toast.LENGTH_SHORT).show();
+
                     Intent intent = new Intent(pagePriseConfirmation.this, PageMesRDV.class);
                     intent.putExtra("token", token);
                     intent.putExtra("courriel", courriel);
@@ -126,12 +137,14 @@ public class pagePriseConfirmation extends AppCompatActivity implements View.OnC
                     finish();
                 } else {
                     Log.e("API", "Erreur réponse: " + response.code());
+                    Toast.makeText(pagePriseConfirmation.this, "Erreur lors de la confirmation du RDV", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.e("API", "Erreur réseau: " + t.getMessage());
+                Toast.makeText(pagePriseConfirmation.this, "Erreur réseau : " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
