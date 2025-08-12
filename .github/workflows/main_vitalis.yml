@@ -55,5 +55,6 @@ jobs:
         with:
           app-name: 'vitalis'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_XXXX }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_VITALIS }}
+
           package: .
