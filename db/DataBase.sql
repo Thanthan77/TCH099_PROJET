@@ -241,7 +241,7 @@ VALUES
 (4, 200, '08:00:00', '17:00:00', 'Lundi, Mardi, Mercredi, Jeudi, Vendredi'),
 (5, 201, '08:00:00', '17:00:00', 'Lundi, Mardi, Mercredi, Jeudi, Vendredi'),
 (6, 202, '08:00:00', '17:00:00', 'Lundi, Mardi, Mercredi, Jeudi, Vendredi'),
-(7, 300, '08:00:00', '17:00:00', 'Lundi, Mardi, Mercredi, Jeudi, Vendredi'),
+(7, 300, '08:00:00', '17:00:00', 'Lundi, Mardi, Mercredi, Jeudi, Vendredi');
 
 
 
