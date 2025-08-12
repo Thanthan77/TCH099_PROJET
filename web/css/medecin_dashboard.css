@@ -1,9 +1,22 @@
-body {
+/* ====== Structure commune (Footer toujours en bas) ====== */
+html, body {
+  height: 100%;
   margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
   font-family: Arial, sans-serif;
   background-color: #e0f2ff;
 }
 
+main {
+  flex: 1;
+  padding: 30px;
+}
+
+/* ====== Header (commun) ====== */
 header {
   background-color: #0077b6;
   padding: 20px 40px;
@@ -33,6 +46,8 @@ header h1 {
   transform: translateX(-50%);
 }
 
+/* ====== Styles spécifiques à la page ====== */
+
 /* Onglets */
 .tabs {
   display: flex;
@@ -55,10 +70,6 @@ header h1 {
 }
 
 /* Contenu */
-main {
-  padding: 30px;
-}
-
 .tab-content {
   background-color: white;
   padding: 25px;
@@ -104,6 +115,7 @@ button:hover {
   background-color: #023e8a;
 }
 
+/* Menu utilisateur */
 .user-menu-container {
   position: absolute;
   top: 20px;
@@ -140,10 +152,7 @@ button:hover {
   background-color: #f1f1f1;
 }
 
-header {
-  position: relative;
-}
-
+/* RDV header */
 .rdv-header {
   display: flex;
   justify-content: space-between;

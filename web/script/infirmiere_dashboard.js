@@ -1,10 +1,10 @@
 const API_URL =
-  window.location.hostname === "localhost"
+  ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname)
     ? "http://localhost/api/"
     : "https://vitalis-bbe7aybcc3ata2gm.canadacentral-01.azurewebsites.net/api/";
 
-const codeEmploye = new URLSearchParams(window.location.search).get("codeEmploye");
 
+const codeEmploye = new URLSearchParams(window.location.search).get("codeEmploye");
 const codeInUrl = new URLSearchParams(window.location.search).get("codeEmploye");
 const codeSession = sessionStorage.getItem("codeEmploye") || localStorage.getItem("codeEmploye");
 
@@ -23,25 +23,40 @@ if (codeInUrl && codeInUrl !== codeSession) {
   window.codeEmploye = codeInUrl || codeSession;
 }
 
+// ========================= Fonctions utilitaires =========================
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.toString()
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(sec => sec.classList.add('hidden'));
+  const target = document.getElementById(id);
+  if (target) target.classList.remove('hidden');
+}
+
+window.showTab = showTab;
+window.afficherDossier = afficherDossier;
+
+// ========================= Chargement des rendez-vous =========================
 async function chargerAfficherRendezVous() {
   try {
-    if (!codeEmploye) {
-      throw new Error("Code employé manquant dans l'URL");
-    }
+    if (!codeEmploye) throw new Error("Code employé manquant dans l'URL");
 
     const response = await fetch(`${API_URL}rendezvous/${codeEmploye}`);
-    if (!response.ok) {
-      throw new Error(`Erreur HTTP: ${response.status}`);
-    }
+    if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
     const data = await response.json();
 
     const patientsRes = await fetch(`${API_URL}patients`);
     const listePatients = await patientsRes.json();
 
     const servicesMap = {};
-    data.services.forEach(service => {
-      servicesMap[service.id] = service.nom;
-    });
+    data.services.forEach(service => servicesMap[service.id] = service.nom);
 
     const tbody = document.querySelector('#rdv tbody');
     if (!tbody) throw new Error("Élément #rdv tbody introuvable");
@@ -74,7 +89,6 @@ async function chargerAfficherRendezVous() {
         </tr>
       `;
     }).join('');
-
   } catch (error) {
     console.error('Erreur:', error);
     const errorHtml = `
@@ -90,16 +104,7 @@ async function chargerAfficherRendezVous() {
   }
 }
 
-function escapeHtml(str) {
-  if (!str) return '';
-  return str.toString()
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
+// ========================= Affichage du dossier =========================
 function afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, note) {
   document.getElementById('patient-nom').textContent = `${prenom} ${nom}`;
   document.getElementById('patient-dob').textContent = dateNaissance || 'Date inconnue';
@@ -108,7 +113,6 @@ function afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, note) {
 
   const sec = document.getElementById('dossier');
   sec.classList.remove('hidden');
-
   sec.querySelectorAll('textarea, button.js-save').forEach(el => el.remove());
 
   const ta = document.createElement('textarea');
@@ -128,7 +132,7 @@ function afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, note) {
     });
     const j = await r.json();
     if (r.ok && j.status === 'success') {
-      alert('Note mise à jour avec succès !');
+      alert('Note mise à jour avec succès !');
       chargerAfficherRendezVous();
       showTab('rdv');
     } else {
@@ -138,6 +142,7 @@ function afficherDossier(prenom, nom, dateNaissance, assurance, numrdv, note) {
   sec.appendChild(btn);
 }
 
+// ========================= Chargement des horaires =========================
 async function chargerAfficherHoraires() {
   try {
     const res = await fetch(`${API_URL}horaires`);
@@ -151,135 +156,28 @@ async function chargerAfficherHoraires() {
 
     console.log("Code employé actuel :", codeEmploye);
     tbody.innerHTML = data.map(h => {
-    const isCurrentUser = parseInt(h.CODE_EMPLOYE) === parseInt(codeEmploye);
-
-    console.log("Employé JSON :", h.CODE_EMPLOYE, " Comparé avec :", codeEmploye);
-
-    return `
-    <tr ${isCurrentUser ? 'class="surbrillance-row"' : ''}>
-      <td>${escapeHtml(h.NOM_EMPLOYE)}</td>
-      <td>${escapeHtml(h.JOURS)}</td>
-      <td>${escapeHtml(h.HEURE)}</td>
-    </tr>
-  `;
-  }).join('');
-
+      const isCurrentUser = parseInt(h.CODE_EMPLOYE) === parseInt(codeEmploye);
+      console.log("Employé JSON :", h.CODE_EMPLOYE, " Comparé avec :", codeEmploye);
+      return `
+        <tr ${isCurrentUser ? 'class="surbrillance-row"' : ''}>
+          <td>${escapeHtml(h.NOM_EMPLOYE)}</td>
+          <td>${escapeHtml(h.JOURS)}</td>
+          <td>${escapeHtml(h.HEURE)}</td>
+        </tr>
+      `;
+    }).join('');
   } catch (error) {
     console.error("Erreur lors du chargement des horaires :", error);
   }
 }
 
-function showTab(id) {
-  document.querySelectorAll('.tab-content')
-    .forEach(sec => sec.classList.add('hidden'));
-  const target = document.getElementById(id);
-  if (target) target.classList.remove('hidden');
-}
-
-window.showTab = showTab;
-window.afficherDossier = afficherDossier;
-
-let demandeEnvoyee = false;
-
-document.addEventListener('DOMContentLoaded', () => {
-  chargerAfficherRendezVous();
-  chargerAfficherHoraires();
-  chargerDemandesVacances();
-
-  const btnVacances = document.querySelector("#vacances button");
-
-  if (btnVacances) {
-    btnVacances.addEventListener("click", async function (e) {
-      if (demandeEnvoyee) return; // protection double-clic
-      
-      e.preventDefault();
-      demandeEnvoyee = true;
-      btnVacances.disabled = true;
-
-      const errDiv = document.getElementById("erreur-vacances");
-      errDiv.innerText = "";
-
-      const dateDebut = document.getElementById("date-debut").value;
-      const dateFin = document.getElementById("date-fin").value;
-
-      if (!codeEmploye || !dateDebut || !dateFin) {
-        errDiv.style.color = "red";
-        errDiv.innerText = "Veuillez remplir toutes les informations.";
-        btnVacances.disabled = false;
-        demandeEnvoyee = false;
-        return;
-      }
-
-      const data = { dateDebut, dateFin };
-
-      try {
-        const response = await fetch(`${API_URL}conge/employe/${codeEmploye}`, {
-          method: "POST",
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-
-        const rawText = await response.text();
-        const json = JSON.parse(rawText);
-
-        if (!response.ok) {
-          throw new Error(json.error || "Erreur inconnue");
-        }
-
-        if (json.status === "OK") {
-          errDiv.style.color = "green";
-          errDiv.innerText = json.message || "Demande envoyée avec succès.";
-        } else {
-          errDiv.style.color = "red";
-          if (data.error && data.error.includes("SQLSTATE[23000]") && data.error.includes("Duplicate entry")) {
-            errDiv.innerText = " Des vacances ont déjà été prises durant ces dates";
-          } else {
-            errDiv.innerText = data.error || "Une erreur s'est produite lors de la demande.";
-          } 
-        }
-
-      } catch (error) {
-        console.error("Erreur lors de la demande :", error);
-        errDiv.style.color = "red";
-
-        if (error.message.includes("SQLSTATE[23000]") && error.message.includes("Duplicate entry")) {
-          errDiv.innerText = " Cette date a deja été prise";
-        } else{
-          errDiv.innerText = error.message || "Réponse du serveur invalide.";
-        }
-
-        
-      } finally {
-        btnVacances.disabled = false;
-        demandeEnvoyee = false;
-      }
-    });
-  }
-
-});
-
-window.toggleUserMenu = function () {
-  const menu = document.getElementById("userDropdown");
-  menu.style.display = (menu.style.display === "block") ? "none" : "block";
-};
-
-window.addEventListener("click", function (event) {
-  const icon = document.querySelector(".user-menu-icon");
-  const menu = document.getElementById("userDropdown");
-
-  if (!menu.contains(event.target) && event.target !== icon) {
-    menu.style.display = "none";
-  }
-});
-
-
+// ========================= Chargement des vacances =========================
 async function chargerDemandesVacances() {
   try {
     const res = await fetch(`${API_URL}conge/${codeEmploye}`);
     const data = await res.json();
 
     const tbody = document.querySelector('#table-vacances tbody');
-
     if (!Array.isArray(data) || !data.length) {
       tbody.innerHTML = '<tr><td colspan="4">Aucune demande de vacances</td></tr>';
       return;
@@ -295,15 +193,77 @@ async function chargerDemandesVacances() {
     `).join('');
   } catch (error) {
     console.error("Erreur lors du chargement des vacances :", error);
-    const tbody = document.querySelector('#table-vacances tbody');
-    tbody.innerHTML = '<tr><td colspan="4">Erreur de chargement des vacances</td></tr>';
+    document.querySelector('#table-vacances tbody').innerHTML =
+      '<tr><td colspan="4">Erreur de chargement des vacances</td></tr>';
   }
 }
 
+// ========================= DOMContentLoaded =========================
+let demandeEnvoyee = false;
+document.addEventListener('DOMContentLoaded', () => {
+  chargerAfficherRendezVous();
+  chargerAfficherHoraires();
+  chargerDemandesVacances();
 
+  const btnVacances = document.querySelector("#vacances button");
+  if (btnVacances) {
+    btnVacances.addEventListener("click", async function (e) {
+      if (demandeEnvoyee) return;
+      e.preventDefault();
 
+      demandeEnvoyee = true;
+      btnVacances.disabled = true;
+      const errDiv = document.getElementById("erreur-vacances");
+      errDiv.innerText = "";
 
-document.addEventListener("DOMContentLoaded", function () {
+      const dateDebut = document.getElementById("date-debut").value;
+      const dateFin = document.getElementById("date-fin").value;
+      if (!codeEmploye || !dateDebut || !dateFin) {
+        errDiv.style.color = "red";
+        errDiv.innerText = "Veuillez remplir toutes les informations.";
+        btnVacances.disabled = false;
+        demandeEnvoyee = false;
+        return;
+      }
+
+      const data = { dateDebut, dateFin };
+      try {
+        const response = await fetch(`${API_URL}conge/employe/${codeEmploye}`, {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const rawText = await response.text();
+        const json = JSON.parse(rawText);
+        if (!response.ok) throw new Error(json.error || "Erreur inconnue");
+
+        if (json.status === "OK") {
+          errDiv.style.color = "green";
+          errDiv.innerText = json.message || "Demande envoyée avec succès.";
+        } else {
+          errDiv.style.color = "red";
+          if (data.error?.includes("SQLSTATE[23000]") && data.error.includes("Duplicate entry")) {
+            errDiv.innerText = " Des vacances ont déjà été prises durant ces dates";
+          } else {
+            errDiv.innerText = data.error || "Une erreur s'est produite lors de la demande.";
+          }
+        }
+      } catch (error) {
+        console.error("Erreur lors de la demande :", error);
+        errDiv.style.color = "red";
+        if (error.message.includes("SQLSTATE[23000]") && error.message.includes("Duplicate entry")) {
+          errDiv.innerText = " Cette date a déjà été prise";
+        } else {
+          errDiv.innerText = error.message || "Réponse du serveur invalide.";
+        }
+      } finally {
+        btnVacances.disabled = false;
+        demandeEnvoyee = false;
+      }
+    });
+  }
+
   const logoutBtn = document.getElementById("btn-logout");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", function (e) {
@@ -312,5 +272,19 @@ document.addEventListener("DOMContentLoaded", function () {
       localStorage.clear();
       window.location.href = "index.html";
     });
+  }
+});
+
+// ========================= Menu utilisateur =========================
+window.toggleUserMenu = function () {
+  const menu = document.getElementById("userDropdown");
+  menu.style.display = (menu.style.display === "block") ? "none" : "block";
+};
+
+window.addEventListener("click", function (event) {
+  const icon = document.querySelector(".user-menu-icon");
+  const menu = document.getElementById("userDropdown");
+  if (!menu.contains(event.target) && event.target !== icon) {
+    menu.style.display = "none";
   }
 });

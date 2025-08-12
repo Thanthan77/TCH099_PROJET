@@ -1,11 +1,31 @@
-/* Style général */
-body {
+/* ========================
+   Styles communs à toutes les pages
+   ======================== */
+
+/* Structure générale */
+html, body {
+  height: 100%;
   margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+body {
   font-family: Arial, sans-serif;
   background-color: #e0f2ff;
 }
 
-/* En-tête */
+/* Zone principale */
+main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+}
+
+/* ====== Header ====== */
 header {
   background-color: #0077b6;
   padding: 20px 40px;
@@ -35,13 +55,45 @@ header h1 {
   transform: translateX(-50%);
 }
 
-/* Contenu principal */
-main {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 50px 20px;
+/* ====== Boutons ====== */
+button {
+  padding: 10px 20px;
+  background-color: #0077b6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
 }
+
+button:hover {
+  background-color: #023e8a;
+}
+
+/* ====== Formulaires ====== */
+textarea,
+input:not([type="checkbox"]):not([type="radio"]),
+select {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+input[type="checkbox"] {
+  width: auto;
+  margin-right: 5px;
+  transform: scale(1.2);
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+/* ========================
+   Styles spécifiques : Page de connexion
+   ======================== */
 
 .login-box {
   background-color: white;
@@ -64,33 +116,10 @@ label {
   color: #333;
 }
 
-input[type="text"],
-input[type="password"] {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 20px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 16px;
-}
-
 .options {
+  display: flex;
+  align-items: center;
   margin-bottom: 20px;
-}
-
-button {
-  width: 100%;
-  padding: 12px;
-  background-color: #0077b6;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #023e8a;
 }
 
 .links {

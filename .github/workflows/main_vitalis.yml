@@ -11,11 +11,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Upload artifact
+      - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
         with:
-          name: php-app
-          path: web/*   
+        name: php-app
+        path: |
+          web/**
+          api/**
+          .htaccess
 
   deploy:
     runs-on: ubuntu-latest
