@@ -9,7 +9,7 @@
     }
     
     define('DB_HOST', 'vitalis-sql.mysql.database.azure.com');
-    define('DB_USER', 'app_vitalis');
+    define('DB_USER', 'adminvitalis');
     define('DB_PWD', 'Banane&01');
     define('DB_NAME', 'clinique_db');
 
