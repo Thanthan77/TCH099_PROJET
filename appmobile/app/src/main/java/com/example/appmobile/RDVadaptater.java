@@ -24,15 +24,8 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
     private TextView medecinRdv;
     private Button annulerRdv;
 
-    public interface AnnulerRdvClickListener {
-        void onClick(RdvInfo rdv);
-    }
-
-    private final AnnulerRdvClickListener listener;
-
-    public RDVadaptater(AnnulerRdvClickListener listener, List<RdvInfo> rdvList, Context context) {
+    public RDVadaptater(List<RdvInfo> rdvList, Context context) {
         super(context, 0, rdvList);
-        this.listener = listener;
     }
 
     @Override
@@ -54,8 +47,8 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
         dateRdv.setText(rdv.getJourRdv());
         timeRdv.setText(rdv.getHeureRdv());
 
-        // Affichage direct sans string.xml
-        medecinRdv.setText("Rendez-vous avec " + rdv.getMedecin());
+        // Texte affiché avec le nom du professionnel
+        medecinRdv.setText("Rendez-vous avec Mm(e)" + rdv.getMedecin());
 
         annulerRdv.setOnClickListener(v -> annulerRdv(rdv));
         return convertView;
@@ -77,9 +70,6 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
                     remove(rdv);
                     notifyDataSetChanged();
                     Log.d("API", "RDV annulé avec succès");
-                    if (listener != null) {
-                        listener.onClick(rdv);
-                    }
                 } else {
                     Log.e("API", "Erreur d'annulation : code " + response.code());
                 }
