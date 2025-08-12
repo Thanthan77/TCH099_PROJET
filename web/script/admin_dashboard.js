@@ -72,56 +72,65 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (form && modal) {
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      const motDePasse = genererMotDePasse();
-      const data = {
-        prenom: form.prenom.value.trim(),
-        nom: form.nom.value.trim(),
-        etat_civil: form.etat_civil.value.trim(),
-        courriel: form.courriel.value.trim(),
-        telephone: form.telephone.value.trim(),
-        adresse: form.adresse.value.trim(),
-        date_naissance: form.date_naissance.value,
-        sexe: form.sexe.value,
-        poste: form.poste.value,
-        mot_de_passe: motDePasse
-      };
+    const motDePasse = genererMotDePasse();
+    const data = {
+      prenom: form.prenom.value.trim(),
+      nom: form.nom.value.trim(),
+      etat_civil: form.etat_civil.value.trim(),
+      courriel: form.courriel.value.trim(),
+      telephone: form.telephone.value.trim(),
+      adresse: form.adresse.value.trim(),
+      date_naissance: form.date_naissance.value,
+      sexe: form.sexe.value,
+      poste: form.poste.value,
+      mot_de_passe: motDePasse
+    };
 
-      try {
-        const res = await fetch(`${API_URL}employe`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
-        });
-        const result = await res.json();
+    try {
+      const res = await fetch(`${API_URL}employe`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
 
-        if (res.ok) {
-          // récupère un identifiant d'employé quelle que soit la clé renvoyée
-          const newCode = result.codeEmploye || result.CODE_EMPLOYE || result.code || result.id || null;
+      if (res.ok) {
+        // Récupère le code employé quelle que soit la clé renvoyée
+        const newCode =
+          result.codeEmploye ||
+          result.CODE_EMPLOYE ||
+          result.code_employe ||
+          result.code ||
+          result.id ||
+          null;
 
-          alert(`Compte créé avec succès !\nMot de passe généré : ${motDePasse}`);
-          form.reset();
-          modal.classList.add("hidden");
-          safeCall(chargerEmployes);
+        alert(`Compte créé avec succès !\nMot de passe généré : ${motDePasse}`);
+        form.reset();
+        modal.classList.add("hidden");
+        safeCall(chargerEmployes);
 
-          // ouvre le popup Horaire si on a le code
-          if (newCode) {
-            ouvrirPopupHoraire({
-              codeEmploye: newCode,
-              prenom: data.prenom,
-              nom: data.nom
-            });
-          }
+        // Ouvre le popup Horaire juste après la création
+        if (newCode) {
+          ouvrirPopupHoraire({
+            codeEmploye: newCode,
+            prenom: data.prenom,
+            nom: data.nom
+          });
         } else {
-          alert("Erreur : " + (result?.error || "Inconnue"));
+          console.warn("Code employé introuvable dans la réponse de création.");
         }
-      } catch (err) {
-        alert("Erreur réseau : " + err.message);
+      } else {
+        alert("Erreur : " + (result?.error || "Inconnue"));
       }
-    });
-  }
+    } catch (err) {
+      alert("Erreur réseau : " + err.message);
+    }
+  });
+}
+
 
   // Popup disponibilités
   const btnCharger = document.getElementById("btn-charger-disponibilites");
@@ -240,36 +249,39 @@ document.addEventListener("DOMContentLoaded", () => {
       const codeEmploye = document.getElementById("horaire-code-employe")?.value || "";
       const jours = Array.from(document.querySelectorAll('#form-horaire input[name="jours"]:checked')).map(x => x.value);
       const heureDebut = document.getElementById("heureDebut")?.value || "";
-      const heureFin = document.getElementById("heureFin")?.value || "";
+      const heureFin   = document.getElementById("heureFin")?.value || "";
 
       if (!codeEmploye) { alert("Code employé introuvable."); return; }
       if (!jours.length) { alert("Sélectionnez au moins un jour."); return; }
       if (!heureDebut || !heureFin || heureDebut >= heureFin) { alert("Sélectionnez une plage horaire valide."); return; }
 
       try {
-        const toHHMMSS = (hhmm) => (hhmm && hhmm.length === 5 ? `${hhmm}:00` : hhmm);
-        const payload = {
-          CODE_EMPLOYE: codeEmploye,
-          JOURS: jours.join(", "),
-          HEURE_DEBUT: toHHMMSS(heureDebut),
-          HEURE_FIN: toHHMMSS(heureFin)
-        };
-
-        const res = await fetch(`${API_URL}horaires`, {
+        const res = await fetch(`${API_URL}horaire`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify({
+            CODE_EMPLOYE: codeEmploye,
+            JOURS: jours.join(", "),
+            HEURE_DEBUT: heureDebut.length === 5 ? `${heureDebut}:00` : heureDebut,
+            HEURE_FIN:   heureFin.length   === 5 ? `${heureFin}:00`   : heureFin
+          })
         });
-        const data = await res.json();
 
-        if (!res.ok) throw new Error(data?.error || "Erreur lors de l'enregistrement de l'horaire.");
+        // LIRE UNE SEULE FOIS
+        const raw = await res.text();
+        let data;
+        try { data = JSON.parse(raw); } catch { data = { error: raw }; }
+
+        if (!res.ok) throw new Error(data?.error || `HTTP ${res.status}`);
 
         alert(data?.message || "Horaire enregistré avec succès.");
-        popupHoraire.classList.add("hidden");
+        document.getElementById("popup-horaire").classList.add("hidden");
         safeCall(chargerAfficherHoraires);
       } catch (err) {
-        console.error(err);
-        alert("Erreur : " + err.message);
+        alert("Erreur serveur : " + err.message);
       }
     });
   }
@@ -279,6 +291,11 @@ document.addEventListener("DOMContentLoaded", () => {
 function safeCall(fn) {
   try { fn?.(); } catch (e) { console.error(e); }
 }
+
+window.ouvrirPopup = function () {
+  const modal = document.getElementById("modal-creer-compte");
+  if (modal) modal.classList.remove("hidden");
+};
 
 // ================== FONCTIONS UI ==================
 function showTab(id) {
