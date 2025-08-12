@@ -41,5 +41,13 @@ try {
     http_response_code(500);
     error_log("Erreur serveur : " . $e->getMessage()); 
     echo json_encode(['error' => 'Erreur serveur : ' . $e->getMessage()]);
+}finally {
+    if (isset($cnx)) {
+        $cnx = null;
+    }
 }
+
+
+
+
 ?>

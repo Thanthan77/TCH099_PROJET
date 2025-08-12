@@ -31,4 +31,8 @@ try {
         "error" => "Erreur de base de données",
         "details" => $e->getMessage()
     ]);
+}finally {
+    if (isset($cnx)) {
+        $cnx = null;
+    }
 }

@@ -75,6 +75,9 @@ post($URL.'/service_employe', 'endpoints/employe/service_employe_post.php');
 // POST pour générer et insérer les disponibilités en base
 post($URL.'/disponibilites/generation', 'endpoints/employe/generer_disponibilites_post.php');
 
+// POST pour insérer un horaire d'un employe
+post($URL.'/horaire','endpoints/employe/horaire_post.php');
+
 
 //PUT--
 
