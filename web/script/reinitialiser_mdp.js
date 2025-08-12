@@ -1,15 +1,9 @@
-// ===================================================================
-// ============== 1) CONFIG ==========================================
-// ===================================================================
 const API_URL =
-  window.location.hostname === "localhost"
+  ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname)
     ? "http://localhost/api/"
-    : "http://20.116.216.218/api/";
+    : "https://vitalis-bbe7aybcc3ata2gm.canadacentral-01.azurewebsites.net/api/";
 
 
-// ===================================================================
-// ============== 2) UTILS ===========================================
-// ===================================================================
 function verifierMotDePasse(motDePasse) {
   const erreurs = [];
 
@@ -32,10 +26,6 @@ function verifierMotDePasse(motDePasse) {
   return erreurs;
 }
 
-
-// ===================================================================
-// ============== 3) TÂCHE — RÉINITIALISATION MOT DE PASSE ===========
-// ===================================================================
 async function handlePasswordResetSubmit(e) {
   e.preventDefault();
 
@@ -98,9 +88,6 @@ async function handlePasswordResetSubmit(e) {
 }
 
 
-// ===================================================================
-// ============== 4) TÂCHE — NAVIGATION & SESSION ====================
-// ===================================================================
 function logoutAndRedirect(e) {
   if (e) e.preventDefault();
   sessionStorage.clear();
@@ -131,9 +118,6 @@ function retourDashboard() {
 }
 
 
-// ===================================================================
-// ============== 5) TÂCHE — UI MENU UTILISATEUR =====================
-// ===================================================================
 function toggleUserMenu() {
   const menu = document.getElementById("userDropdown");
   if (menu) {
@@ -151,9 +135,6 @@ function handleGlobalClick(event) {
 }
 
 
-// ===================================================================
-// ============== 6) DOM READY — BRANCHEMENTS ========================
-// ===================================================================
 document.addEventListener("DOMContentLoaded", function () {
   // Formulaire réinitialisation
   const form = document.getElementById("form-reinitialisation");
