@@ -1,9 +1,24 @@
-body {
+/* ===================== STRUCTURE GLOBALE (FOOTER EN BAS) ===================== */
+html, body {
+  height: 100%;
   margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
   font-family: Arial, sans-serif;
   background-color: #e0f2ff;
 }
 
+main {
+  flex: 1;
+  padding: 30px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ===================== HEADER ===================== */
 header {
   background-color: #0077b6;
   padding: 20px 40px;
@@ -33,7 +48,7 @@ header h1 {
   transform: translateX(-50%);
 }
 
-/* Onglets */
+/* ===================== ONGLET NAVIGATION ===================== */
 .tabs {
   display: flex;
   justify-content: center;
@@ -54,11 +69,7 @@ header h1 {
   background-color: #90e0ef;
 }
 
-/* Contenu */
-main {
-  padding: 30px;
-}
-
+/* ===================== CONTENU DES ONGLET ===================== */
 .tab-content {
   background-color: white;
   padding: 25px;
@@ -66,10 +77,7 @@ main {
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-.hidden {
-  display: none;
-}
-
+/* ===================== TABLEAUX ===================== */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -82,6 +90,7 @@ th, td {
   text-align: left;
 }
 
+/* ===================== FORMULAIRES ===================== */
 textarea, input, select {
   width: 100%;
   padding: 10px;
@@ -104,6 +113,7 @@ button:hover {
   background-color: #0077b6;
 }
 
+/* ===================== MENU UTILISATEUR ===================== */
 .user-menu-container {
   position: absolute;
   top: 20px;
@@ -140,10 +150,7 @@ button:hover {
   background-color: #f1f1f1;
 }
 
-header {
-  position: relative;
-}
-
+/* ===================== SECTION RDV ===================== */
 .rdv-header {
   display: flex;
   justify-content: space-between;
