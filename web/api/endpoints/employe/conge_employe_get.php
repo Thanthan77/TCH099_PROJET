@@ -5,14 +5,14 @@ require_once(__DIR__.'/../../db/Database.php');
 header('Content-Type: application/json');
 header('Cache-Control: no-cache');
 
-try {
-    $cnx = Database::getInstance();
-
-    if (!$codeEmploye) {
+if (!$codeEmploye) {
         http_response_code(400);
         echo json_encode(["error" => "Le paramètre codeEmploye est requis"]);
         exit();
     }
+
+try {
+    $cnx = Database::getInstance();
 
     $query = "
         SELECT e.PRENOM_EMPLOYE, e.NOM_EMPLOYE, ex.DATE_DEBUT, ex.DATE_FIN,ex.STATUS

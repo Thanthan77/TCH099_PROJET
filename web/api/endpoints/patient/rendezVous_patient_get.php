@@ -14,8 +14,6 @@ try {
     }
 
 
-
-
     $queryPatient = "
         SELECT PRENOM_PATIENT, NOM_PATIENT, NUM_TEL, VILLE, DATE_NAISSANCE
         FROM Patient

@@ -4,7 +4,7 @@ require_once(__DIR__.'/../../db/Database.php');
 
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: PUT');
+
 
 $data = json_decode(file_get_contents('php://input'), true);
 
@@ -27,7 +27,7 @@ try {
     $cnx = Database::getInstance();
 
     if ($action === 'modifier') {
-        $jour = $data['JOUR'] ?? null;
+       $jour  = $data['JOUR']  ?? null;
         $heure = $data['HEURE'] ?? null;
         $duree = $data['DUREE'] ?? null;
 
@@ -37,16 +37,17 @@ try {
             exit;
         }
 
-        $dateObj = DateTime::createFromFormat('Y-m-d', $jour);
-        $heureObj = DateTime::createFromFormat('H:i:s', $heure);
+        $dateObj  = DateTime::createFromFormat('Y-m-d', $jour);
+        $heureObj = DateTime::createFromFormat('H:i:s', $heure) ?: DateTime::createFromFormat('H:i', $heure);
 
-        if (!$dateObj || $dateObj->format('Y-m-d') !== $jour ||
-            !$heureObj || $heureObj->format('H:i:s') !== $heure) {
+        if (!$dateObj || $dateObj->format('Y-m-d') !== $jour || !$heureObj) {
             http_response_code(400);
             echo json_encode(['error' => 'Format de date ou d\'heure invalide']);
             exit;
         }
 
+        $heure = $heureObj->format('H:i:s');
+        
         $sql = "UPDATE Rendezvous
                 SET JOUR = :jour,
                     HEURE = :heure,

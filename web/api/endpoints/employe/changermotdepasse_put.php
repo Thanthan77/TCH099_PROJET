@@ -4,18 +4,13 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: PUT');
 
-if ($_SERVER['REQUEST_METHOD'] !== 'PUT') {
-    http_response_code(405);
-    echo json_encode(['error' => 'Méthode non autorisée']);
-    exit;
-}
+
 
 // Lecture du JSON brut
 $raw = file_get_contents("php://input");
 $data = json_decode($raw, true);
 
-// 🔍 DEBUG (à activer temporairement si besoin)
-// file_put_contents("php://stderr", "INPUT = " . $raw . PHP_EOL, FILE_APPEND);
+
 
 // Vérification que le JSON est bien formé
 if (is_null($data)) {

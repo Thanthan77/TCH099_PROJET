@@ -1,7 +1,12 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
 .page-container {
   display: flex;
-  justify-content: center; 
-  align-items: center;    
+  flex-direction: column; 
+  min-height: 100vh;    
 }
 
 .footer-clinique {
@@ -9,8 +14,10 @@
   font-family: Arial, sans-serif;
   font-size: 12px;
   line-height: 1.2;
+  margin-top: auto;       
 }
 
 .footer-clinique p {
   margin: 3px 0;
 }
+

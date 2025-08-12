@@ -5,11 +5,8 @@ header('Content-Type: application/json');
 
 $data = json_decode(file_get_contents('php://input'), true);
 
-try {
-    $cnx = Database::getInstance();
-    $cnx->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Vérification des champs requis
+// Vérification des champs requis
     $champsRequis = ['CODE_EMPLOYE', 'COURRIEL', 'JOUR', 'HEURE', 'DUREE', 'NOM_SERVICE'];
     foreach ($champsRequis as $champ) {
         if (!isset($data[$champ])) {
@@ -18,6 +15,12 @@ try {
             exit;
         }
     }
+
+
+try {
+    $cnx = Database::getInstance();
+    $cnx->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
 
     // Vérification de l'existence du patient
     $sqlPatient = "SELECT COURRIEL FROM Patient WHERE COURRIEL = :courriel LIMIT 1";

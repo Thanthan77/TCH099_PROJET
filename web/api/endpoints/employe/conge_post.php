@@ -4,17 +4,8 @@ header('Content-Type: application/json');
 
 $data = json_decode(file_get_contents('php://input'), true);
 
-$codeEmploye = null;
-if (isset($_SERVER['REQUEST_URI'])) {
-    $parts = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
-    $dernier = end($parts);
-    if (is_numeric($dernier)) {
-        $codeEmploye = intval($dernier);
-    }
-}
 
-try {
-    $dateDebut = $data['dateDebut'] ?? null;
+$dateDebut = $data['dateDebut'] ?? null;
     $dateFin = $data['dateFin'] ?? null;
 
     if (!$codeEmploye || !$dateDebut || !$dateFin) {
@@ -28,6 +19,10 @@ try {
         echo json_encode(['error' => 'La date de fin doit être après la date de début']);
         exit;
     }
+
+
+try {
+    
 
     $cnx = Database::getInstance();
 

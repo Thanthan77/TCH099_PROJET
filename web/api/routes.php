@@ -35,7 +35,7 @@ get($URL.'/horaires','endpoints/employe/horaire_get.php');
 get($URL.'/conge','endpoints/employe/conge_get.php');
 
 //GET pour avoir tous les professionels
-get($URL.'/professionnels','endpoints/employe/professionels_get.php');
+get($URL.'/professionnels/$nom_service','endpoints/employe/professionels_get.php');
 
 // GET pour récupérer les services d’un employé
 get($URL.'/service_employe', 'endpoints/employe/service_employe_get.php');
@@ -51,6 +51,8 @@ get($URL.'/disponibilites/$codeEmploye/$date', 'endpoints/employe/disponibilite_
 
 // GET pour récupérer les vacances d'un certain employe
 get($URL.'/conge/$codeEmploye','endpoints/employe/conge_employe_get.php');
+
+
 
 //POST--
 
@@ -111,8 +113,14 @@ get($URL.'/rendezvous/patient/$courriel','endpoints/patient/rendezVous_patient_g
 // GET pour avoir toutes les informations d'un patient 
 get($URL.'/patient/$courriel','endpoints/patient/patient_get');
 
-// GET pour avoir toutes les disponibilites en fonction d'un service
-get($URL. '/disponibilitees/services/id/$id_service', 'endpoints/patient/disponibilite_get.php');
+// GET pour avoir toutes les disponibilites en fonction d'un employe
+get($URL. '/disponibilitees/employe/id/$code_employe', 'endpoints/patient/disponibilite_get.php');
+
+// GET pour avoir toutes les disponibilites en fonction d'un employe et le jour
+get($URL.'/disponibilite/employe/$code_employe/$jour','endpoints/patient/disponibilite_heure_get.php');
+
+// GET la liste d'employe en fonction d'un service
+get($URL.'/employees/$id_service','endpoints/patient/services_Employe_get.php');
 
 
 // POST--

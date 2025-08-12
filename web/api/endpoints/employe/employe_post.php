@@ -5,11 +5,8 @@ header('Content-Type: application/json');
 
 $data = json_decode(file_get_contents('php://input'), true);
 
-try {
-    $cnx = Database::getInstance();
-    $cnx->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Champs requis
+// Champs requis
     $champsRequis = ['prenom', 'nom', 'etat_civil', 'courriel', 'telephone', 'adresse', 'date_naissance', 'sexe', 'poste', 'mot_de_passe'];
     foreach ($champsRequis as $champ) {
         if (empty($data[$champ])) {
@@ -18,6 +15,11 @@ try {
             exit;
         }
     }
+
+try {
+    $cnx = Database::getInstance();
+    $cnx->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
 
     // Nettoyer et normaliser les champs sensibles
     $poste = trim($data['poste']);
@@ -59,7 +61,7 @@ try {
     // Hacher le mot de passe
     $motDePasseHash = password_hash($data['mot_de_passe'], PASSWORD_DEFAULT);
 
-    // Insertion
+
     $stmt = $cnx->prepare("INSERT INTO Employe (
         CODE_EMPLOYE, PRENOM_EMPLOYE, NOM_EMPLOYE, ETAT_CIVIL, MOT_DE_PASSE,
         COURRIEL, TELEPHONE, ADRESSE, DATE_NAISSANCE, SEXE, POSTE
