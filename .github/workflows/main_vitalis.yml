@@ -34,13 +34,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: php-app
-          path: ./web/* 
+          path: ./web/*
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    environment:
-      name: 'Production'
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
@@ -48,7 +46,6 @@ jobs:
           name: php-app
 
       - name: Deploy to Azure Web App
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'vitalis'
