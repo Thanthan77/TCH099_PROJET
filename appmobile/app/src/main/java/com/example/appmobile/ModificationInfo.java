@@ -13,12 +13,20 @@ import retrofit2.Response;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Écran de modification du profil.
+ * Le patient pourra modifier certaines de ses informations personnelles et pourra aussi
+ * naviguer en arrière vers la page de profil. Une fois ses informations enregistrées,
+ * il sera redirigé vers la page profil avec ses informations mises à jour.
+ */
 public class ModificationInfo extends AppCompatActivity {
+    //Imposer les formats des informations du patients
     private static final String RX_CIVIQUE = "^\\d+$";
     private static final String RX_TEL10   = "^\\d{10}$";
     private static final String RX_VILLE   = "^[\\p{L} '-]+$";
     private static final String RX_POSTAL  = "^[A-Z]\\d[A-Z]\\d[A-Z]\\d$";
 
+    //Références UI
     private EditText prenom, nom, naissance, nam;
     private EditText email, emailConfirme, tel, civique, rue, ville, postal;
     private TextView retour ;
@@ -30,11 +38,11 @@ public class ModificationInfo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modification_profil);
 
+        //Récupération des Views
         prenom = findViewById(R.id.profil_prenom);
         nom = findViewById(R.id.profil_nom);
         naissance = findViewById(R.id.profil_naissance);
         nam = findViewById(R.id.profil_nam);
-
         email = findViewById(R.id.profil_email);
         emailConfirme = findViewById(R.id.profil_email_confirme);
         tel = findViewById(R.id.profil_tel);
@@ -42,18 +50,20 @@ public class ModificationInfo extends AppCompatActivity {
         rue = findViewById(R.id.profil_rue);
         ville = findViewById(R.id.profil_ville);
         postal = findViewById(R.id.profil_postal);
-
         retour = findViewById(R.id.btn_retour_profil);
         btnAppliquer = findViewById(R.id.btn_appliquer_changements);
 
+        //Données reçues pour la session
         courrielPatient = getIntent().getStringExtra("courriel");
         token = getIntent().getStringExtra("token");
 
+        //Imposer les chiffres pour téléphone et num civique
         android.text.InputFilter digitsOnly = (src, s, e, dest, ds, de) ->
                 src.toString().matches("\\d+") ? src : "";
         tel.setFilters(new android.text.InputFilter[]{digitsOnly});
         civique.setFilters(new android.text.InputFilter[]{digitsOnly});
 
+        //Imposer lettres en majuscules
         postal.addTextChangedListener(new android.text.TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
             @Override public void onTextChanged(CharSequence s, int st, int b, int c) {
@@ -66,10 +76,12 @@ public class ModificationInfo extends AppCompatActivity {
             @Override public void afterTextChanged(android.text.Editable s) {}
         });
 
-
+        //Champs non modifiables pour prénom, nom, date de naissance et numéro d'assurance maladie
         disableUneditableFields();
+        //Pré-chargement des informations patient
         chargerInfosPatient(courrielPatient);
 
+        //Lien vers la page de profil sans changements
         retour.setOnClickListener(v -> {
             Intent intent = new Intent(ModificationInfo.this, PageProfil.class);
             intent.putExtra("courriel", courrielPatient);
@@ -78,15 +90,18 @@ public class ModificationInfo extends AppCompatActivity {
             finish();
         });
 
+        //Applique le changement d'informations
         btnAppliquer.setOnClickListener(v -> {
             if (!champsModifiablesNonVides()) return;
 
+            //Message d'erreur si l'email n'est pas identique à l'email de confirmation
             if (!email.getText().toString().trim().equals(emailConfirme.getText().toString().trim())) {
                 Toast.makeText(this, "Les courriels ne correspondent pas", Toast.LENGTH_SHORT).show();
                 return;
             }
             if (!validateModifs()) return;
 
+            //Construction du payload pour l’API
             Map<String, String> data = new HashMap<>();
             data.put("COURRIEL", email.getText().toString().trim().toLowerCase());
             data.put("PRENOM_PATIENT", prenom.getText().toString());
@@ -102,29 +117,34 @@ public class ModificationInfo extends AppCompatActivity {
             ApiService apiService = ApiClient.getApiService();
             Call<Void> call = apiService.updatePatient(data);
 
+            //Requête asynchrone
             call.enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.isSuccessful()) {
                         Toast.makeText(ModificationInfo.this, "Changements appliqués", Toast.LENGTH_SHORT).show();
+                        //Si l'email a été changé, l'email pour la session connectée va être changé aussi
                         Intent intent = new Intent(ModificationInfo.this, PageProfil.class);
                         intent.putExtra("courriel", email.getText().toString());
                         intent.putExtra("token", token);
                         startActivity(intent);
                         finish();
                     } else {
+                        //Message d'erreur pour la modification
                         Toast.makeText(ModificationInfo.this, "Erreur lors de la mise à jour", Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<Void> call, Throwable t) {
+                    //Message d'erreur réseau/transport
                     Toast.makeText(ModificationInfo.this, "Erreur réseau : " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         });
     }
 
+    //Champs non modifiables
     private void disableUneditableFields() {
         prenom.setEnabled(false);
         nom.setEnabled(false);
@@ -132,6 +152,7 @@ public class ModificationInfo extends AppCompatActivity {
         nam.setEnabled(false);
     }
 
+    //Vérifie la présence des champs modifiables
     private boolean champsModifiablesNonVides() {
         if (email.getText().toString().trim().isEmpty() ||
                 emailConfirme.getText().toString().trim().isEmpty() ||
@@ -147,6 +168,7 @@ public class ModificationInfo extends AppCompatActivity {
         return true;
     }
 
+    //Validation des formats des champs
     private boolean validateModifs() {
         String vEmail  = email.getText().toString().trim().toLowerCase();
         String vEmail2 = emailConfirme.getText().toString().trim().toLowerCase();
@@ -192,6 +214,7 @@ public class ModificationInfo extends AppCompatActivity {
         return true;
     }
 
+    //Récupère les informations du patient par courriel et remplit le formulaire
     private void chargerInfosPatient(String courriel) {
         ApiService apiService = ApiClient.getApiService();
         Call<Patient> call = apiService.getPatient(courriel);

@@ -13,21 +13,30 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Écran du profil patient avec toutes ses informations.
+ *Le patient consulter ses données et pourra naviguer vers les pages de modification de profil ou de mot de passe
+ * et vers les pages de prise de rendez-vous, ses rendez-vous et de déconnexion(nav-bar).
+ */
 public class PageProfil extends AppCompatActivity {
 
+    //Références UI
     private EditText prenom, nom, dateNaissance, noAssurance, email;
     private EditText numCivique, rue, ville, codePostal, tel;
     private TextView lienAccueil, lienRDV, lienProfil, lienModif, lienDeconnexion;
 
+    //Données de session
     private String token, courrielPatient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profil);
+        setContentView(R.layout.activity_profil);//Lie le layout activity_profil avec PageProfil.java
+
+        //Récupère le courriel
         courrielPatient = getIntent().getStringExtra("courriel");
 
-        // Ajout discret pour session persistante
+        //Récupère la session locale
         SharedPreferences prefs = getSharedPreferences("session", MODE_PRIVATE);
         if (prefs != null) {
             String savedToken = prefs.getString("token", null);
@@ -38,7 +47,7 @@ public class PageProfil extends AppCompatActivity {
             }
         }
 
-        // Champs
+        //Récupération des Views
         prenom = findViewById(R.id.profil_prenom);
         nom = findViewById(R.id.profil_nom);
         dateNaissance = findViewById(R.id.profil_naissance);
@@ -50,20 +59,20 @@ public class PageProfil extends AppCompatActivity {
         codePostal = findViewById(R.id.profil_postal);
         tel = findViewById(R.id.profil_tel);
 
-
-        // Lien navigation
         lienAccueil = findViewById(R.id.lienMesRdv);
         lienRDV = findViewById(R.id.lien_rdv);
         lienProfil = findViewById(R.id.lien_modifier_infos);
         lienModif = findViewById(R.id.lien_modifier_mdp);
         lienDeconnexion = findViewById(R.id.lienDeconnexion);
 
-        // Désactiver modification
+        //Tous les champs d'information du profil sont en lecture seule
         disableAllFields();
 
-        // Charger les infos
+        //Affiche les infos
         chargerProfil(courrielPatient);
 
+
+        //Lien vers la page des rdv du patient
         lienAccueil.setOnClickListener(v -> {
             Intent intent = new Intent(PageProfil.this, PageMesRDV.class);
             intent.putExtra("token", token);
@@ -71,6 +80,7 @@ public class PageProfil extends AppCompatActivity {
             startActivity(intent);
         });
 
+        //Lien vers la prise de rdv
         lienRDV.setOnClickListener(v -> {
             Intent intent = new Intent(PageProfil.this, pagePriseService.class);
             intent.putExtra("token", token);
@@ -78,6 +88,7 @@ public class PageProfil extends AppCompatActivity {
             startActivity(intent);
         });
 
+        //Lien de déconnexion vers la page de connexion
         lienDeconnexion.setOnClickListener(v -> {
             Intent intent = new Intent(PageProfil.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -85,6 +96,7 @@ public class PageProfil extends AppCompatActivity {
             finish();
         });
 
+        //Lien vers la page de modification d'informations
         lienProfil.setOnClickListener(v -> {
             Intent intent = new Intent(PageProfil.this, ModificationInfo.class);
             intent.putExtra("token", token);
@@ -92,6 +104,7 @@ public class PageProfil extends AppCompatActivity {
             startActivity(intent);
         });
 
+        //Lien vers la page de modification de mdp
         lienModif.setOnClickListener(v -> {
             Intent intent = new Intent(PageProfil.this, ModificationMotDePasse.class);
             intent.putExtra("token", token);
@@ -100,6 +113,7 @@ public class PageProfil extends AppCompatActivity {
         });
     }
 
+    //Les champs d'informations sont en lecture seule
     private void disableAllFields() {
         prenom.setEnabled(false);
         nom.setEnabled(false);
@@ -113,6 +127,9 @@ public class PageProfil extends AppCompatActivity {
         tel.setEnabled(false);
     }
 
+    /**
+     * Appel API pour récupérer le profil du patient par son courriel
+     */
     private void chargerProfil(String courriel) {
         ApiService apiService = ApiClient.getApiService() ;
         Call<Patient> call = apiService.getPatient(courrielPatient);
@@ -123,6 +140,7 @@ public class PageProfil extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     Patient patient = response.body();
 
+                    //Remplissage des champs
                     prenom.setText(patient.getPrenom());
                     nom.setText(patient.getNom());
                     dateNaissance.setText(patient.getDateNaissance());
