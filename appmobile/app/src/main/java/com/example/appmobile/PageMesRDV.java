@@ -64,6 +64,10 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
         chargerRdv();
     }
 
+    /**
+     * Appel API pour récupérer la liste des rendez-vous du patient.
+     */
+
     private void chargerRdv() {
         Call<RdvResponse> call = apiService.getRDV(courrielPatient);
         call.enqueue(new Callback<RdvResponse>() {
@@ -84,6 +88,12 @@ public class PageMesRDV extends AppCompatActivity implements View.OnClickListene
             }
         });
     }
+
+    /**
+     * Affiche la liste des rendez-vous dans la ListView.
+     * @param rdvRequests
+     */
+
 
     private void afficherRdv(List<RdvRequest> rdvRequests) {
         if (rdvRequests == null || rdvRequests.isEmpty()) {

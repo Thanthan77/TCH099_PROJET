@@ -35,6 +35,9 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
         this.listener = listener;
     }
 
+    /**
+    *Fonction qui va nous faire afficher tout le selements de la liste
+    */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         RdvInfo rdv = getItem(position);
@@ -60,6 +63,10 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
         annulerRdv.setOnClickListener(v -> annulerRdv(rdv));
         return convertView;
     }
+
+    /**
+     * Fonction qui va nous permettre d'annuler un rdv
+     */
 
     private void annulerRdv(RdvInfo rdv) {
         ApiService apiService = ApiClient.getApiService();

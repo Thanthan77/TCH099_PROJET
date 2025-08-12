@@ -9,6 +9,17 @@ public class RdvInfo {
     private String nomService;
     private String medecin;
 
+    /**
+     * Constructeur de la classe RdvInfo.
+     * @param numRdv
+     * @param jourRdv
+     * @param heureRdv
+     * @param typeRdv
+     * @param nomService
+     * @param medecin
+     */
+
+
     public RdvInfo(int numRdv, String jourRdv, String heureRdv, int typeRdv, String nomService, String medecin) {
         this.numRdv = numRdv;
         this.jourRdv = jourRdv;

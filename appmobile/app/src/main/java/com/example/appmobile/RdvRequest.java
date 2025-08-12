@@ -19,6 +19,11 @@ public class RdvRequest {
     @SerializedName("NOM_EMPLOYE")
     private String medecin;
 
+    /**
+     * Constructeur de la classe RdvRequest.
+     * @return
+     */
+
     public int getNUMRdv() {
         return numRdv;
     }
