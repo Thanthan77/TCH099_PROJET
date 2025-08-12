@@ -21,7 +21,7 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
     private TextView serviceRdv;
     private TextView dateRdv;
     private TextView timeRdv;
-    private TextView adresseClient ;
+    private TextView medecinRdv;
     private Button annulerRdv;
 
     public interface AnnulerRdvClickListener {
@@ -31,7 +31,7 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
     private final AnnulerRdvClickListener listener;
 
     public RDVadaptater(AnnulerRdvClickListener listener, List<RdvInfo> rdvList, Context context) {
-        super(context, 0,rdvList);
+        super(context, 0, rdvList);
         this.listener = listener;
     }
 
@@ -45,15 +45,15 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
         serviceRdv = convertView.findViewById(R.id.nomService2);
         dateRdv = convertView.findViewById(R.id.dateRdv2);
         timeRdv = convertView.findViewById(R.id.heureRdv2);
+        medecinRdv = convertView.findViewById(R.id.medecinRdv2);
         annulerRdv = convertView.findViewById(R.id.buttonAnnulerRdv);
-        adresseClient=convertView.findViewById(R.id.emailPatient) ;
 
         assert rdv != null;
 
+        serviceRdv.setText(rdv.getNomService());
         dateRdv.setText(rdv.getJourRdv());
         timeRdv.setText(rdv.getHeureRdv());
-        adresseClient.setText(rdv.getCourriel());
-        serviceRdv.setText(rdv.getNomService());
+        medecinRdv.setText(rdv.getMedecin());
 
         annulerRdv.setOnClickListener(v -> annulerRdv(rdv));
         return convertView;
@@ -75,6 +75,9 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
                     remove(rdv);
                     notifyDataSetChanged();
                     Log.d("API", "RDV annulé avec succès");
+                    if (listener != null) {
+                        listener.onClick(rdv);
+                    }
                 } else {
                     Log.e("API", "Erreur d'annulation : code " + response.code());
                 }
@@ -87,9 +90,3 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
         });
     }
 }
-
-
-
-
-
-
