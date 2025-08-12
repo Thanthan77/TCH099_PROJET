@@ -175,6 +175,12 @@ async function modifierRdv(numRdv) {
   // Heures
   heureSelect = document.getElementById("popupHour");
   heureSelect.innerHTML = "";
+
+  // [NOUVEAU] Restreindre les jours dans la popup selon l'employé courant
+  try {
+    await appliquerJoursDisponiblesAuChamp("popupDate", rdv.CODE_EMPLOYE);
+  } catch (e) { console.error(e); }
+
   await mettreAJourHeuresDisponibles();
 
   document.getElementById("popupModification").classList.remove("hidden");
@@ -368,8 +374,6 @@ async function mettreAJourProfessionnelsSuivi() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const professionnels = await res.json();
 
-    console.log(professionnels); // 👈 garder pour debug ciblé si besoin
-
     (Array.isArray(professionnels) ? professionnels : []).forEach((pro) => {
       if (!pro || !pro.CODE_EMPLOYE) return;
       const opt = document.createElement("option");
@@ -382,7 +386,6 @@ async function mettreAJourProfessionnelsSuivi() {
     });
 
     selectPro.disabled = false;
-
   } catch (error) {
     console.error("Erreur chargement professionnels :", error);
     selectPro.disabled = true;
@@ -583,14 +586,15 @@ async function chargerPatientsPourListe() {
   }
 }
 
+// --------- LISTE NOM (UL) ---------
 function afficherPatientsFiltres(nomTape) {
   const liste = document.getElementById("listeDeroulantePatients");
   if (!liste) return;
   liste.innerHTML = "";
 
-  const filtres = tousLesPatients.filter((p) => {
+  const filtres = (tousLesPatients || []).filter((p) => {
     const nomComplet = `${p.PRENOM_PATIENT} ${p.NOM_PATIENT}`.toLowerCase();
-    return nomComplet.includes(nomTape.toLowerCase());
+    return nomComplet.includes((nomTape || "").toLowerCase()); // vide => tous
   });
 
   if (filtres.length === 0) {
@@ -605,6 +609,40 @@ function afficherPatientsFiltres(nomTape) {
       document.getElementById("nomPatient").value = `${p.PRENOM_PATIENT} ${p.NOM_PATIENT}`;
       document.getElementById("assurancePatient").value = p.NO_ASSURANCE_MALADIE;
       liste.classList.add("hidden");
+      document.getElementById("listeDeroulanteAssurances")?.classList.add("hidden"); // ferme l’autre liste
+    };
+    liste.appendChild(li);
+  });
+
+  liste.classList.remove("hidden");
+}
+
+// --------- LISTE NAS (UL) — NOUVEAU ---------
+function afficherAssurancesFiltres(nasTape) {
+  const liste = document.getElementById("listeDeroulanteAssurances");
+  if (!liste) return;
+  liste.innerHTML = "";
+
+  const needle = (nasTape || "").toLowerCase();
+  const filtres = (tousLesPatients || []).filter((p) => {
+    const nas = (p.NO_ASSURANCE_MALADIE || "").toLowerCase();
+    return nas.includes(needle); // focus vide => tous
+  });
+
+  if (filtres.length === 0) {
+    liste.classList.add("hidden");
+    return;
+  }
+
+  filtres.forEach((p) => {
+    const li = document.createElement("li");
+    // ✅ n’affiche QUE le NAS (sans nom)
+    li.textContent = p.NO_ASSURANCE_MALADIE || "";
+    li.onclick = () => {
+      document.getElementById("assurancePatient").value = p.NO_ASSURANCE_MALADIE || "";
+      document.getElementById("nomPatient").value = `${p.PRENOM_PATIENT} ${p.NOM_PATIENT}`.trim();
+      liste.classList.add("hidden");
+      document.getElementById("listeDeroulantePatients")?.classList.add("hidden");
     };
     liste.appendChild(li);
   });
@@ -770,51 +808,232 @@ function escapeHtml(str) {
 }
 
 // ===================================================================
+// ============== 11) JOURS DISPONIBLES (CALENDRIER) =================
+// ===================================================================
+// [NOUVEAU] — restreint les jours du calendrier aux dates où l'employé a au moins une plage DISPONIBLE
+
+const __joursDispoCache = {};                 // { [CODE_EMPLOYE]: Set("YYYY-MM-DD", ...) }
+const __SCAN_RANGE_JOURS = 60;                // fallback: explorera les 60 prochains jours si pas d'API agrégée
+
+const toYMD = (d) => {                        // [NOUVEAU] utilitaire date
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
+
+async function fetchJoursDisponibles(codeEmp, fromDate, toDate) { // [NOUVEAU]
+  if (!codeEmp) return new Set();
+
+  // 1) Essai endpoint agrégé (optionnel côté backend)
+  try {
+    const url = `${API_URL}disponibilites/jours/${codeEmp}?from=${fromDate}&to=${toDate}`;
+    const res = await fetch(url, { cache: "no-store" });
+    if (res.ok) {
+      const data = await res.json();
+      const s = new Set();
+      (Array.isArray(data) ? data : []).forEach((x) => {
+        const d = typeof x === "string" ? x : (x.JOUR || x.date || x.jour);
+        if (d) s.add(String(d).slice(0, 10));
+      });
+      if (s.size) return s;
+    }
+  } catch (_) { /* ignore */ }
+
+  // 2) Fallback: scan quotidien via /disponibilites/{codeEmp}/{date}
+  const start = new Date(fromDate);
+  const end   = new Date(toDate);
+  const dates = [];
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) dates.push(toYMD(d));
+
+  const allowed = new Set();
+  let i = 0;
+  const CONCURRENCY = 8;
+
+  async function worker() {
+    while (i < dates.length) {
+      const idx = i++;
+      const dt = dates[idx];
+      try {
+        const r = await fetch(`${API_URL}disponibilites/${codeEmp}/${dt}`, { cache: "no-store" });
+        if (r.ok) {
+          const plages = await r.json();
+          if (Array.isArray(plages) && plages.some((p) => p.STATUT === "DISPONIBLE")) {
+            allowed.add(dt);
+          }
+        }
+      } catch (_) { /* ignore */ }
+    }
+  }
+  await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+  return allowed;
+}
+
+async function appliquerJoursDisponiblesAuChamp(inputId, codeEmp, rangeJours = __SCAN_RANGE_JOURS) { // [NOUVEAU]
+  const input = document.getElementById(inputId);
+  if (!input || !codeEmp) return;
+
+  input.value = "";
+  input.disabled = true;
+  input.setCustomValidity("");
+
+  const today = new Date();
+  const from  = toYMD(today);
+  const end   = new Date(today); end.setDate(end.getDate() + rangeJours);
+  const to    = toYMD(end);
+
+  const allowed = await fetchJoursDisponibles(codeEmp, from, to);
+  __joursDispoCache[codeEmp] = allowed;
+
+  if (window.flatpickr) {
+    if (input._fp) input._fp.destroy();
+    input._fp = flatpickr(input, {
+      dateFormat: "Y-m-d",
+      altInput: true,
+      altFormat: "F j, Y",
+      enable: Array.from(allowed),   // n'affiche QUE ces jours
+      disableMobile: true,
+    });
+  } else {
+  // --- Fallback natif: validation + min/max (sans texte sous le champ) ---
+  const sorted = Array.from(allowed).sort();
+  input.min = sorted[0] || from;
+  input.max = sorted[sorted.length - 1] || to;
+
+  const validate = () => {
+    const v = input.value;
+    if (v && !allowed.has(v)) {
+      input.value = "";
+      input.setCustomValidity("Ce jour n'est pas disponible pour ce professionnel.");
+      input.reportValidity();
+    } else {
+      input.setCustomValidity("");
+    }
+  };
+
+  // Nettoie anciens handlers pour éviter doublons
+  if (input._allowedHandler) {
+    input.removeEventListener("change", input._allowedHandler);
+    input.removeEventListener("blur",   input._allowedHandler);
+  }
+  input._allowedHandler = validate;
+  input.addEventListener("change", validate);
+  input.addEventListener("blur",   validate);
+
+  // 🔇 Supprime tout ancien hint et n'en recrée pas
+  const existing = document.getElementById(inputId + "-hint");
+  if (existing) existing.remove();
+}
+
+  input.disabled = false;
+}
+
+function clearDateEtHeure(ids = { dateId: "date", heureId: "heure" }) { // [NOUVEAU]
+  const d = document.getElementById(ids.dateId);
+  const h = document.getElementById(ids.heureId);
+  if (d) d.value = "";
+  if (h) h.innerHTML = `<option value="">Heure du Rendez-Vous</option>`;
+}
+
+// ===================================================================
 // ============== 10) DOM READY (branchements & init) =================
 // ===================================================================
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    await chargerPatients();
-    await chargerAfficherRendezVous();
-  } catch (e) {
-    console.error(e);
-  }
+document.addEventListener("DOMContentLoaded", () => {
+  // 1) Branchements IMMEDIATS : menus nom + NAS
+  const champNomPatient = document.getElementById("nomPatient");
+  champNomPatient?.addEventListener("input", () =>
+    afficherPatientsFiltres((champNomPatient.value || "").trim())
+  );
+  champNomPatient?.addEventListener("focus", () =>
+    afficherPatientsFiltres((champNomPatient.value || "").trim())
+  );
 
-  chargerAfficherHoraires();
-  chargerDemandesVacances();
-  chargerPatientsPourListe();
-  await chargerServicesPourCreation();
+  const champAssurance = document.getElementById("assurancePatient");
+  champAssurance?.addEventListener("input", () =>
+    afficherAssurancesFiltres((champAssurance.value || "").trim())
+  );
+  champAssurance?.addEventListener("focus", () =>
+    afficherAssurancesFiltres((champAssurance.value || "").trim())
+  );
 
-  // Références champs "Nouveau RDV"
+  // On garde aussi le remplissage auto NAS -> Nom
+  champAssurance?.addEventListener("input", rechercherPatientParAssurance);
+
+  // Fermer les listes si clic à l’extérieur (les deux)
+  document.addEventListener("click", (e) => {
+    const champNom = document.getElementById("nomPatient");
+    const champAss = document.getElementById("assurancePatient");
+    const listeNom = document.getElementById("listeDeroulantePatients");
+    const listeAss = document.getElementById("listeDeroulanteAssurances");
+
+    if (champNom && listeNom && !champNom.contains(e.target) && !listeNom.contains(e.target)) {
+      listeNom.classList.add("hidden");
+    }
+    if (champAss && listeAss && !champAss.contains(e.target) && !listeAss.contains(e.target)) {
+      listeAss.classList.add("hidden");
+    }
+  });
+
+  // 2) Références champs "Nouveau RDV" + branchements (non bloquants)
   const serviceEl = document.getElementById("service");
   const proEl     = document.getElementById("professionnel");
   const dateEl    = document.getElementById("date");
 
-  // Contraintes de dates : pas de dates passées, pas de week-ends
-  // (nécessite les utilitaires appliquerContraintesDates / toYMD / isWeekend / nextWeekday)
-  appliquerContraintesDates(["date", "popupDate"]);
-
-  // Branchements "Nouveau RDV"
+  // (service) -> recharge pros + reset date/heure + MAJ heures si possible
   serviceEl?.addEventListener("change", async () => {
-    await mettreAJourProfessionnelsSuivi();
-    await mettreAJourHeuresDisponiblesNewRdv();
+    try { await mettreAJourProfessionnelsSuivi(); } catch (e) { console.error(e); }
+    clearDateEtHeure({ dateId: "date", heureId: "heure" }); // [NOUVEAU] reset
+    try { await mettreAJourHeuresDisponiblesNewRdv(); } catch (e) { console.error(e); }
   });
-  proEl?.addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
-  dateEl?.addEventListener("change", mettreAJourHeuresDisponiblesNewRdv);
 
-  // Si un service est déjà présent, initialise pros + heures
-  if (serviceEl?.value) {
-    await mettreAJourProfessionnelsSuivi();
-    await mettreAJourHeuresDisponiblesNewRdv();
+  // (pro) -> applique jours disponibles + reset + MAJ heures
+  proEl?.addEventListener("change", async () => { // [NOUVEAU]
+    try {
+      clearDateEtHeure({ dateId: "date", heureId: "heure" });
+      const codeEmp = document.getElementById("professionnel")?.value;
+      if (codeEmp) await appliquerJoursDisponiblesAuChamp("date", codeEmp);
+      await mettreAJourHeuresDisponiblesNewRdv();
+    } catch (e) { console.error(e); }
+  });
+
+  // (date) -> MAJ heures
+  dateEl?.addEventListener("change", () => mettreAJourHeuresDisponiblesNewRdv().catch(console.error));
+
+  // 3) Contraintes de dates (protégées si la fonction n'existe pas)
+  if (typeof appliquerContraintesDates === "function") {
+    try { appliquerContraintesDates(["date", "popupDate"]); }
+    catch (e) { console.warn("Contraintes dates ignorées :", e); }
+  } else {
+    console.warn("appliquerContraintesDates absente : pas de contraintes min/week-end.");
   }
 
-  showTab("rdv");
+  // 4) Filtres dynamiques (patients + RDV)
+  ["filtrePrenom", "filtreNom", "filtreDateNaissance", "filtreAssurance"].forEach((id) => {
+    const champ = document.getElementById(id);
+    champ?.addEventListener("input", filtrerPatients);
+  });
+  ["filtreDateRdv", "filtreNomPatientRdv", "filtreNomProRdv", "filtreServiceRdv"].forEach((id) => {
+    const champ = document.getElementById(id);
+    champ?.addEventListener("input", filtrerRendezVous);
+  });
 
-  // logout (header)
+  // 5) Toggles filtres + déconnexions
+  document.querySelector("#patients .filtre-icon")?.addEventListener("click", () => {
+    document.getElementById("filtreSection")?.classList.toggle("hidden");
+  });
+  document.querySelector("#rdv .filtre-icon")?.addEventListener("click", () => {
+    document.getElementById("filtreSectionRdv")?.classList.toggle("hidden");
+  });
+
   const logoutBtn = document.getElementById("logout-btn");
-  if (logoutBtn) logoutBtn.addEventListener("click", () => (window.location.href = "login.html"));
+  logoutBtn?.addEventListener("click", () => (window.location.href = "login.html"));
 
-  // Demandes de vacances
+  document.getElementById("btn-logout")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    sessionStorage.clear();
+    localStorage.clear();
+    window.location.href = "index.html";
+  });
+
+  // 6) Bouton vacances
   const btnVacances = document.getElementById("btn-demande-vacances");
   if (btnVacances) {
     btnVacances.addEventListener("click", async (e) => {
@@ -823,7 +1042,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       errDiv.innerText = "";
 
       const dateDebut = document.getElementById("date-debut").value;
-      const dateFin = document.getElementById("date-fin").value;
+      const dateFin   = document.getElementById("date-fin").value;
 
       if (!codeEmploye || !dateDebut || !dateFin) {
         errDiv.style.color = "red";
@@ -854,53 +1073,39 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Filtres dynamiques patients
-  ["filtrePrenom", "filtreNom", "filtreDateNaissance", "filtreAssurance"].forEach((id) => {
-    const champ = document.getElementById(id);
-    if (champ) champ.addEventListener("input", filtrerPatients);
-  });
+  // 7) Lancer les chargements **sans bloquer** l'init
+  (async () => { try { await chargerPatients(); } catch (e) { console.error(e); } })();
+  (async () => { try { await chargerAfficherRendezVous(); } catch (e) { console.error(e); } })();
+  chargerAfficherHoraires()?.catch?.(console.error);
+  chargerDemandesVacances()?.catch?.(console.error);
+  chargerPatientsPourListe()?.catch?.(console.error);
+  chargerServicesPourCreation()?.catch?.(console.error);
 
-  // Filtres dynamiques RDV
-  ["filtreDateRdv", "filtreNomPatientRdv", "filtreNomProRdv", "filtreServiceRdv"].forEach((id) => {
-    const champ = document.getElementById(id);
-    if (champ) champ.addEventListener("input", filtrerRendezVous);
-  });
-
-  // Toggle filtres
-  document.querySelector("#patients .filtre-icon")?.addEventListener("click", () => {
-    document.getElementById("filtreSection")?.classList.toggle("hidden");
-  });
-  document.querySelector("#rdv .filtre-icon")?.addEventListener("click", () => {
-    document.getElementById("filtreSectionRdv")?.classList.toggle("hidden");
-  });
-
-  // Déconnexion (footer/bouton secondaire)
-  document.getElementById("btn-logout")?.addEventListener("click", (e) => {
-    e.preventDefault();
-    sessionStorage.clear();
-    localStorage.clear();
-    window.location.href = "index.html";
-  });
-
-  // Liste déroulante recherche patient (création RDV)
-  const champNomPatient = document.getElementById("nomPatient");
-  champNomPatient?.addEventListener("input", () => afficherPatientsFiltres(champNomPatient.value.trim()));
-  champNomPatient?.addEventListener("focus", () => afficherPatientsFiltres(champNomPatient.value.trim()));
-
-  document.getElementById("assurancePatient")?.addEventListener("input", rechercherPatientParAssurance);
-
-  // Fermer la liste si clic à l’extérieur
-  document.addEventListener("click", (e) => {
-    const champ = document.getElementById("nomPatient");
-    const liste = document.getElementById("listeDeroulantePatients");
-    if (champ && liste && !champ.contains(e.target) && !liste.contains(e.target)) {
-      liste.classList.add("hidden");
+  // 8) Si un service est déjà présent, on prépare la suite
+  if (serviceEl?.value) {
+    mettreAJourProfessionnelsSuivi().catch(console.error);
+    mettreAJourHeuresDisponiblesNewRdv().catch(console.error);
+    if (proEl?.value) { // [NOUVEAU] si un pro est déjà sélectionné au chargement
+      appliquerJoursDisponiblesAuChamp("date", proEl.value).catch(console.error);
     }
-  });
+  }
 
-  // Popup modification : MAJ heures quand service/pro/date changent
+  // 9) Popup modification : MAJ heures quand service/pro/date changent
   ["popupService", "popupProfessionnel", "popupDate"].forEach((id) => {
     const champ = document.getElementById(id);
-    if (champ) champ.addEventListener("change", mettreAJourHeuresDisponibles);
+    champ?.addEventListener("change", () => mettreAJourHeuresDisponibles().catch(console.error));
   });
+
+  // [NOUVEAU] Popup: si le professionnel change, ré-appliquer les jours autorisés et reset la date/heure
+  document.getElementById("popupProfessionnel")?.addEventListener("change", async () => {
+    try {
+      const codeEmp = document.getElementById("popupProfessionnel")?.value || rdvAvantChangement?.CODE_EMPLOYE;
+      clearDateEtHeure({ dateId: "popupDate", heureId: "popupHour" });
+      if (codeEmp) await appliquerJoursDisponiblesAuChamp("popupDate", codeEmp);
+      await mettreAJourHeuresDisponibles();
+    } catch (e) { console.error(e); }
+  });
+
+  // 10) Affiche l’onglet RDV
+  showTab("rdv");
 });
