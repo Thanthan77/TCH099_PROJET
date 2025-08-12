@@ -18,15 +18,20 @@ import retrofit2.Response;
 
 import android.text.InputFilter;
 
+/**Écran d'inscription du patient.
+ * Le client devra remplir toutes ses informations dans les champs désignés et pourra se créer un compte patient.
+ * Le patient sera dirigé vers la page de connexion une fois l'inscription complétée ou s'il clique sur le lien "Vous avez déjà un compte?"
+ */
 public class PageInscription extends AppCompatActivity {
+    //Imposer les formats des informations du patients
+    private static final String RX_NOM        = "^[\\p{L} '-]+$"; //Pour les noms et ville, seulement des lettres, espaces, apostrophes et traits d'union
+    private static final String RX_CIVIQUE    = "^\\d+$"; //Pour le numéro civique, seulement des chiffres
+    private static final String RX_DATE       = "^\\d{4}-\\d{2}-\\d{2}$"; //Pour date de naissance, seulement des chiffres sous le format : AAAA-MM-JJ
+    private static final String RX_POSTAL     = "^[A-Z]\\d[A-Z]\\d[A-Z]\\d$"; //Pour code postal, seulement chiffres et lettres sous ce format : A1A1A1
+    private static final String RX_RAMQ       = "^[A-Z]{4}\\d{8}$"; //Pour numéro d'assurance maladie, seulement chiffres et lettres sous ce format : AAAA11112222
+    private static final String RX_TEL10      = "^\\d{10}$"; //Pour numéro de téléphone, seulement 10 chiffres
 
-    private static final String RX_NOM        = "^[\\p{L} '-]+$";
-    private static final String RX_CIVIQUE    = "^\\d+$";
-    private static final String RX_DATE       = "^\\d{4}-\\d{2}-\\d{2}$";
-    private static final String RX_POSTAL     = "^[A-Z]\\d[A-Z]\\d[A-Z]\\d$";
-    private static final String RX_RAMQ       = "^[A-Z]{4}\\d{8}$";
-    private static final String RX_TEL10      = "^\\d{10}$";
-
+    //Références UI
     private EditText prenom, nom, nam, naissance, civique, rue, ville, postal, tel, email, emailConf, mdp, mdpConf;
 
     private Button btnCreerCompte;
