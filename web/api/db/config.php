@@ -1,12 +1,10 @@
 <?php
-// config.php
-
 $host = $_SERVER['HTTP_HOST'] ?? '';
 $isLocal = in_array($host, ['localhost','127.0.0.1','::1']);
 
-// ---- Choix des valeurs selon l'environnement ----
+
 if ($isLocal) {
-    $DB_HOST = 'database';   // pas besoin de :3306, le port se met dans le DSN
+    $DB_HOST = 'database';   
     $DB_PORT = 3306;
     $DB_NAME = 'docker';
     $DB_USER = 'root';
