@@ -5,8 +5,8 @@ import com.google.gson.annotations.SerializedName;
 public class RdvRequest {
     @SerializedName("NUM_RDV")
     private int numRdv;
-    @SerializedName("JOUR")
-    private String jourRdv;
+    @SerializedName("DATE_RDV")
+    private String dateRdv;
     @SerializedName("HEURE")
     private String heureRdv;
     @SerializedName("COURRIEL")
@@ -16,11 +16,14 @@ public class RdvRequest {
     @SerializedName("ID_SERVICE")
     private int idRdv ;
 
+    @SerializedName("NOM_EMPLOYE")
+    private String medecin;
+
     public int getNUMRdv() {
         return numRdv;
     }
-    public String getJourRdv() {
-        return jourRdv;
+    public String getDateRdv() {
+        return dateRdv;
     }
     public String getHeureRdv() {
         return heureRdv;
@@ -33,5 +36,8 @@ public class RdvRequest {
     }
     public int getIdRdv() {
         return idRdv;
+    }
+    public String getMedecin() {
+        return medecin;
     }
 }
