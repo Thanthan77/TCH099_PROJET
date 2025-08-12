@@ -1,11 +1,22 @@
-/* BASE */
-body {
+/* ====== Structure commune ====== */
+html, body {
+  height: 100%;
   margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
   font-family: Arial, sans-serif;
   background-color: #e0f2ff;
 }
 
-/* ENTÊTE */
+main {
+  flex: 1;
+  padding: 30px;
+}
+
+/* ====== Header (commun) ====== */
 header {
   background-color: #0077b6;
   padding: 20px 40px;
@@ -71,11 +82,8 @@ header h1 {
   background-color: #f1f1f1;
 }
 
-/* CONTENU */
-main {
-  padding: 30px;
-}
 
+/* ====== Styles spécifiques : Profil ====== */
 .container {
   max-width: 600px;
   margin: 0 auto;
@@ -97,7 +105,7 @@ label {
   color: #333;
 }
 
-/* CHAMPS COMMUNS */
+/* Champs communs */
 input, textarea, select {
   width: 100%;
   padding: 10px;
@@ -109,7 +117,7 @@ input, textarea, select {
   font-size: 14px;
 }
 
-/* CHAMPS EN LECTURE SEULE */
+/* Champs en lecture seule */
 input[readonly],
 textarea[readonly],
 select:disabled {
@@ -119,7 +127,7 @@ select:disabled {
   cursor: not-allowed;
 }
 
-/* CHAMPS ÉDITABLES */
+/* Champs éditables */
 input.editable,
 textarea.editable,
 select.editable {
@@ -129,7 +137,7 @@ select.editable {
   cursor: text;
 }
 
-/* BOUTONS */
+/* Boutons */
 button {
   margin-top: 25px;
   width: 100%;

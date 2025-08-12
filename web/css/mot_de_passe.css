@@ -1,10 +1,25 @@
-body {
+/* ====== Structure commune (Footer toujours en bas) ====== */
+html, body {
+  height: 100%;
   margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
   font-family: Arial, sans-serif;
   background-color: #e0f2ff;
 }
 
-/* En-tête */
+main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 20px;
+}
+
+/* ====== Header (commun) ====== */
 header {
   background-color: #0077b6;
   padding: 20px 40px;
@@ -34,13 +49,7 @@ header h1 {
   transform: translateX(-50%);
 }
 
-/* Contenu principal */
-main {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 50px 20px;
-}
+/* ====== Styles spécifiques à la page ====== */
 
 .reset-box {
   background-color: white;

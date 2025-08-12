@@ -9,15 +9,22 @@ html, body {
   min-height: 100vh;    
 }
 
+
 .footer-clinique {
+  background-color: #0077b6;
+  color: white;
   text-align: center;
   font-family: Arial, sans-serif;
   font-size: 12px;
-  line-height: 1.2;
-  margin-top: auto;       
+  line-height: 1.4;
+  padding: 15px 10px;
+  margin-top: auto;
 }
 
 .footer-clinique p {
   margin: 3px 0;
 }
 
+.footer-clinique strong {
+  font-size: 14px;
+}

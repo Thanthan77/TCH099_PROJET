@@ -1,4 +1,4 @@
-/* Structure pour maintenir le footer en bas */
+/* ===================== STRUCTURE GLOBALE (FOOTER EN BAS) ===================== */
 html, body {
   height: 100%;
   margin: 0;
@@ -9,8 +9,6 @@ html, body {
   background-color: #eef4ff;
 }
 
-/* ===================== GÉNÉRAL ===================== */
-
 main {
   flex: 1;
   padding: 30px;
@@ -20,6 +18,7 @@ main {
   display: none !important;
 }
 
+/* ===================== HEADER ===================== */
 header {
   background-color: #0077b6;
   padding: 20px 40px;
@@ -49,6 +48,7 @@ header h1 {
   transform: translateX(-50%);
 }
 
+/* ===================== TABS ===================== */
 .tabs {
   display: flex;
   justify-content: center;
@@ -76,8 +76,7 @@ header h1 {
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-/* ===================== TABLEAUX ===================== */
-
+/* ===================== TABLES ===================== */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -91,7 +90,6 @@ th, td {
 }
 
 /* ===================== FORMULAIRES ===================== */
-
 input, select {
   width: 100%;
   padding: 10px;
@@ -123,7 +121,6 @@ button.danger:hover {
 }
 
 /* ===================== MENU UTILISATEUR ===================== */
-
 .user-menu-container {
   position: absolute;
   top: 20px;
@@ -160,8 +157,7 @@ button.danger:hover {
   background-color: #f1f1f1;
 }
 
-/* ===================== MODAL CRÉATION COMPTE ===================== */
-
+/* ===================== MODALS ===================== */
 .modal {
   position: fixed;
   top: 0; left: 0;
@@ -196,45 +192,7 @@ button.danger:hover {
   cursor: pointer;
 }
 
-.modal-content form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.modal-content form label {
-  flex: 1 1 calc(50% - 20px);
-  display: flex;
-  flex-direction: column;
-  font-weight: bold;
-  color: #023e8a;
-}
-
-.modal-content form input,
-.modal-content form select {
-  margin-top: 5px;
-  padding: 10px;
-  font-size: 14px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-}
-
-.modal-content form button[type="submit"],
-.modal-content form button[type="button"] {
-  flex: 1 1 100%;
-  padding: 10px;
-  font-size: 16px;
-  border: none;
-  border-radius: 6px;
-  background-color: #0077b6;
-  color: white;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
 /* ===================== FILTRES ===================== */
-
 .rdv-header {
   display: flex;
   justify-content: space-between;
@@ -283,333 +241,8 @@ button.danger:hover {
   background-color: #005f99;
 }
 
-/* ===================== PIED DE PAGE ===================== */
-
-.footer-clinique {
-  background-color: #0077b6;
-  color: white;
-  text-align: center;
-  padding: 20px;
-}
-
-td ul {
-  list-style-type: disc;
-  padding-left: 20px;
-  margin: 0;
-}
-
-td ul li {
-  margin-bottom: 4px;
-}
-
-.modal {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
-.modal-content {
-  background-color: white;
-  padding: 30px;
-  border-radius: 10px;
-  width: 600px; /* largeur fixe propre */
-  max-width: 90%;
-  max-height: none;
-  overflow: visible;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-
-
-/* Bouton de fermeture */
-.close-button {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 20px;
-  cursor: pointer;
-  color: #000;
-}
-
-/* Formulaire d’assignation : 2 colonnes de 3 éléments */
-#form-modifier-assignation {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  margin-top: 20px;
-  padding: 10px 0;
-}
-
-#form-modifier-assignation label {
-  display: flex;
-  align-items: center;
-  font-weight: bold;
-  color: #023e8a;
-  font-size: 15px;
-  gap: 8px;
-}
-
-/* Bouton Enregistrer */
-#form-modifier-assignation button {
-  grid-column: span 2;
-  margin-top: 20px;
-  padding: 12px;
-  font-size: 16px;
-  border-radius: 6px;
-  background-color: #0077b6;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-#form-modifier-assignation button:hover {
-  background-color: #023e8a;
-}
-
-/* Conteneur grille des services */
-#liste-services-checkboxes {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 colonnes fixes */
-  gap: 20px 30px;
-  margin-top: 25px;
-}
-
-/* Carte stylée pour chaque service */
-.service-card {
-  background-color: #f1f9ff;
-  border: 1px solid #b6d9f5;
-  border-radius: 10px;
-  padding: 12px;
-  font-size: 14px;
-  color: #023e8a;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  height: 75px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center; /* centre aussi les longs textes */
-  gap: 8px;
-}
-
-
-.service-card:hover {
-  background-color: #e0f0ff;
-}
-
-
-/* Masque la checkbox par défaut */
-.service-card input[type="checkbox"] {
-  accent-color: #0077b6;
-  width: 18px;
-  height: 18px;
-}
-
-/* Zone des boutons en bas */
-#form-modifier-assignation {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-}
-
-#form-modifier-assignation .btn-group {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 30px;
-}
-
-#form-modifier-assignation .btn-group button {
-  padding: 12px 25px;
-  font-size: 15px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  width: 200px;
-}
-
-
-.btn-submit {
-  background-color: #0077b6;
-  color: white;
-}
-
-.btn-submit:hover {
-  background-color: #023e8a;
-}
-
-.btn-cancel {
-  background-color: #ccc;
-  color: black;
-}
-
-.btn-cancel:hover {
-  background-color: #b2b2b2;
-}
-
-/* Style pour le nom complet */
-.label-assignation {
-  font-size: 14px;
-  font-weight: bold;
-  color: black;
-  margin-right: 6px;
-}
-
-
-.popup-title {
-  font-size: 26px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #000;
-}
-
-/* Nom + "Nom" */
-.valeur-nom {
-  font-size: 22px;
-  font-weight: 700;
-  color: #000;
-}
-
-/* Poste + "Poste" */
-.valeur-poste {
-  font-size: 18px;
-  font-weight: 600;
-  color: #666;
-}
-
-#assignation-services table {
-  width: 100%;
-  table-layout: fixed;
-  border-collapse: collapse;
-}
-
-#assignation-services th,
-#assignation-services td {
-  text-align: center;
-  vertical-align: top;
-  padding: 10px;
-}
-
-/* Colonnes équilibrées */
-#assignation-services th:nth-child(1),
-#assignation-services td:nth-child(1) {
-  width: 20%;
-}
-
-#assignation-services th:nth-child(2),
-#assignation-services td:nth-child(2) {
-  width: 20%;
-}
-
-#assignation-services th:nth-child(3),
-#assignation-services td:nth-child(3) {
-  width: 45%;
-  text-align: left; /* Aligner les puces à gauche */
-}
-
-/* Aligner les boutons */
-#assignation-services th:nth-child(4),
-#assignation-services td:nth-child(4) {
-  width: 15%;
-  text-align: center;
-}
-
-
-
-.assignation-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed; /* Important pour contrôler les largeurs */
-}
-
-.assignation-table th,
-.assignation-table td {
-  padding: 12px 15px;
-  text-align: left;
-  vertical-align: top;
-}
-
-/* Largeurs spécifiques */
-.assignation-table th:nth-child(1),
-.assignation-table td:nth-child(1) {
-  width: 20%;
-}
-
-.assignation-table th:nth-child(2),
-.assignation-table td:nth-child(2) {
-  width: 15%;
-}
-
-.assignation-table th:nth-child(3),
-.assignation-table td:nth-child(3) {
-  width: 45%;
-}
-
-.assignation-table th:nth-child(4),
-.assignation-table td:nth-child(4) {
-  width: 20%;
-  text-align: center;
-}
-
-.assignation-table ul {
-  margin: 0;
-  padding-left: 20px;
-  list-style-type: disc;
-}
-
-.assignation-table {
-  width: 90%; /* Réduit un peu la largeur totale */
-  margin: 0 auto; /* Centre horizontalement */
-  border-collapse: collapse;
-  table-layout: fixed;
-}
-
-#assignation-services table {
-  width: 100%;
-  table-layout: fixed;
-}
-
-#assignation-services th,
-#assignation-services td {
-  width: 25%;         /* 100% / 4 colonnes */
-  text-align: left;
-  padding: 12px 10px;
-  vertical-align: top;
-}
-
-#assignation-services table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 40px 15px; /* espace horizontal entre colonnes + vertical entre lignes */
-}
-
-#assignation-services th,
-#assignation-services td {
-  text-align: left;
-  vertical-align: top;
-}
-
-#assignation-services th:first-child,
-#assignation-services td:first-child {
-  padding-left: 20px; /* Espace à gauche */
-}
-
-#assignation-services th:last-child,
-#assignation-services td:last-child {
-  padding-right: 20px; /* Espace à droite */
-}
-
-/* ===================== Ajustement tableau #comptes ===================== */
+/* ===================== TABLEAUX SPÉCIFIQUES ===================== */
+/* Comptes */
 #comptes table {
   width: 90%;
   margin: 0 auto;
@@ -619,16 +252,14 @@ td ul li {
   text-align: center;
 }
 
-#comptes th,
-#comptes td {
+#comptes th, #comptes td {
   width: 25%;
   text-align: center;
   vertical-align: middle;
   padding: 12px 0;
 }
 
-
-/* ===================== Ajustement tableau #vacances ===================== */
+/* Vacances */
 #vacances table {
   width: 90%;
   margin: 0 auto;
@@ -638,16 +269,14 @@ td ul li {
   text-align: center;
 }
 
-#vacances th,
-#vacances td {
+#vacances th, #vacances td {
   width: 16.66%;
   text-align: center;
   vertical-align: middle;
   padding: 12px 0;
 }
 
-
-/* ===================== Ajustement tableau #assignation-services ===================== */
+/* Assignation Services */
 #assignation-services table {
   width: 90%;
   margin: 0 auto;
@@ -657,35 +286,27 @@ td ul li {
   text-align: center;
 }
 
-#assignation-services th,
-#assignation-services td {
+#assignation-services th, #assignation-services td {
   width: 25%;
   text-align: center;
   vertical-align: middle;
   padding: 12px 0;
 }
 
-
-#assignation-services td:nth-child(3),
-#assignation-services th:nth-child(3) {
-  text-align: center;
-}
-
-/* ===================== Alignement fixe des services dans la colonne ===================== */
 #assignation-services td:nth-child(3) {
-  padding-left: 60px; /* Point de départ fixe pour le texte des services */
+  padding-left: 60px;
   text-align: left;
 }
 
 #assignation-services td:nth-child(3) ul {
-  list-style: none; /* Supprimer les puces natives */
+  list-style: none;
   margin: 0;
   padding: 0;
 }
 
 #assignation-services td:nth-child(3) li {
   position: relative;
-  padding-left: 1.2em; /* Espace réservé pour la puce personnalisée */
+  padding-left: 1.2em;
   margin-bottom: 4px;
 }
 
@@ -698,7 +319,7 @@ td ul li {
   line-height: 1;
 }
 
-/* ===================== Boutons côte à côte ===================== */
+/* ===================== BOUTONS DANS LES TABLEAUX ===================== */
 td .action-buttons {
   display: flex;
   gap: 10px;
@@ -714,6 +335,7 @@ td .action-buttons button {
   white-space: nowrap;
 }
 
+/* ===================== BOUTONS CHARGER DISPONIBILITÉS ===================== */
 .horaire-header {
   display: flex;
   justify-content: space-between;
