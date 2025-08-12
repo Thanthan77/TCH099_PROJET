@@ -83,4 +83,12 @@
     <string name="annuler_le_rdv">Annuler le rdv</string>
     <string name="aucun_rendez_vous_pour_le_patient">Aucun rendez-vous pour le patient</string>
     <string name="retour4">Retour</string>
+    <string name="nom_de_l_employe">Nom de l\'employe</string>
+    <string name="confirmation">Confirmation</string>
+    <string name="confirmation2">Confirmation</string>
+    <string name="retour5">Retour</string>
+    <string name="retour6">Retour</string>
+    <string name="retour7">Retour</string>
+    <string name="nom2">Nom</string>
+    <string name="pr_nom2">Prénom</string>
 </resources>

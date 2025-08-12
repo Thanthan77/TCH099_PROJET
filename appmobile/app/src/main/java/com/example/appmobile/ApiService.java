@@ -3,6 +3,9 @@ package com.example.appmobile;
 import java.util.List;
 import java.util.Map;
 
+import com.example.appmobile.PagesRDV.FiltreDateRequest;
+import com.example.appmobile.PagesRDV.FiltreHeureRequest;
+import com.example.appmobile.PagesRDV.FiltrePersonnelRequest;
 import com.example.appmobile.PagesRDV.HoraireRequest;
 import com.example.appmobile.PagesRDV.ServiceRequest;
 
@@ -51,6 +54,22 @@ public interface ApiService {
             @Path("numRdv") int numRdv,
             @Body Map<String, String> body);
 
+
+
+    //GET recevoir pour filtrer selon les codes des employé
+    @GET("employees/{id_service}")
+    Call <List<FiltrePersonnelRequest>> getCodeEmploye (@Path("id_service") int idService) ;
+    // GET pour filtrer selon la date
+
+    @GET("disponibilitees/employe/id/{code_employe}")
+    Call<List<FiltreDateRequest>> getDate(@Path("code_employe") int codeEmploye);
+
+    //GET pour filtrer selon l'heure
+    @GET("disponibilite/employe/{code_employe}/{jour}")
+    Call<List<FiltreHeureRequest>> getHeure(
+            @Path("code_employe") int codeEmploye,
+            @Path("jour") String jour
+    );
 }
 
 

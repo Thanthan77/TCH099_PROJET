@@ -103,7 +103,7 @@ public class pagePriseService extends AppCompatActivity implements View.OnClickL
             int idService= getIdService (nomService) ;
 
                 if (idService !=  0) {
-                    Intent intent = new Intent(this, pagePriseMoment.class);
+                    Intent intent = new Intent(this, PageFiltrePersonnel.class);
                     intent.putExtra("id_service", idService);
                     intent.putExtra("token", token);
                     intent.putExtra("courriel", courriel);

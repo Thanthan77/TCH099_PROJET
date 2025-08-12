@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+
 
     <application
         android:allowBackup="true"
@@ -26,7 +29,9 @@
         <activity android:name=".ModificationMotDePasse" />
         <activity android:name=".PageMesRDV" />
         <activity android:name=".PagesRDV.pagePriseConfirmation" />
-        <activity android:name=".PagesRDV.pagePriseMoment" />
+        <activity android:name=".PagesRDV.PageFiltrePersonnel" />
+        <activity android:name=".PagesRDV.PageFiltreDate" />
+        <activity android:name=".PagesRDV.PageFiltreHeure" />
         <activity android:name=".PagesRDV.pagePriseService" />
         <activity android:name=".pageConfirmation" />
         <activity android:name=".PageProfil" />
