@@ -53,7 +53,9 @@ public class RDVadaptater extends ArrayAdapter<RdvInfo> {
         serviceRdv.setText(rdv.getNomService());
         dateRdv.setText(rdv.getJourRdv());
         timeRdv.setText(rdv.getHeureRdv());
-        medecinRdv.setText(rdv.getMedecin());
+
+        // Affichage direct sans string.xml
+        medecinRdv.setText("Rendez-vous avec " + rdv.getMedecin());
 
         annulerRdv.setOnClickListener(v -> annulerRdv(rdv));
         return convertView;
