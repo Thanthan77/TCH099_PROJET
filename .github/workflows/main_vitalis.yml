@@ -26,9 +26,14 @@ jobs:
         with:
           name: php-app
 
+      - name: Remove default Azure files
+        run: |
+          echo "Nettoyage du wwwroot..."
+          rm -rf /home/site/wwwroot/* || true
+
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'vitalis'                               
+          app-name: 'vitalis'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_VITALIS }}
           package: .
