@@ -192,6 +192,47 @@ button.danger:hover {
   cursor: pointer;
 }
 
+/* ===================== POPUP HORAIRE ===================== */
+#popup-horaire .modal-content {
+  width: 500px;
+}
+
+#popup-horaire fieldset {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 15px;
+}
+
+#popup-horaire legend {
+  font-weight: bold;
+  padding: 0 6px;
+}
+
+#popup-horaire .jours-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(150px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+#popup-horaire .horaire-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+#popup-horaire select {
+  width: 100%;
+}
+
+#popup-horaire .btn-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
 /* ===================== FILTRES ===================== */
 .rdv-header {
   display: flex;
@@ -242,8 +283,9 @@ button.danger:hover {
 }
 
 /* ===================== TABLEAUX SPÉCIFIQUES ===================== */
-/* Comptes */
-#comptes table {
+#comptes table,
+#vacances table,
+#assignation-services table {
   width: 90%;
   margin: 0 auto;
   border-collapse: separate;
@@ -259,31 +301,11 @@ button.danger:hover {
   padding: 12px 0;
 }
 
-/* Vacances */
-#vacances table {
-  width: 90%;
-  margin: 0 auto;
-  border-collapse: separate;
-  border-spacing: 40px 0;
-  table-layout: fixed;
-  text-align: center;
-}
-
 #vacances th, #vacances td {
   width: 16.66%;
   text-align: center;
   vertical-align: middle;
   padding: 12px 0;
-}
-
-/* Assignation Services */
-#assignation-services table {
-  width: 90%;
-  margin: 0 auto;
-  border-collapse: separate;
-  border-spacing: 40px 0;
-  table-layout: fixed;
-  text-align: center;
 }
 
 #assignation-services th, #assignation-services td {

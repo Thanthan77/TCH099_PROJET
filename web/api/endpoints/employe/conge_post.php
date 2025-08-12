@@ -59,4 +59,8 @@ try {
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(["error" => "Erreur serveur : " . $e->getMessage()]);
+}finally {
+    if (isset($cnx)) {
+        $cnx = null;
+    }
 }
