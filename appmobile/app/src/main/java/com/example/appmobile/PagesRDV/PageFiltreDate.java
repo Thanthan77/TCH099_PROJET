@@ -40,7 +40,7 @@ public class PageFiltreDate extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_page_filtre_date);
+        setContentView(R.layout.activity_filtre_date);
 
         SharedPreferences prefs = getSharedPreferences("session", MODE_PRIVATE);
         token = prefs.getString("token", null);
