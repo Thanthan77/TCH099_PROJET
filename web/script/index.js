@@ -1,7 +1,7 @@
 const API_URL =
   window.location.hostname === "localhost"
     ? "http://localhost/api/"
-    : "http://20.116.216.218/api/";
+    : "https://vitalis-bbe7aybcc3ata2gm.canadacentral-01.azurewebsites.net/api/";
 
 
 const codeEmploye = localStorage.getItem("codeEmploye");
