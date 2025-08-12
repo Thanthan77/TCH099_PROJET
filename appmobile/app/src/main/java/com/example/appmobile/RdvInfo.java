@@ -8,7 +8,7 @@ public class RdvInfo {
     private String courriel;
     private String nomService;
 
-    public RdvInfo(int numRdv,String jourRdv, String heureRdv, int typeRdv, String nomService) {
+    public RdvInfo(int numRdv, String jourRdv, String heureRdv, int typeRdv, String nomService, String medecin) {
         this.numRdv = numRdv;
         this.jourRdv = jourRdv;
         this.heureRdv = heureRdv;
