@@ -57,28 +57,28 @@ En ce qui concerne l’évolution des technologies utilisé pour la création du
 ## 5. Revue des tâches des sprints
 
 ### Sprint 1
-| Nom                  | XS | S | M | L | XL | Total complété | Total assigné |
-|----------------------|----|---|---|---|----|----------------|---------------|
-| Koffi Akakpo         |    |   | 1 |   |    | 1              |               |
-| Ethan Chea           |    |   | 2 | 1 |    | 3 (2 partagées)|               |
-| Mathis Clermont      |    | 1 | 1 | 1 |    | 3 (2 partagées)|               |
-| Lotfi Fradj          |    | 3 |   |   |    | 3              |               |
-| Vanisone Rasavady    | 1  | 2 | 1 |   |    | 4              |               |
-| Wassim Ouali         |    | 1 | 2 |   |    | 3              |               |
+| Nom                  | XS | S | M | L | XL | Total complété |
+|----------------------|----|---|---|---|----|----------------|
+| Koffi Akakpo         |    |   | 1 |   |    | 1              |            
+| Ethan Chea           |    |   | 2 | 1 |    | 3 (2 partagées)|               
+| Mathis Clermont      |    | 1 | 1 | 1 |    | 3 (2 partagées)|               
+| Lotfi Fradj          |    | 3 |   |   |    | 3              |               
+| Vanisone Rasavady    | 1  | 2 | 1 |   |    | 4              |               
+| Wassim Ouali         |    | 1 | 2 |   |    | 3              |               
 
 **Total des tâches de l’équipe :** 15  
 
 ---
 
 ### Sprint 2
-| Nom                  | XS | S | M | L | XL | Total complété | Total assigné |
-|----------------------|----|---|---|---|----|----------------|---------------|
-| Koffi Akakpo         | 1  | 1 | 1 |   |    | 3              |               |
-| Ethan Chea           | 3  | 6 |   | 2 |    | 11             |               |
-| Mathis Clermont      | 3  | 2 | 3 | 2 | 2  | 12             |               |
-| Lotfi Fradj          |    | 3 | 5 | 1 |    | 9              |               |
-| Vanisone Rasavady    | 6  | 8 |   |   |    | 14             |               |
-| Wassim Ouali         | 1  | 6 | 1 |   |    | 8              |               |
+| Nom                  | XS | S | M | L | XL | Total complété |  
+|----------------------|----|---|---|---|----|----------------|
+| Koffi Akakpo         | 1  | 1 | 1 |   |    | 3              |               
+| Ethan Chea           | 3  | 6 |   | 2 |    | 11             |               
+| Mathis Clermont      | 3  | 2 | 3 | 2 | 2  | 12             |               
+| Lotfi Fradj          |    | 3 | 5 | 1 |    | 9              |               
+| Vanisone Rasavady    | 6  | 8 |   |   |    | 14             |               
+| Wassim Ouali         | 1  | 6 | 1 |   |    | 8              |              
 
 **Total des tâches de l’équipe :** 55   
 
@@ -97,3 +97,4 @@ Cela permettrait d’améliorer l’accessibilité et la sécurité, tout en off
 Pour l’application mobile, il serait intéressant d’intégrer l’historique des transactions et l’envoi d’une confirmation de rendez-vous par courriel.
 
 ---
+
