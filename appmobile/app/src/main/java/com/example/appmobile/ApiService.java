@@ -6,7 +6,6 @@ import java.util.Map;
 import com.example.appmobile.PagesRDV.FiltreDateRequest;
 import com.example.appmobile.PagesRDV.FiltreHeureRequest;
 import com.example.appmobile.PagesRDV.FiltrePersonnelRequest;
-import com.example.appmobile.PagesRDV.HoraireRequest;
 import com.example.appmobile.PagesRDV.ServiceRequest;
 
 import retrofit2.Call;
@@ -26,8 +25,7 @@ public interface ApiService {
     // GET pour avoir toutes les informations d'un patient
     @GET("patient/{courriel}")
     Call<Patient> getPatient(@Path("courriel") String courriel);
-    @GET("disponibilitees/services/id/{id_service}")
-    Call<List<HoraireRequest>> getHoraire(@Path("id_service") int idService);
+
     // GET pour avoir les rendezvous d'un patient
     @GET("rendezvous/patient/{courriel}")
     Call<RdvResponse> getRDV(@Path("courriel") String courriel);

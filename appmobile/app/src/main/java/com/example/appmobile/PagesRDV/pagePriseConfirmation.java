@@ -64,10 +64,15 @@ public class pagePriseConfirmation extends AppCompatActivity implements View.OnC
 
         Intent intent = getIntent();
         nomServiceStr = intent.getStringExtra("nom_service");
+        Log.e("API", "Erreur réponse: " + nomServiceStr);
         heureStr = intent.getStringExtra("heure");
+        Log.e("API", "Erreur réponse: " + heureStr);
         jourStr = intent.getStringExtra("jour");
+        Log.e("API", "Erreur réponse: " + jourStr);
         nomEmployeStr = intent.getStringExtra("nom_employe");
+        Log.e("API", "Erreur réponse: " + nomServiceStr);
         prenomEmployeStr = intent.getStringExtra("prenom_employe");
+        Log.e("API", "Erreur réponse: " + prenomEmployeStr);
 
 
 
