@@ -1,4 +1,4 @@
-name: Build and deploy PHP app to Azure Web App - vitalis
+name: Build and deploy PHP app to Azure Web App - cliniqueprive
 
 on:
   push:
@@ -31,6 +31,6 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: vitalis
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_VITALIS }}
+          app-name: cliniqueprive
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CLINIQUEPRIVE }}
           package: ./build        
