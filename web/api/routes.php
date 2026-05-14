@@ -2,9 +2,12 @@
 
 require_once __DIR__.'/router.php';
 
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: *");
+header("Access-Control-Allow-Methods: *");
+
 $URL = '/api';
 
-header("Access-Control-Allow-Origin: *");
 
 // Page d'accueil de l'API
 get($URL.'/', 'views/index.php');

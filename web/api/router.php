@@ -1,4 +1,12 @@
 <?php
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header("Access-Control-Allow-Origin: *");
+    header("Access-Control-Allow-Headers: *");
+    header("Access-Control-Allow-Methods: *");
+    http_response_code(200);
+    exit();
+}
+
 	//var_dump($_SERVER['REQUEST_URI']);
 	//exit;
 function get($route, $path_to_include)
