@@ -1,7 +1,7 @@
 const API_URL =
   ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname)
     ? "http://localhost/api/"
-    : "https://vitalis-bbe7aybcc3ata2gm.canadacentral-01.azurewebsites.net/api/";
+    : "https://cliniqueprive.azurewebsites.net/api/";
 
 
 const codeEmploye = new URLSearchParams(window.location.search).get('codeEmploye');
