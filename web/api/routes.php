@@ -7,7 +7,9 @@ $URL = '/api';
 header("Access-Control-Allow-Origin: *");
 
 // Page d'accueil de l'API
+get($URL.'/', 'views/index.php');
 get($URL, 'views/index.php');
+
 
 // Section Employes
 
