@@ -4,6 +4,11 @@ require_once(__DIR__ . '/../../db/Database.php');
 
 header('Content-Type: application/json');
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+
+
 // Lecture du JSON envoyé
 $data = json_decode(file_get_contents('php://input'), true);
 $code_employe = $data['CODE_EMPLOYE'] ?? '';
