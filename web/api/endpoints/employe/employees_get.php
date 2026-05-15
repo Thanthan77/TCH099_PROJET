@@ -2,8 +2,13 @@
 
 require_once(__DIR__.'/../../db/Database.php');
 
+
 header('Content-Type: application/json');
 header('Cache-Control: no-cache');
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 
 try {
     $cnx = Database::getInstance();
