@@ -8,6 +8,5 @@ appmobile/.idea/workspace.xml
 appmobile/.idea/workspace.xml
 appmobile/app/src/main/java/com/example/appmobile/ModificationInfo.java
 appmobile/app/src/main/java/com/example/appmobile/ModificationInfo.java
-web/api/db/config.php
 web/api/db/config.local.php
 web/api/db/Database.php
