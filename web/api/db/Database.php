@@ -1,5 +1,8 @@
 <?php
 
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/config.local.php';
+
 class Database
 {
     private static ?PDO $instance = null;
@@ -15,19 +18,27 @@ class Database
             'localhost', '127.0.0.1', '::1'
         ]);
 
-        // Charger config
-        $config = $isLocal
-            ? require __DIR__ . '/config.local.php'
-            : require __DIR__ . '/config.php';
+        // --- CONFIGURATION ---
+        if ($isLocal) {
+            // Utilise l’interface ConfigLocal
+            $host = ConfigLocal::DB_HOST;
+            $port = ConfigLocal::DB_PORT;
+            $db   = ConfigLocal::DB_NAME;
+            $user = ConfigLocal::DB_USER;
+            $pass = ConfigLocal::DB_PWD;
+        } else {
+            // Utilise l’interface Config (Azure)
+            $host = Config::DB_HOST;
+            $port = Config::DB_PORT;
+            $db   = Config::DB_NAME;
+            $user = Config::DB_USER;
+            $pass = Config::DB_PWD;
+        }
 
-        $host = $config['host'];
-        $port = $config['port'];
-        $db   = $config['database'];
-        $user = $config['user'];
-        $pass = $config['password'];
-
+        // --- DSN ---
         $dsn = "mysql:host={$host};port={$port};dbname={$db};charset=utf8mb4";
 
+        // --- OPTIONS PDO ---
         $options = [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -40,6 +51,7 @@ class Database
             $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
         }
 
+        // --- CONNEXION ---
         self::$instance = new PDO($dsn, $user, $pass, $options);
         return self::$instance;
     }
