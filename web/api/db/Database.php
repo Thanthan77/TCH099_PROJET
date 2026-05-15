@@ -1,5 +1,11 @@
 <?php
+<?php
 require_once __DIR__ . '/config.php';
+
+if (file_exists(__DIR__ . '/config.local.php')) {
+    require_once __DIR__ . '/config.local.php';
+}
+
 
 class Database
 {
@@ -17,7 +23,6 @@ class Database
         ]);
 
         if ($isLocal) {
-            require_once __DIR__ . '/config.local.php';
             // --- CONFIG LOCAL ---
             $host = ConfigLocal::DB_HOST;
             $port = ConfigLocal::DB_PORT;
