@@ -56,6 +56,9 @@ function route($route, $path_to_include)
 		exit();
 	}
 	$request_url = filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL);
+	$request_url = str_replace('/index.php', '', $request_url);
+	$request_url = str_replace('/home/site/wwwroot', '', $request_url);
+	$request_url = str_replace('/api/api', '/api', $request_url);
 	$request_url = rtrim($request_url, '/');
 	$request_url = strtok($request_url, '?');
 	$route_parts = explode('/', $route);
