@@ -11,12 +11,12 @@ mysqli_ssl_set($con, NULL, NULL, "/etc/ssl/certs/ca-certificates.crt", NULL, NUL
 
 if (!mysqli_real_connect(
     $con,
-    Config::DB_HOST,
-    Config::DB_USER,
-    Config::DB_PWD,
-    Config::DB_NAME,
-    Config::DB_PORT,
-    NULL, // tu peux mettre NULL si MYSQLI_CLIENT_SSL n’existe pas
+    DB_HOST,
+    DB_USER,
+    DB_PWD,
+    DB_NAME,
+    DB_PORT,
+    NULL, // tu peux mettre NULL si MYSQLI_CLIENT_SSL nexiste pas
 )) {
     die("Erreur MySQLi : " . mysqli_connect_error());
 }
