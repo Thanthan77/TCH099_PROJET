@@ -13,7 +13,16 @@ echo "Checkpoint 1\n";
 $con = mysqli_init();
 echo "Checkpoint 2\n";
 
-mysqli_ssl_set($con, NULL, NULL, "/etc/ssl/cert.pem", NULL, NULL);
+// SSL avec le bon certificat DigiCert Global Root G2
+mysqli_ssl_set(
+    $con,
+    NULL,
+    NULL,
+    "/home/site/wwwroot/web/certs/DigiCertGlobalRootG2.crt.pem",
+    NULL,
+    NULL
+);
+
 echo "Checkpoint 3\n";
 
 if (mysqli_real_connect(
