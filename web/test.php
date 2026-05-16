@@ -13,7 +13,7 @@ echo "Checkpoint 1\n";
 $con = mysqli_init();
 echo "Checkpoint 2\n";
 
-mysqli_ssl_set($con, NULL, NULL, "/etc/ssl/certs/ca-certificates.crt", NULL, NULL);
+mysqli_ssl_set($con, NULL, NULL, "/etc/ssl/cert.pem", NULL, NULL);
 echo "Checkpoint 3\n";
 
 if (mysqli_real_connect(
