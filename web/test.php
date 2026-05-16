@@ -22,7 +22,7 @@ if (mysqli_real_connect(
     getenv('DB_USER'),
     getenv('DB_PWD'),
     getenv('DB_NAME'),
-    getenv('DB_PORT'),
+    intval(getenv('DB_PORT')),
     NULL,
     MYSQLI_CLIENT_SSL
 )) {
