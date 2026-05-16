@@ -3,6 +3,7 @@
 echo "<pre>";
 echo "DB_HOST = [" . getenv('DB_HOST') . "]\n";
 echo "DB_USER = [" . getenv('DB_USER') . "]\n";
+echo "PWD=[" . getenv('DB_PWD') . "]\n";
 echo "DB_PWD length = " . strlen(getenv('DB_PWD')) . "\n";
 echo "DB_NAME = [" . getenv('DB_NAME') . "]\n";
 echo "DB_PORT = [" . getenv('DB_PORT') . "]\n";
