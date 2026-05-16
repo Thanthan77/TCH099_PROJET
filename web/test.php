@@ -18,10 +18,11 @@ mysqli_ssl_set(
     $con,
     NULL,
     NULL,
-    "/home/site/wwwroot/web/certs/DigiCertGlobalRootG2.crt.pem",
+    "/home/site/wwwroot/certs/DigiCertGlobalRootG2.crt.pem",
     NULL,
     NULL
 );
+
 
 echo "Checkpoint 3\n";
 
